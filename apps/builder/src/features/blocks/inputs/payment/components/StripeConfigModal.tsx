@@ -190,7 +190,7 @@ export const StripeConfigModal = ({
 
         <ModalFooter>
           <Button
-            colorScheme="blue"
+            colorScheme="red"
             onClick={createCredentials}
             isDisabled={
               stripeConfig.live.publicKey === '' ||

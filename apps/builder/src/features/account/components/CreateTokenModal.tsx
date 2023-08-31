@@ -83,12 +83,12 @@ export const CreateTokenModal = ({
 
         <ModalFooter>
           {newTokenValue ? (
-            <Button onClick={onClose} colorScheme="blue">
+            <Button onClick={onClose} colorScheme="red">
               {scopedT('doneButton.label')}
             </Button>
           ) : (
             <Button
-              colorScheme="blue"
+              colorScheme="red"
               isDisabled={name.length === 0}
               isLoading={isSubmitting}
               onClick={createToken}

@@ -198,7 +198,7 @@ export const WebhookAdvancedConfigForm = ({
       {webhook.url && (
         <Button
           onClick={executeTestRequest}
-          colorScheme="blue"
+          colorScheme="red"
           isLoading={isTestResponseLoading}
         >
           Test the request

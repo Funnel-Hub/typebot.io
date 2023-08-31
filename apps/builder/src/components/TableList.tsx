@@ -133,7 +133,7 @@ export const TableList = <T,>({
                       icon={<PlusIcon />}
                       size="xs"
                       shadow="md"
-                      colorScheme="blue"
+                      colorScheme="red"
                       onClick={insertItem(itemIndex - 1)}
                     />
                   </SlideFade>
@@ -152,7 +152,7 @@ export const TableList = <T,>({
                     icon={<PlusIcon />}
                     size="xs"
                     shadow="md"
-                    colorScheme="blue"
+                    colorScheme="red"
                     onClick={insertItem(itemIndex)}
                   />
                 </SlideFade>
@@ -166,7 +166,7 @@ export const TableList = <T,>({
           leftIcon={<PlusIcon />}
           onClick={createItem}
           flexShrink={0}
-          colorScheme="blue"
+          colorScheme="red"
         >
           {addLabel}
         </Button>

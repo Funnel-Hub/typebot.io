@@ -95,7 +95,7 @@ const TextBubbleEditorContent = ({
       flex="1"
       ref={textEditorRef}
       borderWidth="2px"
-      borderColor="blue.400"
+      borderColor="red.400"
       rounded="md"
       pos="relative"
       spacing={0}
@@ -103,7 +103,7 @@ const TextBubbleEditorContent = ({
       className="prevent-group-drag"
       sx={{
         '.slate-ToolbarButton-active': {
-          color: useColorModeValue('blue.500', 'blue.300') + ' !important',
+          color: useColorModeValue('red.500', 'red.300') + ' !important',
         },
         '[class^="PlateFloatingLink___Styled"]': {
           '--tw-bg-opacity': useColorModeValue('1', '.1') + '!important',
@@ -116,7 +116,7 @@ const TextBubbleEditorContent = ({
           '--tw-bg-opacity': useColorModeValue('1', '.4') + '!important',
         },
         '.slate-a': {
-          color: useColorModeValue('blue.500', 'blue.300'),
+          color: useColorModeValue('red.500', 'red.300'),
         },
       }}
     >

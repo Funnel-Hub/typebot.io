@@ -171,7 +171,7 @@ export const PreCheckoutModal = ({
             <Button
               type="submit"
               isLoading={isCreatingCheckout}
-              colorScheme="blue"
+              colorScheme="red"
               isDisabled={customer.company === '' || customer.email === ''}
             >
               {scopedT('submitButton.label')}

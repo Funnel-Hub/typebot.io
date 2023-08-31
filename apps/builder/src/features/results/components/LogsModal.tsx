@@ -91,11 +91,11 @@ const LogCard = ({ log }: { log: Log }) => {
 const StatusTag = ({ status }: { status: string }) => {
   switch (status) {
     case 'error':
-      return <Tag colorScheme={'red'}>Fail</Tag>
+      return <Tag colorScheme={'orange'}>Fail</Tag>
     case 'warning':
       return <Tag colorScheme={'orange'}>Warn</Tag>
     case 'info':
-      return <Tag colorScheme={'blue'}>Info</Tag>
+      return <Tag colorScheme={'red'}>Info</Tag>
     default:
       return <Tag colorScheme={'green'}>Ok</Tag>
   }

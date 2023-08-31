@@ -169,7 +169,7 @@ export const CustomDomainModal = ({
                 onClick={onAddDomainClick}
                 isDisabled={hostname.domain === ''}
                 isLoading={isLoading}
-                colorScheme="blue"
+                colorScheme="red"
               >
                 Save
               </Button>

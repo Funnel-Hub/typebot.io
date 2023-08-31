@@ -93,7 +93,7 @@ export const SmtpConfigModal = ({
 
         <ModalFooter>
           <Button
-            colorScheme="blue"
+            colorScheme="red"
             onClick={handleCreateClick}
             isDisabled={
               isNotDefined(smtpConfig.from.email) ||

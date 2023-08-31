@@ -28,7 +28,7 @@ export const Hero = () => {
               fontSize={['4xl', '4xl', '5xl', '7xl']}
               textAlign="center"
               maxW="1000px"
-              bgGradient="linear(to-r, blue.300, purple.300)"
+              bgGradient="linear(to-r, red.300, purple.300)"
               bgClip="text"
               data-aos="fade-up"
             >
@@ -78,7 +78,7 @@ export const Hero = () => {
             <Box
               pos="absolute"
               right="-40px"
-              bgColor="blue.500"
+              bgColor="red.500"
               boxSize={['150px', '150px', '300px', '600px']}
               rounded="full"
               filter="blur(40px)"

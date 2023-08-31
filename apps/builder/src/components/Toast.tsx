@@ -144,14 +144,14 @@ const Icon = ({
 }
 
 const parseColor = (status: ToastProps['status']) => {
-  if (!status) return 'red'
+  if (!status) return 'orange'
   switch (status) {
     case 'error':
-      return 'red'
+      return 'orange'
     case 'success':
       return 'green'
     case 'info':
-      return 'blue'
+      return 'red'
   }
 }
 

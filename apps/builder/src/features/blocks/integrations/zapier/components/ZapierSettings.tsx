@@ -37,7 +37,7 @@ export const ZapierSettings = ({
               as={Link}
               href="https://zapier.com/apps/typebot/integrations"
               isExternal
-              colorScheme="blue"
+              colorScheme="red"
             >
               <Text mr="2">Zapier</Text> <ExternalLinkIcon />
             </Button>

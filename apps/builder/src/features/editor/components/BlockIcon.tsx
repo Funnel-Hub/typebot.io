@@ -44,22 +44,22 @@ import { PixelLogo } from '@/features/blocks/integrations/pixel/components/Pixel
 type BlockIconProps = { type: BlockType } & IconProps
 
 export const BlockIcon = ({ type, ...props }: BlockIconProps): JSX.Element => {
-  const blue = useColorModeValue('blue.500', 'blue.300')
+  const red = useColorModeValue('red.500', 'red.300')
   const orange = useColorModeValue('orange.500', 'orange.300')
   const purple = useColorModeValue('purple.500', 'purple.300')
   const openAIColor = useColorModeValue('black', 'white')
 
   switch (type) {
     case BubbleBlockType.TEXT:
-      return <TextBubbleIcon color={blue} {...props} />
+      return <TextBubbleIcon color={red} {...props} />
     case BubbleBlockType.IMAGE:
-      return <ImageBubbleIcon color={blue} {...props} />
+      return <ImageBubbleIcon color={red} {...props} />
     case BubbleBlockType.VIDEO:
-      return <VideoBubbleIcon color={blue} {...props} />
+      return <VideoBubbleIcon color={red} {...props} />
     case BubbleBlockType.EMBED:
-      return <EmbedBubbleIcon color={blue} {...props} />
+      return <EmbedBubbleIcon color={red} {...props} />
     case BubbleBlockType.AUDIO:
-      return <AudioBubbleIcon color={blue} {...props} />
+      return <AudioBubbleIcon color={red} {...props} />
     case InputBlockType.TEXT:
       return <TextInputIcon color={orange} {...props} />
     case InputBlockType.NUMBER:

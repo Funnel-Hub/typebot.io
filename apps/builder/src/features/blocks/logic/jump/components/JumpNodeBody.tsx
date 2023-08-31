@@ -16,10 +16,10 @@ export const JumpNodeBody = ({ options }: Props) => {
   return (
     <Text>
       Jump to{' '}
-      <Tag colorScheme="blue">{parseGroupTitle(selectedGroup.title)}</Tag>{' '}
+      <Tag colorScheme="red">{parseGroupTitle(selectedGroup.title)}</Tag>{' '}
       {isDefined(blockIndex) && blockIndex >= 0 ? (
         <>
-          at block <Tag colorScheme="blue">{blockIndex + 1}</Tag>
+          at block <Tag colorScheme="red">{blockIndex + 1}</Tag>
         </>
       ) : null}
     </Text>

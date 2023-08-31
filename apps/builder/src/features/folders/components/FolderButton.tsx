@@ -80,7 +80,7 @@ export const FolderButton = ({
       pos="relative"
       cursor="pointer"
       variant="outline"
-      colorScheme={isTypebotOver ? 'blue' : 'gray'}
+      colorScheme={isTypebotOver ? 'red' : 'gray'}
       borderWidth={isTypebotOver ? '3px' : '1px'}
       justifyContent="center"
       onClick={handleClick}
@@ -115,7 +115,7 @@ export const FolderButton = ({
       <VStack spacing="4">
         <FolderIcon
           fontSize={50}
-          color={useColorModeValue('blue.500', 'blue.400')}
+          color={useColorModeValue('red.500', 'red.400')}
         />
         <Editable
           defaultValue={folder.name}

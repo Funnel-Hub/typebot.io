@@ -133,7 +133,7 @@ export const ChangePlanForm = ({ workspace }: Props) => {
             />
             <HStack>
               <Text>Yearly</Text>
-              <Tag colorScheme="blue">16% off</Tag>
+              <Tag colorScheme="red">16% off</Tag>
             </HStack>
           </HStack>
           <HStack alignItems="stretch" spacing="4" w="full">

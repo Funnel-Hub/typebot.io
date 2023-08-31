@@ -138,12 +138,12 @@ export const ProPlanCard = ({ isYearly }: Props) => {
         ],
       }}
       borderWidth="3px"
-      borderColor="blue.200"
+      borderColor="red.200"
       button={
         <Button
           as={Link}
           href={`https://app.typebot.io/register?subscribePlan=${Plan.PRO}&chats=${selectedChatsLimitIndex}&storage=${selectedStorageLimitIndex}&isYearly=${isYearly}`}
-          colorScheme="blue"
+          colorScheme="red"
           size="lg"
           w="full"
           fontWeight="extrabold"

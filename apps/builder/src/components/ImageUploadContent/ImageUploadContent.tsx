@@ -186,7 +186,7 @@ const UploadFileContent = ({
       filePath={filePath}
       onFileUploaded={onNewUrl}
       includeFileName={includeFileName}
-      colorScheme="blue"
+      colorScheme="red"
     >
       Choose an image
     </UploadButton>

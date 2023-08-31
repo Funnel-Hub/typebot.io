@@ -99,7 +99,7 @@ export const SaveThemeModal = ({
               Save as new template
             </Button>
           )}
-          <Button type="submit" colorScheme="blue" isLoading={isSaving}>
+          <Button type="submit" colorScheme="red" isLoading={isSaving}>
             {selectedTemplate?.id ? 'Update' : 'Save'}
           </Button>
         </ModalFooter>

@@ -83,7 +83,7 @@ export const TargetEndpoint = ({
       ref={ref}
       boxSize="20px"
       rounded="full"
-      bgColor="blue.500"
+      bgColor="red.500"
       cursor="pointer"
       visibility="hidden"
       {...props}

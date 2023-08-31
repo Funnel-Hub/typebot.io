@@ -148,15 +148,15 @@ export const ProPlanPricingCard = ({
       flex="1"
       flexShrink={0}
       borderWidth="1px"
-      borderColor={useColorModeValue('blue.500', 'blue.300')}
+      borderColor={useColorModeValue('red.500', 'red.300')}
       rounded="lg"
     >
       <Flex justifyContent="center">
         <Tag
           pos="absolute"
           top="-10px"
-          colorScheme="blue"
-          bg={useColorModeValue('blue.500', 'blue.400')}
+          colorScheme="red"
+          bg={useColorModeValue('red.500', 'red.400')}
           variant="solid"
           fontWeight="semibold"
           style={{ marginTop: 0 }}
@@ -169,7 +169,7 @@ export const ProPlanPricingCard = ({
           <Heading fontSize="2xl">
             {scopedT('heading', {
               plan: (
-                <chakra.span color={useColorModeValue('blue.400', 'blue.300')}>
+                <chakra.span color={useColorModeValue('red.400', 'red.300')}>
                   Pro
                 </chakra.span>
               ),
@@ -283,7 +283,7 @@ export const ProPlanPricingCard = ({
               </Heading>
             )}
             <Button
-              colorScheme="blue"
+              colorScheme="red"
               variant="outline"
               onClick={handlePayClick}
               isLoading={isLoading}

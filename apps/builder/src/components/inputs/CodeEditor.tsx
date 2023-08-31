@@ -147,7 +147,7 @@ export const CodeEditor = ({
             right={0.5}
             top={0.5}
             size="xs"
-            colorScheme="blue"
+            colorScheme="red"
           />
         </Fade>
       )}

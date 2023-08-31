@@ -100,7 +100,7 @@ export const UsageProgressBars = ({ workspace }: Props) => {
           rounded="full"
           hasStripe
           isIndeterminate={isLoading}
-          colorScheme={totalChatsUsed >= workspaceChatsLimit ? 'red' : 'blue'}
+          colorScheme={totalChatsUsed >= workspaceChatsLimit ? 'orange' : 'red'}
         />
       </Stack>
       {workspace.plan !== Plan.FREE && (
@@ -151,8 +151,8 @@ export const UsageProgressBars = ({ workspace }: Props) => {
             h="5px"
             colorScheme={
               totalStorageUsed >= workspaceStorageLimitGigabites
-                ? 'red'
-                : 'blue'
+                ? 'orange'
+                : 'red'
             }
             rounded="full"
             hasStripe

@@ -52,7 +52,7 @@ export const AudioBubbleForm = ({
                 fileType="audio"
                 filePath={fileUploadPath}
                 onFileUploaded={updateUrl}
-                colorScheme="blue"
+                colorScheme="red"
               >
                 {scopedT('bubbles.audio.button.chooseFile.label')}
               </UploadButton>

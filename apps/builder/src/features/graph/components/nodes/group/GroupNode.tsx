@@ -57,7 +57,7 @@ const NonMemoizedDraggableGroupNode = ({
   onGroupDrag,
 }: Props & { onGroupDrag: (newCoord: Coordinates) => void }) => {
   const bg = useColorModeValue('white', 'gray.900')
-  const previewingBorderColor = useColorModeValue('blue.400', 'blue.300')
+  const previewingBorderColor = useColorModeValue('red.400', 'red.300')
   const borderColor = useColorModeValue('white', 'gray.800')
   const editableHoverBg = useColorModeValue('gray.100', 'gray.700')
   const {

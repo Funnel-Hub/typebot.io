@@ -52,6 +52,18 @@ export const colors = {
     800: '#001751',
     900: '#1a202c',
   },
+  red: {
+    50: '#fff5f5',
+    100: '#fed7d7',
+    200: '#feb2b2',
+    300: '#fc8181',
+    400: '#f56565',
+    500: '#e53e3e',
+    600: '#c53030',
+    700: '#9b2c2c',
+    800: '#822727',
+    900: '#63171b',
+  },
   orange: {
     50: '#fff1da',
     100: '#ffd7ae',
@@ -135,15 +147,15 @@ const Button = defineStyleConfig({
   }),
   variants: {
     solid: ({ colorMode, colorScheme }) => {
-      if (colorScheme !== 'blue') return {}
+      if (colorScheme !== 'red') return {}
       return {
-        bg: colorMode === 'dark' ? 'blue.400' : 'blue.500',
+        bg: colorMode === 'dark' ? 'red.400' : 'red.500',
         color: 'white',
         _hover: {
-          bg: colorMode === 'dark' ? 'blue.500' : 'blue.600',
+          bg: colorMode === 'dark' ? 'red.500' : 'red.600',
         },
         _active: {
-          bg: colorMode === 'dark' ? 'blue.600' : 'blue.700',
+          bg: colorMode === 'dark' ? 'red.600' : 'red.700',
         },
       }
     },
@@ -161,10 +173,10 @@ const Alert = createMultiStyleConfigHelpers(
 ).defineMultiStyleConfig({
   variants: {
     subtle: ({ colorScheme, colorMode }) => {
-      if (colorScheme !== 'blue' || colorMode === 'dark') return {}
+      if (colorScheme !== 'red' || colorMode === 'dark') return {}
       return {
         container: {
-          bg: 'blue.50',
+          bg: 'red.50',
         },
       }
     },
@@ -198,22 +210,22 @@ const components = {
   Switch,
   Spinner: {
     defaultProps: {
-      colorScheme: 'blue',
+      colorScheme: 'red',
     },
   },
   NumberInput: {
     baseStyle: {
-      focusBorderColor: 'blue.200',
+      focusBorderColor: 'red.200',
     },
   },
   Input: {
     baseStyle: {
-      focusBorderColor: 'blue.200',
+      focusBorderColor: 'red.200',
     },
   },
   Textarea: {
     baseStyle: {
-      focusBorderColor: 'blue.200',
+      focusBorderColor: 'red.200',
     },
   },
   Link: {

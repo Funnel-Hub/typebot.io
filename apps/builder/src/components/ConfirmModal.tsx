@@ -17,7 +17,7 @@ type ConfirmDeleteModalProps = {
   message: JSX.Element
   title?: string
   confirmButtonLabel: string
-  confirmButtonColor?: 'blue' | 'red'
+  confirmButtonColor?: 'red' | 'orange'
 }
 
 export const ConfirmModal = ({
@@ -27,7 +27,7 @@ export const ConfirmModal = ({
   onClose,
   confirmButtonLabel,
   onConfirm,
-  confirmButtonColor = 'red',
+  confirmButtonColor = 'orange',
 }: ConfirmDeleteModalProps) => {
   const scopedT = useScopedI18n('confirmModal')
   const [confirmLoading, setConfirmLoading] = useState(false)

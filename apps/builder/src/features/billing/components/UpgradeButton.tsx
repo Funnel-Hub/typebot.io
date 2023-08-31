@@ -13,7 +13,7 @@ export const UpgradeButton = ({ limitReachedType, ...props }: Props) => {
   const { workspace } = useWorkspace()
   return (
     <Button
-      colorScheme="blue"
+      colorScheme="red"
       {...props}
       isLoading={isNotDefined(workspace)}
       onClick={onOpen}

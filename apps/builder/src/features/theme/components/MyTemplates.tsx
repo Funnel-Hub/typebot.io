@@ -40,7 +40,7 @@ export const MyTemplates = ({
     <Stack spacing={4}>
       {(!selectedTemplate ||
         !areThemesEqual(selectedTemplate?.theme, currentTheme)) && (
-        <Button leftIcon={<SaveIcon />} onClick={onOpen} colorScheme="blue">
+        <Button leftIcon={<SaveIcon />} onClick={onOpen} colorScheme="red">
           Save current theme
         </Button>
       )}

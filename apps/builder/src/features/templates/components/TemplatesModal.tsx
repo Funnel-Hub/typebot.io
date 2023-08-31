@@ -227,7 +227,7 @@ export const TemplatesModal = ({ isOpen, onClose, onTypebotChoose }: Props) => {
                 <Text>{selectedTemplate.description}</Text>
               </Stack>
               <Button
-                colorScheme="blue"
+                colorScheme="red"
                 onClick={onUseThisTemplateClick}
                 isLoading={isLoading}
               >

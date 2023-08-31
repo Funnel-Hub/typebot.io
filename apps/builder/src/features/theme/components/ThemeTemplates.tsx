@@ -29,7 +29,7 @@ export const ThemeTemplates = ({
         <Button
           flex="1"
           variant="outline"
-          colorScheme={selectedTab === 'my-templates' ? 'blue' : 'gray'}
+          colorScheme={selectedTab === 'my-templates' ? 'red' : 'gray'}
           onClick={() => setSelectedTab('my-templates')}
         >
           My templates
@@ -37,7 +37,7 @@ export const ThemeTemplates = ({
         <Button
           flex="1"
           variant="outline"
-          colorScheme={selectedTab === 'gallery' ? 'blue' : 'gray'}
+          colorScheme={selectedTab === 'gallery' ? 'red' : 'gray'}
           onClick={() => setSelectedTab('gallery')}
         >
           Gallery

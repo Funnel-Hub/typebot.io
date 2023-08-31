@@ -36,7 +36,7 @@ export const WordpressPopupInstructions = ({
         <Link
           href="https://wordpress.org/plugins/typebot/"
           isExternal
-          color={useColorModeValue('blue.500', 'blue.300')}
+          color={useColorModeValue('red.500', 'red.300')}
         >
           the official Typebot WordPress plugin
           <ExternalLinkIcon mx="2px" />

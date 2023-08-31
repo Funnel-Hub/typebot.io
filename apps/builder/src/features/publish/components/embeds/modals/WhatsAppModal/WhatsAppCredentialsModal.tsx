@@ -276,7 +276,7 @@ export const WhatsAppCredentialsModal = ({
         <ModalFooter>
           <Button
             onClick={goToNextStep}
-            colorScheme="blue"
+            colorScheme="red"
             isDisabled={
               (activeStep === 1 && isEmpty(systemUserAccessToken)) ||
               (activeStep === 2 && isEmpty(phoneNumberId))

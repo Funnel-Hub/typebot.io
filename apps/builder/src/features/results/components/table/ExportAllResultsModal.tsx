@@ -153,7 +153,7 @@ export const ExportAllResultsModal = ({ isOpen, onClose }: Props) => {
             Cancel
           </Button>
           <Button
-            colorScheme="blue"
+            colorScheme="red"
             onClick={exportAllResultsToCSV}
             leftIcon={<DownloadIcon />}
             size="sm"

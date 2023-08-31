@@ -46,7 +46,7 @@ export const PabblyConnectSettings = ({
               as={Link}
               href="https://www.pabbly.com/connect/integrations/typebot/"
               isExternal
-              colorScheme="blue"
+              colorScheme="red"
             >
               <Text mr="2">Pabbly.com</Text> <ExternalLinkIcon />
             </Button>

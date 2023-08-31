@@ -101,7 +101,7 @@ export const TypebotHeader = () => {
         <Button
           as={Link}
           href={`/typebots/${typebot?.id}/edit`}
-          colorScheme={router.pathname.includes('/edit') ? 'blue' : 'gray'}
+          colorScheme={router.pathname.includes('/edit') ? 'red' : 'gray'}
           variant={router.pathname.includes('/edit') ? 'outline' : 'ghost'}
           size="sm"
         >
@@ -110,7 +110,7 @@ export const TypebotHeader = () => {
         <Button
           as={Link}
           href={`/typebots/${typebot?.id}/theme`}
-          colorScheme={router.pathname.endsWith('theme') ? 'blue' : 'gray'}
+          colorScheme={router.pathname.endsWith('theme') ? 'red' : 'gray'}
           variant={router.pathname.endsWith('theme') ? 'outline' : 'ghost'}
           size="sm"
         >
@@ -119,7 +119,7 @@ export const TypebotHeader = () => {
         <Button
           as={Link}
           href={`/typebots/${typebot?.id}/settings`}
-          colorScheme={router.pathname.endsWith('settings') ? 'blue' : 'gray'}
+          colorScheme={router.pathname.endsWith('settings') ? 'red' : 'gray'}
           variant={router.pathname.endsWith('settings') ? 'outline' : 'ghost'}
           size="sm"
         >
@@ -128,7 +128,7 @@ export const TypebotHeader = () => {
         <Button
           as={Link}
           href={`/typebots/${typebot?.id}/share`}
-          colorScheme={router.pathname.endsWith('share') ? 'blue' : 'gray'}
+          colorScheme={router.pathname.endsWith('share') ? 'red' : 'gray'}
           variant={router.pathname.endsWith('share') ? 'outline' : 'ghost'}
           size="sm"
         >
@@ -138,7 +138,7 @@ export const TypebotHeader = () => {
           <Button
             as={Link}
             href={`/typebots/${typebot?.id}/results`}
-            colorScheme={router.pathname.includes('results') ? 'blue' : 'gray'}
+            colorScheme={router.pathname.includes('results') ? 'red' : 'gray'}
             variant={router.pathname.includes('results') ? 'outline' : 'ghost'}
             size="sm"
           >

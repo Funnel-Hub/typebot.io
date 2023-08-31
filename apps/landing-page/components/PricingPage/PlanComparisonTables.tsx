@@ -39,7 +39,7 @@ export const PlanComparisonTables = () => (
             </Th>
             <Th>Free</Th>
             <Th color="orange.200">Starter</Th>
-            <Th color="blue.200">Pro</Th>
+            <Th color="red.200">Pro</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -125,7 +125,7 @@ export const PlanComparisonTables = () => (
             </Th>
             <Th>Free</Th>
             <Th color="orange.200">Starter</Th>
-            <Th color="blue.200">Pro</Th>
+            <Th color="red.200">Pro</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -322,7 +322,7 @@ export const PlanComparisonTables = () => (
             </Th>
             <Th>Free</Th>
             <Th color="orange.200">Starter</Th>
-            <Th color="blue.200">Pro</Th>
+            <Th color="red.200">Pro</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -379,7 +379,7 @@ export const PlanComparisonTables = () => (
         </Link>
       </Stack>
       <Stack spacing={4}>
-        <Heading as="h3" size="md" color="blue.200">
+        <Heading as="h3" size="md" color="red.200">
           Pro
         </Heading>
         <Heading as="h3">

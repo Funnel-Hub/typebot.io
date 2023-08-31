@@ -23,7 +23,7 @@ export const BackButton = ({ id }: { id: string | null }) => {
       href={id ? `/typebots/folders/${id}` : '/typebots'}
       leftIcon={<ChevronLeftIcon />}
       variant={'outline'}
-      colorScheme={isTypebotOver ? 'blue' : 'gray'}
+      colorScheme={isTypebotOver ? 'red' : 'gray'}
       borderWidth={isTypebotOver ? '3px' : '1px'}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

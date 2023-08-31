@@ -41,8 +41,8 @@ export const DropOffEdge = ({
   onUnlockProPlanClick,
 }: Props) => {
   const dropOffColor = useColorModeValue(
-    theme.colors.red[500],
-    theme.colors.red[400]
+    theme.colors.orange[500],
+    theme.colors.orange[400]
   )
   const { workspace } = useWorkspace()
   const { groupsCoordinates } = useGroupsCoordinates()

@@ -58,7 +58,7 @@ export const RadioCard = (props: UseRadioProps & { children: ReactNode }) => {
         borderWidth="2px"
         borderRadius="md"
         _checked={{
-          borderColor: 'blue.400',
+          borderColor: 'red.400',
         }}
         _hover={{
           bgColor: useColorModeValue('gray.100', 'gray.700'),

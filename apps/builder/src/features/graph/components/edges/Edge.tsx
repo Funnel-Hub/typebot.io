@@ -102,13 +102,13 @@ export const Edge = ({ edge }: Props) => {
         d={path}
         stroke={
           isPreviewing
-            ? colors.blue[400]
+            ? colors.orange[400]
             : isDark
             ? colors.gray[700]
             : colors.gray[400]
         }
         strokeWidth="2px"
-        markerEnd={isPreviewing ? 'url(#blue-arrow)' : 'url(#arrow)'}
+        markerEnd={isPreviewing ? 'url(#red-arrow)' : 'url(#arrow)'}
         fill="none"
         pointerEvents="none"
       />

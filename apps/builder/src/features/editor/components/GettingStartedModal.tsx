@@ -44,7 +44,7 @@ export const GettingStartedModal = () => {
             <List spacing={4}>
               <HStack as={ListItem}>
                 <Flex
-                  bgColor="blue.500"
+                  bgColor="red.500"
                   rounded="full"
                   boxSize="25px"
                   justify="center"
@@ -62,7 +62,7 @@ export const GettingStartedModal = () => {
               </HStack>
               <HStack as={ListItem}>
                 <Flex
-                  bgColor="blue.500"
+                  bgColor="red.500"
                   rounded="full"
                   boxSize="25px"
                   fontSize="13px"
@@ -80,7 +80,7 @@ export const GettingStartedModal = () => {
               </HStack>
               <HStack as={ListItem}>
                 <Flex
-                  bgColor="blue.500"
+                  bgColor="red.500"
                   rounded="full"
                   boxSize="25px"
                   justify="center"
@@ -96,7 +96,7 @@ export const GettingStartedModal = () => {
               </HStack>
               <HStack as={ListItem}>
                 <Flex
-                  bgColor="blue.500"
+                  bgColor="red.500"
                   rounded="full"
                   boxSize="25px"
                   justify="center"
