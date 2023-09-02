@@ -20,6 +20,7 @@ import { parseVariables } from '@/features/variables/parseVariables'
 const cors = initMiddleware(Cors())
 
 const currencySymbols: { [key: string]: string } = {
+  BRL: 'R$',
   USD: '$',
   EUR: '€',
   CRC: '₡',

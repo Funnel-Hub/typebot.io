@@ -6,5 +6,5 @@ export const parseWorkspaceDefaultPlan = (userEmail: string) => {
   const defaultPlan = env.DEFAULT_WORKSPACE_PLAN as Plan
   if (defaultPlan && Object.values(Plan).includes(defaultPlan))
     return defaultPlan
-  return Plan.FREE
+  return Plan.UNDEFINED
 }

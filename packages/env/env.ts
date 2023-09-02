@@ -20,11 +20,11 @@ const baseEnv = {
     DISABLE_SIGNUP: boolean.optional().default('false'),
     ADMIN_EMAIL: z.string().email().optional(),
     DEFAULT_WORKSPACE_PLAN: z
-      .enum(['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED'])
+      .enum(['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'])
       .refine((str) =>
-        ['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED'].includes(str)
+        ['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'].includes(str)
       )
-      .default('FREE'),
+      .default('UNDEFINED'),
     DEBUG: boolean.optional().default('false'),
   },
   client: {
@@ -150,6 +150,13 @@ const stripeEnv = {
     STRIPE_PRO_CHATS_YEARLY_PRICE_ID: z.string().min(1).optional(),
     STRIPE_PRO_STORAGE_MONTHLY_PRICE_ID: z.string().min(1).optional(),
     STRIPE_PRO_STORAGE_YEARLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_PRODUCT_ID: z.string().min(1).optional(),
+    STRIPE_LTD_MONTHLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_YEARLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_CHATS_MONTHLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_CHATS_YEARLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_STORAGE_MONTHLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_STORAGE_YEARLY_PRICE_ID: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string().min(1).optional(),

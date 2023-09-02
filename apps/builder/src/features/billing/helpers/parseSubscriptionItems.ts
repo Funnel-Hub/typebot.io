@@ -2,7 +2,7 @@ import { getChatsLimit, getStorageLimit } from '@typebot.io/lib/pricing'
 import { priceIds } from '@typebot.io/lib/api/pricing'
 
 export const parseSubscriptionItems = (
-  plan: 'STARTER' | 'PRO',
+  plan: 'STARTER' | 'PRO' | 'LIFETIME',
   additionalChats: number,
   additionalStorage: number,
   isYearly: boolean

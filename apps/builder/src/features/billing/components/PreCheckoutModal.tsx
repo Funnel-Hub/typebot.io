@@ -13,6 +13,8 @@ import {
   ModalContent,
   ModalOverlay,
   Stack,
+  Text,
+  Flex
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
@@ -23,11 +25,11 @@ import { useScopedI18n } from '@/locales'
 export type PreCheckoutModalProps = {
   selectedSubscription:
     | {
-        plan: 'STARTER' | 'PRO'
+        plan: 'STARTER' | 'PRO' | 'LIFETIME'
         workspaceId: string
         additionalChats: number
         additionalStorage: number
-        currency: 'eur' | 'usd'
+        currency: 'eur' | 'usd' | 'brl'
         isYearly: boolean
       }
     | undefined
@@ -150,7 +152,10 @@ export const PreCheckoutModal = ({
               debounceTimeout={0}
             />
             <FormControl>
-              <FormLabel>{scopedT('taxId.label')}</FormLabel>
+              <Flex>
+                <FormLabel>{scopedT('taxId.label')} </FormLabel>
+                <Text color="red.300">*</Text>
+              </Flex>
               <HStack>
                 <Select
                   placeholder={scopedT('taxId.placeholder')}
@@ -172,7 +177,7 @@ export const PreCheckoutModal = ({
               type="submit"
               isLoading={isCreatingCheckout}
               colorScheme="red"
-              isDisabled={customer.company === '' || customer.email === ''}
+              isDisabled={customer.company === '' || customer.email === '' || customer.vat.value === '' || customer.vat.type === undefined}
             >
               {scopedT('submitButton.label')}
             </Button>

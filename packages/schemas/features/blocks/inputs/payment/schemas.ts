@@ -79,7 +79,7 @@ export const defaultPaymentInputOptions: PaymentInputOptions = {
   provider: PaymentProvider.STRIPE,
   labels: { button: 'Pay', success: 'Success' },
   retryMessageContent: 'Payment failed. Please, try again.',
-  currency: 'USD',
+  currency: 'BRL', //'USD',
 }
 
 export type PaymentInputBlock = z.infer<typeof paymentInputSchema>

@@ -10,12 +10,13 @@ import { useUser } from '@/features/account/hooks/useUser'
 import { StarterPlanPricingCard } from './StarterPlanPricingCard'
 import { ProPlanPricingCard } from './ProPlanPricingCard'
 import { I18nFunction, useScopedI18n } from '@/locales'
+import { LifeTimePlanPricingCard } from './LifeTimePlanPricingCard'
 
 type Props = {
   workspace: Workspace
 }
 
-export const ChangePlanForm = ({ workspace }: Props) => {
+export const SelectPlanForm = ({ workspace }: Props) => {
   const scopedT = useScopedI18n('billing')
 
   const { user } = useUser()
@@ -66,7 +67,7 @@ export const ChangePlanForm = ({ workspace }: Props) => {
     selectedChatsLimitIndex,
     selectedStorageLimitIndex,
   }: {
-    plan: 'STARTER' | 'PRO'
+    plan: 'LIFETIME' | 'STARTER' | 'PRO'
     selectedChatsLimitIndex: number
     selectedStorageLimitIndex: number
   }) => {
@@ -82,8 +83,8 @@ export const ChangePlanForm = ({ workspace }: Props) => {
       workspaceId: workspace.id,
       additionalChats: selectedChatsLimitIndex,
       additionalStorage: selectedStorageLimitIndex,
-      currency:
-        data?.subscription?.currency ?? 'brl',
+      currency: 'brl',
+        // data?.subscription?.currency ??
         // (guessIfUserIsEuropean() ? 'eur' : 'usd'),
       isYearly,
     } as const
@@ -136,8 +137,8 @@ export const ChangePlanForm = ({ workspace }: Props) => {
           <HStack alignItems="stretch" spacing="4" w="full">
             <StarterPlanPricingCard
               scopedT={scopedT as I18nFunction}
-              highlights={true}
-              isSelectPlan={false}
+              highlights={false}
+              isSelectPlan={true}
               workspace={workspace}
               currentSubscription={{ isYearly: data.subscription?.isYearly }}
               onPayClick={(props) =>
@@ -148,10 +149,24 @@ export const ChangePlanForm = ({ workspace }: Props) => {
               currency={data.subscription?.currency}
             />
 
-            <ProPlanPricingCard
+            <LifeTimePlanPricingCard
               scopedT={scopedT as I18nFunction}
               highlights={true}
-              isSelectPlan={false}
+              isSelectPlan={true}
+              workspace={workspace}
+              currentSubscription={{ isYearly: false }}
+              onPayClick={(props) =>
+                handlePayClick({ ...props, plan: Plan.LIFETIME })
+              }
+              isYearly={false}
+              isLoading={isUpdatingSubscription}
+              currency={data.subscription?.currency}
+            />
+
+            <ProPlanPricingCard
+              scopedT={scopedT as I18nFunction}
+              highlights={false}
+              isSelectPlan={true}
               workspace={workspace}
               currentSubscription={{ isYearly: data.subscription?.isYearly }}
               onPayClick={(props) =>

@@ -30,4 +30,18 @@ export const priceIds = {
       yearly: env.STRIPE_PRO_STORAGE_YEARLY_PRICE_ID,
     },
   },
+  [Plan.LIFETIME]: {
+    base: {
+      monthly: env.STRIPE_LTD_MONTHLY_PRICE_ID,
+      yearly: env.STRIPE_LTD_YEARLY_PRICE_ID,
+    },
+    chats: {
+      monthly: env.STRIPE_LTD_CHATS_MONTHLY_PRICE_ID,
+      yearly: env.STRIPE_LTD_CHATS_YEARLY_PRICE_ID,
+    },
+    storage: {
+      monthly: env.STRIPE_LTD_STORAGE_MONTHLY_PRICE_ID,
+      yearly: env.STRIPE_LTD_STORAGE_YEARLY_PRICE_ID,
+    },
+  }
 }

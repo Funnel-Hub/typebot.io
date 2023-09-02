@@ -32,7 +32,7 @@ export const updateSubscription = authenticatedProcedure
       plan: z.enum([Plan.STARTER, Plan.PRO]),
       additionalChats: z.number(),
       additionalStorage: z.number(),
-      currency: z.enum(['usd', 'eur']),
+      currency: z.enum(['usd', 'eur', 'brl']),
       isYearly: z.boolean(),
     })
   )

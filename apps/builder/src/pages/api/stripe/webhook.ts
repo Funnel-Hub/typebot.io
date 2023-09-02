@@ -45,7 +45,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           const session = event.data.object as Stripe.Checkout.Session
           const metadata = session.metadata as unknown as
             | {
-                plan: 'STARTER' | 'PRO'
+                plan: 'STARTER' | 'PRO' | 'LIFETIME'
                 additionalChats: string
                 additionalStorage: string
                 workspaceId: string
@@ -152,7 +152,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
               stripeId: subscription.customer as string,
             },
             data: {
-              plan: Plan.FREE,
+              plan: Plan.UNDEFINED,
               additionalChatsIndex: 0,
               additionalStorageIndex: 0,
               customChatsLimit: null,
@@ -177,7 +177,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 workspaceId: workspace.id,
                 userId: user.id,
                 data: {
-                  plan: Plan.FREE,
+                  plan: Plan.UNDEFINED,
                   additionalChatsIndex: 0,
                   additionalStorageIndex: 0,
                 },

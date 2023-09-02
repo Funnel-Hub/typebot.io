@@ -23,8 +23,8 @@ export const createCheckoutSession = authenticatedProcedure
       email: z.string(),
       company: z.string(),
       workspaceId: z.string(),
-      currency: z.enum(['usd', 'eur']),
-      plan: z.enum([Plan.STARTER, Plan.PRO]),
+      currency: z.enum(['usd', 'eur', 'brl']),
+      plan: z.enum([Plan.STARTER, Plan.PRO, Plan.LIFETIME]),
       returnUrl: z.string(),
       additionalChats: z.number(),
       additionalStorage: z.number(),
@@ -138,8 +138,8 @@ export const createCheckoutSession = authenticatedProcedure
 type Props = {
   customerId: string
   workspaceId: string
-  currency: 'usd' | 'eur'
-  plan: 'STARTER' | 'PRO'
+  currency: 'usd' | 'eur' | 'brl'
+  plan: 'STARTER' | 'PRO' | 'LIFETIME'
   returnUrl: string
   additionalChats: number
   additionalStorage: number
@@ -168,7 +168,7 @@ export const createCheckoutSessionUrl =
         address: 'auto',
         name: 'never',
       },
-      mode: 'subscription',
+      mode: plan === Plan.LIFETIME ? 'payment' : 'subscription',
       metadata: {
         workspaceId,
         plan,
@@ -177,7 +177,7 @@ export const createCheckoutSessionUrl =
       },
       currency,
       billing_address_collection: 'required',
-      automatic_tax: { enabled: true },
+      automatic_tax: { enabled: currency == 'brl' ? false : true },
       line_items: parseSubscriptionItems(
         plan,
         additionalChats,

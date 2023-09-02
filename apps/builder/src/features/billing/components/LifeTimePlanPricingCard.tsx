@@ -6,8 +6,6 @@ import {
   Menu,
   MenuButton,
   Button,
-  MenuList,
-  MenuItem,
   Text,
   Tooltip,
   Flex,
@@ -19,8 +17,8 @@ import { Plan } from '@typebot.io/prisma'
 import { useEffect, useState } from 'react'
 import { isDefined, parseNumberWithCommas } from '@typebot.io/lib'
 import {
+  prices,
   chatsLimit,
-  computePrice,
   formatPrice,
   getChatsLimit,
   getStorageLimit,
@@ -56,7 +54,7 @@ type Props = {
   }) => void
 }
 
-export const ProPlanPricingCard = ({
+export const LifeTimePlanPricingCard = ({
   scopedT,
   highlights,
   isSelectPlan,
@@ -73,9 +71,9 @@ export const ProPlanPricingCard = ({
   const [selectedStorageLimitIndex, setSelectedStorageLimitIndex] =
     useState<number>()
 
-  const colorMode = useColorModeValue('red.400', 'red.300')
-  const colorBorder = useColorModeValue('red.500', 'red.300')
-  const colorBg = useColorModeValue('red.500', 'red.400')
+  const colorMode = useColorModeValue('purple.400', 'purple.300')
+  const colorBorder = useColorModeValue('purple.500', 'purple.300')
+  const colorBg = useColorModeValue('purple.500', 'purple.400')
 
   useEffect(() => {
     if (
@@ -83,7 +81,7 @@ export const ProPlanPricingCard = ({
       isDefined(selectedStorageLimitIndex)
     )
       return
-    if (workspace.plan !== Plan.PRO) {
+    if (workspace.plan !== Plan.LIFETIME) {
       setSelectedChatsLimitIndex(0)
       setSelectedStorageLimitIndex(0)
       return
@@ -104,10 +102,8 @@ export const ProPlanPricingCard = ({
     : undefined
 
   const isCurrentPlan =
-    chatsLimit[Plan.PRO].graduatedPrice[selectedChatsLimitIndex ?? 0]
-      .totalIncluded === workspaceChatsLimit &&
-    storageLimit[Plan.PRO].graduatedPrice[selectedStorageLimitIndex ?? 0]
-      .totalIncluded === workspaceStorageLimit &&
+    chatsLimit[Plan.LIFETIME].totalIncluded === workspaceChatsLimit &&
+    storageLimit[Plan.LIFETIME].totalIncluded === workspaceStorageLimit &&
     isYearly === currentSubscription?.isYearly
 
   const getButtonLabel = () => {
@@ -116,14 +112,14 @@ export const ProPlanPricingCard = ({
       selectedStorageLimitIndex === undefined
     )
       return ''
-    if (workspace?.plan === Plan.PRO) {
+    if (workspace?.plan === Plan.LIFETIME) {
       if (isCurrentPlan) return scopedT('upgradeButton.current')
 
       if (
         selectedChatsLimitIndex !== workspace.additionalChatsIndex ||
         selectedStorageLimitIndex !== workspace.additionalStorageIndex
       )
-        return isSelectPlan ? t('select') : t('update')
+      isSelectPlan ? t('select') : t('update')
     }
     return isSelectPlan ? t('select') : t('upgrade')
   }
@@ -140,36 +136,30 @@ export const ProPlanPricingCard = ({
     })
   }
 
-  const price =
-    computePrice(
-      Plan.PRO,
-      selectedChatsLimitIndex ?? 0,
-      selectedStorageLimitIndex ?? 0,
-      isYearly ? 'yearly' : 'monthly'
-    ) ?? NaN
+  const price =  prices[Plan.LIFETIME]
 
-  const ProContent = () => (
+  const LTDContent = () => (
     <>
-        <Stack spacing="4" mt={highlights ? 2 : 0}>
+      <Stack spacing="4" mt={highlights ? 2 : 0}>
           <Heading fontSize="2xl">
-             {!isSelectPlan ? 
-             scopedT('pricingCard.heading', {
+            {!isSelectPlan ? 
+             scopedT('pricingCard.pricingCard.heading', {
               plan: (
                 <chakra.span color={colorMode}>
-                  Pro
+                  Life Time
                 </chakra.span>
               ),
             }) : 
               <chakra.span color={colorMode}>
-                  Pro
+                Life Time
               </chakra.span>}
           </Heading>
-          <Text>{scopedT('pricingCard.pro.description')}</Text>
+          <Text>{scopedT('pricingCard.ltd.description')}</Text>
         </Stack>
         <Stack spacing="4">
           <Heading>
             {formatPrice(price, currency)}
-            <chakra.span fontSize="md">{scopedT('pricingCard.perMonth')}</chakra.span>
+            <chakra.span fontSize="md">{scopedT('pricingCard.once')}</chakra.span>
           </Heading>
           <Text fontWeight="bold">
             <Tooltip
@@ -187,14 +177,14 @@ export const ProPlanPricingCard = ({
               placement="top"
             >
               <chakra.span textDecoration="underline" cursor="pointer">
-                {scopedT('pricingCard.pro.everythingFromStarter')}
+                {scopedT('pricingCard.ltd.everythingFromStarter')}
               </chakra.span>
             </Tooltip>
             {scopedT('pricingCard.plus')}
           </Text>
           <FeaturesList
             features={[
-              scopedT('pricingCard.pro.includedSeats'),
+              scopedT('pricingCard.ltd.includedSeats'),
               <HStack key="test">
                 <Text>
                   <Menu>
@@ -206,13 +196,11 @@ export const ProPlanPricingCard = ({
                     >
                       {selectedChatsLimitIndex !== undefined
                         ? parseNumberWithCommas(
-                            chatsLimit.PRO.graduatedPrice[
-                              selectedChatsLimitIndex
-                            ].totalIncluded
+                            chatsLimit.LIFETIME.totalIncluded
                           )
                         : undefined}
                     </MenuButton>
-                    <MenuList>
+                    {/* <MenuList>
                       {chatsLimit.PRO.graduatedPrice.map((price, index) => (
                         <MenuItem
                           key={index}
@@ -221,7 +209,7 @@ export const ProPlanPricingCard = ({
                           {parseNumberWithCommas(price.totalIncluded)}
                         </MenuItem>
                       ))}
-                    </MenuList>
+                    </MenuList> */}
                   </Menu>{' '}
                   {scopedT('pricingCard.chatsPerMonth')}
                 </Text>
@@ -238,13 +226,11 @@ export const ProPlanPricingCard = ({
                     >
                       {selectedStorageLimitIndex !== undefined
                         ? parseNumberWithCommas(
-                            storageLimit.PRO.graduatedPrice[
-                              selectedStorageLimitIndex
-                            ].totalIncluded
+                            storageLimit.LIFETIME.totalIncluded
                           )
                         : undefined}
                     </MenuButton>
-                    <MenuList>
+                    {/* <MenuList>
                       {storageLimit.PRO.graduatedPrice.map((price, index) => (
                         <MenuItem
                           key={index}
@@ -253,7 +239,7 @@ export const ProPlanPricingCard = ({
                           {parseNumberWithCommas(price.totalIncluded)}
                         </MenuItem>
                       ))}
-                    </MenuList>
+                    </MenuList> */}
                   </Menu>{' '}
                   {scopedT('pricingCard.storageLimit')}
                 </Text>
@@ -261,8 +247,8 @@ export const ProPlanPricingCard = ({
                   {scopedT('pricingCard.storageLimitTooltip')}
                 </MoreInfoTooltip>
               </HStack>,
-              scopedT('pricingCard.pro.customDomains'),
-              scopedT('pricingCard.pro.analytics'),
+              scopedT('pricingCard.ltd.customDomains'),
+              scopedT('pricingCard.ltd.analytics'),
             ]}
           />
           <Stack spacing={3}>
@@ -272,7 +258,7 @@ export const ProPlanPricingCard = ({
               </Heading>
             )}
             <Button
-              colorScheme="red"
+              colorScheme="purple"
               variant="outline"
               onClick={handlePayClick}
               isLoading={isLoading}
@@ -285,7 +271,6 @@ export const ProPlanPricingCard = ({
     </>
   )
   
-
   return (
     highlights ? (
       <Flex
@@ -303,23 +288,25 @@ export const ProPlanPricingCard = ({
         <Tag
           pos="absolute"
           top="-10px"
-          colorScheme="red"
+          colorScheme="purple"
           bg={colorBg}
           variant="solid"
           fontWeight="semibold"
           style={{ marginTop: 0 }}
         >
-          {scopedT('pricingCard.pro.mostPopularLabel')}
+          {scopedT('pricingCard.ltd.endsSoon')}
         </Tag>
       </Flex>
-      <Stack justifyContent="space-between" borderWidth="1px" flex="1" h="full">
-        <ProContent />
+      <Stack justifyContent="space-between" h="full">
+        <LTDContent />
       </Stack>
     </Flex>
     ) : (
-      <Stack spacing={6} p="6" rounded="lg" borderWidth="1px" flex="1" h="full">
-        <ProContent />
-      </Stack>
+      (
+        <Stack spacing={6} p="6" rounded="lg" borderWidth="1px" flex="1" h="full">
+          <LTDContent />
+        </Stack>
+      )
     )
   )
 }

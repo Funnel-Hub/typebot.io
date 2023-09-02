@@ -9,7 +9,7 @@ const checkSubscriptionsStatus = async () => {
   const workspacesWithPaidPlan = await prisma.workspace.findMany({
     where: {
       plan: {
-        in: ['PRO', 'STARTER', 'CUSTOM'],
+        in: ['PRO', 'STARTER', 'CUSTOM', 'LIFETIME'],
       },
     },
   })

@@ -4,12 +4,13 @@ import { Plan } from '@typebot.io/prisma'
 const infinity = -1
 
 export const prices = {
-  [Plan.STARTER]: 39,
-  [Plan.PRO]: 89,
+  [Plan.STARTER]: 195,
+  [Plan.PRO]: 459,
+  [Plan.LIFETIME]: 1599,
 } as const
 
 export const chatsLimit = {
-  [Plan.FREE]: { totalIncluded: 200 },
+  [Plan.FREE]: { totalIncluded: 0 },
   [Plan.STARTER]: {
     graduatedPrice: [
       { totalIncluded: 2000, price: 0 },
@@ -35,6 +36,9 @@ export const chatsLimit = {
       { totalIncluded: 50000, price: 400 },
     ],
   },
+  [Plan.LIFETIME]: { 
+    totalIncluded: 3000 
+  },
   [Plan.CUSTOM]: {
     totalIncluded: 2000,
     increaseStep: {
@@ -43,8 +47,8 @@ export const chatsLimit = {
     },
   },
   [Plan.OFFERED]: { totalIncluded: infinity },
-  [Plan.LIFETIME]: { totalIncluded: infinity },
   [Plan.UNLIMITED]: { totalIncluded: infinity },
+  [Plan.UNDEFINED]: { totalIncluded: 0 },
 } as const
 
 export const storageLimit = {
@@ -83,6 +87,9 @@ export const storageLimit = {
       },
     ],
   },
+  [Plan.LIFETIME]: { 
+    totalIncluded: 2 
+  },
   [Plan.CUSTOM]: {
     totalIncluded: 2,
     increaseStep: {
@@ -91,8 +98,8 @@ export const storageLimit = {
     },
   },
   [Plan.OFFERED]: { totalIncluded: 2 },
-  [Plan.LIFETIME]: { totalIncluded: 10 },
   [Plan.UNLIMITED]: { totalIncluded: infinity },
+  [Plan.UNDEFINED]: { totalIncluded: 0 },
 } as const
 
 export const seatsLimit = {
@@ -103,12 +110,15 @@ export const seatsLimit = {
   [Plan.PRO]: {
     totalIncluded: 5,
   },
+  [Plan.LIFETIME]: { 
+    totalIncluded: 5 
+  },
   [Plan.CUSTOM]: {
     totalIncluded: 2,
   },
   [Plan.OFFERED]: { totalIncluded: 2 },
-  [Plan.LIFETIME]: { totalIncluded: 8 },
   [Plan.UNLIMITED]: { totalIncluded: infinity },
+  [Plan.UNDEFINED]: { totalIncluded: 0 },
 } as const
 
 export const getChatsLimit = ({
@@ -232,12 +242,19 @@ export const guessIfUserIsEuropean = () => {
   })
 }
 
-export const formatPrice = (price: number, currency?: 'eur' | 'usd') => {
+export const formatPrice = (price: number, currency?: 'eur' | 'usd' | 'brl') => {
   const isEuropean = guessIfUserIsEuropean()
-  const formatter = new Intl.NumberFormat(isEuropean ? 'fr-FR' : 'en-US', {
+  // const formatter = new Intl.NumberFormat(isEuropean ? 'fr-FR' : 'en-US', {
+  //   style: 'currency',
+  //   currency: currency?.toUpperCase() ?? (isEuropean ? 'EUR' : 'USD'),
+  //   maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+  // })
+  //price = parseFloat((price/100)).toFixed(2)
+  const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
-    currency: currency?.toUpperCase() ?? (isEuropean ? 'EUR' : 'USD'),
+    currency: 'BRL',
     maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
   })
+
   return formatter.format(price)
 }

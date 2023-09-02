@@ -6,7 +6,7 @@ import {
 } from '@/features/billing/components/PreCheckoutModal'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import { useScopedI18n } from '@/locales'
-import { Stack, VStack, Spinner, Text } from '@chakra-ui/react'
+import { Stack, VStack, Heading, Spinner, Text } from '@chakra-ui/react'
 import { Plan } from '@typebot.io/prisma'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
@@ -15,10 +15,13 @@ import { DashboardHeader } from './DashboardHeader'
 import { FolderContent } from '@/features/folders/components/FolderContent'
 import { TypebotDndProvider } from '@/features/folders/TypebotDndProvider'
 import { ParentModalProvider } from '@/features/graph/providers/ParentModalProvider'
+
 import { trpc } from '@/lib/trpc'
+import { SelectPlanForm } from '@/features/billing/components/SelectPlanForm'
 
 export const DashboardPage = () => {
   const scopedT = useScopedI18n('dashboard')
+  const plansScopedT = useScopedI18n('billing.plans')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { user } = useUser()
@@ -64,28 +67,44 @@ export const DashboardPage = () => {
 
   return (
     <Stack minH="100vh">
-      <Seo title={workspace?.name ?? scopedT('title')} />
-      <DashboardHeader />
-      {!workspace?.stripeId && (
-        <ParentModalProvider>
-          <PreCheckoutModal
-            selectedSubscription={preCheckoutPlan}
-            existingEmail={user?.email ?? undefined}
-            existingCompany={workspace?.name ?? undefined}
-            onClose={() => setPreCheckoutPlan(undefined)}
-          />
-        </ParentModalProvider>
+
+      {workspace?.plan === Plan.UNDEFINED ? (
+        <>
+        <VStack w="full" justifyContent="center" pt="10" spacing={6}>
+          <Stack spacing="4">
+            <Stack spacing="4">
+                  <Heading fontSize="3xl">{plansScopedT('heading')}</Heading>
+                </Stack>
+                <SelectPlanForm workspace={workspace} />
+          </Stack>
+        </VStack>
+        </>
+      ) : (
+        <>
+          <Seo title={workspace?.name ?? scopedT('title')} />
+          <DashboardHeader />
+          {!workspace?.stripeId && (
+            <ParentModalProvider>
+              <PreCheckoutModal
+                selectedSubscription={preCheckoutPlan}
+                existingEmail={user?.email ?? undefined}
+                existingCompany={workspace?.name ?? undefined}
+                onClose={() => setPreCheckoutPlan(undefined)}
+              />
+            </ParentModalProvider>
+          )}
+          <TypebotDndProvider>
+            {isLoading ? (
+              <VStack w="full" justifyContent="center" pt="10" spacing={6}>
+                <Text>{scopedT('redirectionMessage')}</Text>
+                <Spinner />
+              </VStack>
+            ) : (
+              <FolderContent folder={null} />
+            )}
+          </TypebotDndProvider>
+        </>
       )}
-      <TypebotDndProvider>
-        {isLoading ? (
-          <VStack w="full" justifyContent="center" pt="10" spacing={6}>
-            <Text>{scopedT('redirectionMessage')}</Text>
-            <Spinner />
-          </VStack>
-        ) : (
-          <FolderContent folder={null} />
-        )}
-      </TypebotDndProvider>
     </Stack>
   )
 }

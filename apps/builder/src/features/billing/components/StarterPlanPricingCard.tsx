@@ -24,10 +24,13 @@ import {
 } from '@typebot.io/lib/pricing'
 import { FeaturesList } from './FeaturesList'
 import { MoreInfoTooltip } from '@/components/MoreInfoTooltip'
-import { useI18n, useScopedI18n } from '@/locales'
+import { I18nFunction, useI18n } from '@/locales'
 import { Workspace } from '@typebot.io/schemas'
 
 type Props = {
+  scopedT: I18nFunction,
+  highlights: boolean,
+  isSelectPlan: boolean,
   workspace: Pick<
     Workspace,
     | 'additionalChatsIndex'
@@ -40,7 +43,7 @@ type Props = {
   currentSubscription: {
     isYearly?: boolean
   }
-  currency?: 'eur' | 'usd'
+  currency?: 'eur' | 'usd' | 'brl'
   isLoading?: boolean
   isYearly: boolean
   onPayClick: (props: {
@@ -50,6 +53,9 @@ type Props = {
 }
 
 export const StarterPlanPricingCard = ({
+  scopedT,
+  highlights,
+  isSelectPlan,
   workspace,
   currentSubscription,
   isLoading,
@@ -58,7 +64,6 @@ export const StarterPlanPricingCard = ({
   onPayClick,
 }: Props) => {
   const t = useI18n()
-  const scopedT = useScopedI18n('billing.pricingCard')
   const [selectedChatsLimitIndex, setSelectedChatsLimitIndex] =
     useState<number>()
   const [selectedStorageLimitIndex, setSelectedStorageLimitIndex] =
@@ -105,16 +110,16 @@ export const StarterPlanPricingCard = ({
       return ''
     if (workspace?.plan === Plan.PRO) return t('downgrade')
     if (workspace?.plan === Plan.STARTER) {
-      if (isCurrentPlan) return scopedT('upgradeButton.current')
+      if (isCurrentPlan) return scopedT('pricingCard.upgradeButton.current')
 
       if (
         selectedChatsLimitIndex !== workspace.additionalChatsIndex ||
         selectedStorageLimitIndex !== workspace.additionalStorageIndex ||
         isYearly !== currentSubscription?.isYearly
       )
-        return t('update')
+      return isSelectPlan ? t('select') : t('update')
     }
-    return t('upgrade')
+    return isSelectPlan ? t('select') : t('upgrade')
   }
 
   const handlePayClick = async () => {
@@ -141,18 +146,20 @@ export const StarterPlanPricingCard = ({
     <Stack spacing={6} p="6" rounded="lg" borderWidth="1px" flex="1" h="full">
       <Stack spacing="4">
         <Heading fontSize="2xl">
-          {scopedT('heading', {
+          {!isSelectPlan ?
+          scopedT('pricingCard.heading', {
             plan: <chakra.span color="orange.400">Starter</chakra.span>,
-          })}
+          }) :
+          <chakra.span color="orange.400">Starter</chakra.span>}
         </Heading>
-        <Text>{scopedT('starter.description')}</Text>
+        <Text>{scopedT('pricingCard.starter.description')}</Text>
         <Heading>
           {formatPrice(price, currency)}
-          <chakra.span fontSize="md">{scopedT('perMonth')}</chakra.span>
+          <chakra.span fontSize="md">{scopedT('pricingCard.perMonth')}</chakra.span>
         </Heading>
         <FeaturesList
           features={[
-            scopedT('starter.includedSeats'),
+            scopedT('pricingCard.starter.includedSeats'),
             <HStack key="test">
               <Text>
                 <Menu>
@@ -181,9 +188,9 @@ export const StarterPlanPricingCard = ({
                     ))}
                   </MenuList>
                 </Menu>{' '}
-                {scopedT('chatsPerMonth')}
+                {scopedT('pricingCard.chatsPerMonth')}
               </Text>
-              <MoreInfoTooltip>{scopedT('chatsTooltip')}</MoreInfoTooltip>
+              <MoreInfoTooltip>{scopedT('pricingCard.chatsTooltip')}</MoreInfoTooltip>
             </HStack>,
             <HStack key="test">
               <Text>
@@ -213,21 +220,21 @@ export const StarterPlanPricingCard = ({
                     ))}
                   </MenuList>
                 </Menu>{' '}
-                {scopedT('storageLimit')}
+                {scopedT('pricingCard.storageLimit')}
               </Text>
               <MoreInfoTooltip>
-                {scopedT('storageLimitTooltip')}
+                {scopedT('pricingCard.storageLimitTooltip')}
               </MoreInfoTooltip>
             </HStack>,
-            scopedT('starter.brandingRemoved'),
-            scopedT('starter.fileUploadBlock'),
-            scopedT('starter.createFolders'),
+            scopedT('pricingCard.starter.brandingRemoved'),
+            scopedT('pricingCard.starter.fileUploadBlock'),
+            scopedT('pricingCard.starter.createFolders'),
           ]}
         />
       </Stack>
       <Stack>
         {isYearly && workspace.stripeId && !isCurrentPlan && (
-          <Heading mt="0" fontSize="md">
+          <Heading mt={highlights ? 2 : 0} fontSize="md">
             You pay: {formatPrice(price * 12, currency)} / year
           </Heading>
         )}

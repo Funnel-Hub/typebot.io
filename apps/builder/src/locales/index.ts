@@ -1,6 +1,9 @@
 import { createI18n } from 'next-international'
 
-export type I18nFunction = (key: string) => string;
+export type I18nFunction = (
+  key: string,
+  values?: Record<string, React.ReactNode>
+) => string;
 
 export const {
   useI18n,
