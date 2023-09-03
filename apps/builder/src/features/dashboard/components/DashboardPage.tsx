@@ -35,6 +35,10 @@ export const DashboardPage = () => {
       },
     })
 
+  const { data } = trpc.workspace.listWorkspaces.useQuery()
+
+  const workspaces = data?.workspaces ?? []
+
   useEffect(() => {
     const { subscribePlan, chats, storage, isYearly, claimCustomPlan } =
       router.query as {
@@ -52,6 +56,7 @@ export const DashboardPage = () => {
         returnUrl: `${window.location.origin}/typebots`,
       })
     }
+    console.log("######## ", workspace, user)
     if (workspace && subscribePlan && user && workspace.plan === 'FREE') {
       setIsLoading(true)
       setPreCheckoutPlan({
@@ -67,9 +72,8 @@ export const DashboardPage = () => {
 
   return (
     <Stack minH="100vh">
-      {/* Shows select plan page at the first access. 
-        workspace created date equals user created date means it's first workspace */}
-      {workspace?.plan === Plan.UNDEFINED && workspace?.createdAt === user?.createdAt ? (
+      {/* Shows select plan page at the first access. */}
+      {workspace?.plan === Plan.UNDEFINED && workspaces.length < 2 ? (
         <>
         <VStack w="full" justifyContent="center" pt="10" spacing={6}>
           <Stack spacing="4">
