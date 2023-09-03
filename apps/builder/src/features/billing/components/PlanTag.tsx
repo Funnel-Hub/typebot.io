@@ -9,6 +9,7 @@ export const planColorSchemes: Record<Plan, ThemeTypings['colorSchemes']> = {
   [Plan.FREE]: 'gray',
   [Plan.CUSTOM]: 'yellow',
   [Plan.UNLIMITED]: 'yellow',
+  [Plan.UNDEFINED]: '',
 }
 
 export const PlanTag = ({
@@ -82,6 +83,9 @@ export const PlanTag = ({
           Unlimited
         </Tag>
       )
+    }
+    case Plan.UNDEFINED: {
+      return (<></>)
     }
   }
 }

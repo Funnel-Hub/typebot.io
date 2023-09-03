@@ -66,7 +66,7 @@ export const ChangePlanForm = ({ workspace }: Props) => {
     selectedChatsLimitIndex,
     selectedStorageLimitIndex,
   }: {
-    plan: 'STARTER' | 'PRO'
+    plan: 'STARTER' | 'PRO' | 'LIFETIME'
     selectedChatsLimitIndex: number
     selectedStorageLimitIndex: number
   }) => {

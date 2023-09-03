@@ -29,7 +29,7 @@ export const updateSubscription = authenticatedProcedure
     z.object({
       returnUrl: z.string(),
       workspaceId: z.string(),
-      plan: z.enum([Plan.STARTER, Plan.PRO]),
+      plan: z.enum([Plan.STARTER, Plan.PRO, Plan.LIFETIME]),
       additionalChats: z.number(),
       additionalStorage: z.number(),
       currency: z.enum(['usd', 'eur', 'brl']),
@@ -93,7 +93,7 @@ export const updateSubscription = authenticatedProcedure
       })
       const subscription = data[0] as Stripe.Subscription | undefined
       const currentPlanItemId = subscription?.items.data.find((item) =>
-        [env.STRIPE_STARTER_PRODUCT_ID, env.STRIPE_PRO_PRODUCT_ID].includes(
+        [env.STRIPE_STARTER_PRODUCT_ID, env.STRIPE_PRO_PRODUCT_ID, env.STRIPE_LTD_PRODUCT_ID].includes(
           item.price.product.toString()
         )
       )?.id
