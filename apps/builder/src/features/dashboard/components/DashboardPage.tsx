@@ -67,8 +67,9 @@ export const DashboardPage = () => {
 
   return (
     <Stack minH="100vh">
-
-      {workspace?.plan === Plan.UNDEFINED ? (
+      {/* Shows select plan page at the first access. 
+        workspace created date equals user created date means it's first workspace */}
+      {workspace?.plan === Plan.UNDEFINED && workspace?.createdAt === user?.createdAt ? (
         <>
         <VStack w="full" justifyContent="center" pt="10" spacing={6}>
           <Stack spacing="4">
