@@ -95,7 +95,8 @@ export const OnboardingPage = () => {
           prefilledVariables={{ Name: user?.name, Email: user?.email }}
           onEnd={() => {
             setTimeout(() => {
-              push('/typebots/create', { query: { isFirstBot: true } })
+              // push('/typebots/create', { query: { isFirstBot: true } })
+              push('/typebots')
             }, 2000)
           }}
           onAnswer={updateUserInfo}
