@@ -12,10 +12,11 @@ export const {
   getLocaleProps,
   useCurrentLocale,
   useChangeLocale,
+  defineLocale,
 } = createI18n({
-  en:    () => import('./en'),
-  fr:    () => import('./fr'),
-  pt:    () => import('./pt'),
-  pt_BR: () => import('./pt_BR'),
-  de:    () => import('./de'),
+  en: () => import('./en'),
+  fr: () => import('./fr'),
+  pt: () => import('./pt'),
+  'pt-BR': () => import('./pt-BR'),
+  de: () => import('./de'),
 })
