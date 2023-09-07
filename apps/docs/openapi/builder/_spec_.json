@@ -58,7 +58,8 @@
                                     "LIFETIME",
                                     "OFFERED",
                                     "CUSTOM",
-                                    "UNLIMITED"
+                                    "UNLIMITED",
+                                    "UNDEFINED"
                                   ]
                                 }
                               },
@@ -227,7 +228,8 @@
                                     "LIFETIME",
                                     "OFFERED",
                                     "CUSTOM",
-                                    "UNLIMITED"
+                                    "UNLIMITED",
+                                    "UNDEFINED"
                                   ]
                                 },
                                 "additionalChatsIndex": {
@@ -1272,6 +1274,9 @@
                                               },
                                               "isRange": {
                                                 "type": "boolean"
+                                              },
+                                              "format": {
+                                                "type": "string"
                                               }
                                             },
                                             "required": [
@@ -2088,6 +2093,9 @@
                                             "properties": {
                                               "secondsToWaitFor": {
                                                 "type": "string"
+                                              },
+                                              "shouldPause": {
+                                                "type": "boolean"
                                               }
                                             },
                                             "additionalProperties": false
@@ -4082,7 +4090,8 @@
                               "LIFETIME",
                               "OFFERED",
                               "CUSTOM",
-                              "UNLIMITED"
+                              "UNLIMITED",
+                              "UNDEFINED"
                             ]
                           }
                         },
@@ -4181,7 +4190,8 @@
                             "LIFETIME",
                             "OFFERED",
                             "CUSTOM",
-                            "UNLIMITED"
+                            "UNLIMITED",
+                            "UNDEFINED"
                           ]
                         },
                         "stripeId": {
@@ -4330,7 +4340,8 @@
                             "LIFETIME",
                             "OFFERED",
                             "CUSTOM",
-                            "UNLIMITED"
+                            "UNLIMITED",
+                            "UNDEFINED"
                           ]
                         },
                         "stripeId": {
@@ -4496,7 +4507,8 @@
                             "LIFETIME",
                             "OFFERED",
                             "CUSTOM",
-                            "UNLIMITED"
+                            "UNLIMITED",
+                            "UNDEFINED"
                           ]
                         },
                         "stripeId": {
@@ -5565,6 +5577,9 @@
                                           },
                                           "isRange": {
                                             "type": "boolean"
+                                          },
+                                          "format": {
+                                            "type": "string"
                                           }
                                         },
                                         "required": [
@@ -6381,6 +6396,9 @@
                                         "properties": {
                                           "secondsToWaitFor": {
                                             "type": "string"
+                                          },
+                                          "shouldPause": {
+                                            "type": "boolean"
                                           }
                                         },
                                         "additionalProperties": false
@@ -9493,6 +9511,9 @@
                                             },
                                             "isRange": {
                                               "type": "boolean"
+                                            },
+                                            "format": {
+                                              "type": "string"
                                             }
                                           },
                                           "required": [
@@ -10309,6 +10330,9 @@
                                           "properties": {
                                             "secondsToWaitFor": {
                                               "type": "string"
+                                            },
+                                            "shouldPause": {
+                                              "type": "boolean"
                                             }
                                           },
                                           "additionalProperties": false
@@ -13561,6 +13585,9 @@
                                           },
                                           "isRange": {
                                             "type": "boolean"
+                                          },
+                                          "format": {
+                                            "type": "string"
                                           }
                                         },
                                         "required": [
@@ -14377,6 +14404,9 @@
                                         "properties": {
                                           "secondsToWaitFor": {
                                             "type": "string"
+                                          },
+                                          "shouldPause": {
+                                            "type": "boolean"
                                           }
                                         },
                                         "additionalProperties": false
@@ -17509,6 +17539,9 @@
                                             },
                                             "isRange": {
                                               "type": "boolean"
+                                            },
+                                            "format": {
+                                              "type": "string"
                                             }
                                           },
                                           "required": [
@@ -18325,6 +18358,9 @@
                                           "properties": {
                                             "secondsToWaitFor": {
                                               "type": "string"
+                                            },
+                                            "shouldPause": {
+                                              "type": "boolean"
                                             }
                                           },
                                           "additionalProperties": false
@@ -21512,6 +21548,9 @@
                                             },
                                             "isRange": {
                                               "type": "boolean"
+                                            },
+                                            "format": {
+                                              "type": "string"
                                             }
                                           },
                                           "required": [
@@ -22328,6 +22367,9 @@
                                           "properties": {
                                             "secondsToWaitFor": {
                                               "type": "string"
+                                            },
+                                            "shouldPause": {
+                                              "type": "boolean"
                                             }
                                           },
                                           "additionalProperties": false
@@ -25578,6 +25620,9 @@
                                             },
                                             "isRange": {
                                               "type": "boolean"
+                                            },
+                                            "format": {
+                                              "type": "string"
                                             }
                                           },
                                           "required": [
@@ -26394,6 +26439,9 @@
                                           "properties": {
                                             "secondsToWaitFor": {
                                               "type": "string"
+                                            },
+                                            "shouldPause": {
+                                              "type": "boolean"
                                             }
                                           },
                                           "additionalProperties": false
@@ -29710,14 +29758,16 @@
                     "type": "string",
                     "enum": [
                       "usd",
-                      "eur"
+                      "eur",
+                      "brl"
                     ]
                   },
                   "plan": {
                     "type": "string",
                     "enum": [
                       "STARTER",
-                      "PRO"
+                      "PRO",
+                      "LIFETIME"
                     ]
                   },
                   "returnUrl": {
@@ -29821,7 +29871,8 @@
                     "type": "string",
                     "enum": [
                       "STARTER",
-                      "PRO"
+                      "PRO",
+                      "LIFETIME"
                     ]
                   },
                   "additionalChats": {
@@ -29834,7 +29885,8 @@
                     "type": "string",
                     "enum": [
                       "usd",
-                      "eur"
+                      "eur",
+                      "brl"
                     ]
                   },
                   "isYearly": {
@@ -29894,7 +29946,8 @@
                             "LIFETIME",
                             "OFFERED",
                             "CUSTOM",
-                            "UNLIMITED"
+                            "UNLIMITED",
+                            "UNDEFINED"
                           ]
                         },
                         "stripeId": {
@@ -30025,7 +30078,8 @@
                               "type": "string",
                               "enum": [
                                 "eur",
-                                "usd"
+                                "usd",
+                                "brl"
                               ]
                             },
                             "cancelDate": {
