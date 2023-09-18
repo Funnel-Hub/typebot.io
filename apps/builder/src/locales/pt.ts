@@ -122,6 +122,8 @@ export default {
   'billing.currentSubscription.subheading':
     'Subscrição actual do espaço de trabalho:',
   'billing.currentSubscription.cancelDate': 'Será cancelado em',
+  'billing.currentSubscription.pastDueAlert':
+    'O último pagamento falhou. Acesse o portal de faturamento para continuar e evitar o cancelamento da sua assinatura.',
   'billing.invoices.heading': 'Facturas',
   'billing.invoices.empty':
     'Nenhuma factura encontrada para este espaço de trabalho.',
@@ -261,6 +263,7 @@ export default {
   'editor.sidebarBlock.chatwoot.label': 'Chatwoot',
   'editor.sidebarBlock.openai.label': 'OpenAI',
   'editor.sidebarBlock.pixel.label': 'Pixel',
+  'editor.sidebarBlock.zemanticAi.label': 'Zemantic AI',
   'editor.blockCard.bubbleBlock.tooltip.label':
     'Incorporar pdf, iframe, website...',
   'editor.blockCard.inputBlock.tooltip.files.label': 'Carregar Ficheiros',

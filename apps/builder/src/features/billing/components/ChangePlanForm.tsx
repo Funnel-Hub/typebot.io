@@ -97,7 +97,11 @@ export const ChangePlanForm = ({ workspace }: Props) => {
     }
   }
 
-  if (data?.subscription?.cancelDate) return null
+  if (
+    data?.subscription?.cancelDate ||
+    data?.subscription?.status === 'past_due'
+  )
+    return null
 
   return (
     <Stack spacing={6}>

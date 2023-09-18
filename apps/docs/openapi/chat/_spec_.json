@@ -858,6 +858,12 @@
                                                   },
                                                   "format": {
                                                     "type": "string"
+                                                  },
+                                                  "min": {
+                                                    "type": "string"
+                                                  },
+                                                  "max": {
+                                                    "type": "string"
                                                   }
                                                 },
                                                 "required": [
@@ -3483,6 +3489,88 @@
                                               "options"
                                             ],
                                             "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "id": {
+                                                "type": "string"
+                                              },
+                                              "groupId": {
+                                                "type": "string"
+                                              },
+                                              "outgoingEdgeId": {
+                                                "type": "string"
+                                              },
+                                              "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "Zemantic AI"
+                                                ]
+                                              },
+                                              "blockId": {
+                                                "type": "string"
+                                              },
+                                              "options": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "credentialsId": {
+                                                    "type": "string"
+                                                  },
+                                                  "projectId": {
+                                                    "type": "string"
+                                                  },
+                                                  "systemPrompt": {
+                                                    "type": "string"
+                                                  },
+                                                  "prompt": {
+                                                    "type": "string"
+                                                  },
+                                                  "query": {
+                                                    "type": "string"
+                                                  },
+                                                  "maxResults": {
+                                                    "type": "integer"
+                                                  },
+                                                  "responseMapping": {
+                                                    "type": "array",
+                                                    "items": {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "id": {
+                                                          "type": "string"
+                                                        },
+                                                        "valueToExtract": {
+                                                          "type": "string",
+                                                          "enum": [
+                                                            "Summary",
+                                                            "Results"
+                                                          ]
+                                                        },
+                                                        "variableId": {
+                                                          "type": "string"
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    }
+                                                  }
+                                                },
+                                                "required": [
+                                                  "responseMapping"
+                                                ],
+                                                "additionalProperties": false
+                                              }
+                                            },
+                                            "required": [
+                                              "id",
+                                              "groupId",
+                                              "type",
+                                              "options"
+                                            ],
+                                            "additionalProperties": false
                                           }
                                         ]
                                       }
@@ -4696,6 +4784,12 @@
                                       "type": "boolean"
                                     },
                                     "format": {
+                                      "type": "string"
+                                    },
+                                    "min": {
+                                      "type": "string"
+                                    },
+                                    "max": {
                                       "type": "string"
                                     }
                                   },
@@ -6261,6 +6355,86 @@
                   "required": [
                     "presignedUrl",
                     "hasReachedStorageLimit"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/generate-upload-url": {
+      "post": {
+        "operationId": "generateUploadUrl",
+        "summary": "Generate upload URL",
+        "description": "Used to upload anything from the client to S3 bucket",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "filePathProps": {
+                    "type": "object",
+                    "properties": {
+                      "typebotId": {
+                        "type": "string"
+                      },
+                      "blockId": {
+                        "type": "string"
+                      },
+                      "resultId": {
+                        "type": "string"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "typebotId",
+                      "blockId",
+                      "resultId",
+                      "fileName"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "fileType": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filePathProps"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "presignedUrl": {
+                      "type": "string"
+                    },
+                    "fileUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "presignedUrl",
+                    "fileUrl"
                   ],
                   "additionalProperties": false
                 }

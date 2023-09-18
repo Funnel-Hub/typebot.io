@@ -1,4 +1,3 @@
-
 export default {
   back: 'Zurück',
   'confirmModal.defaultTitle': 'Bist du sicher?',
@@ -122,6 +121,8 @@ export default {
   'billing.currentSubscription.heading': 'Abonnement',
   'billing.currentSubscription.subheading': 'Aktuelles Workspace-Abonnement:',
   'billing.currentSubscription.cancelDate': 'Wird storniert am',
+  'billing.currentSubscription.pastDueAlert':
+    'Die letzte Zahlung ist fehlgeschlagen. Gehen Sie zum Abrechnungsportal, um fortzufahren und eine Kündigung Ihres Abonnements zu vermeiden.',
   'billing.invoices.heading': 'Rechnungen',
   'billing.invoices.empty': 'Keine Rechnungen für diesen Workspace gefunden.',
   'billing.invoices.paidAt': 'Bezahlt am',
@@ -252,6 +253,7 @@ export default {
   'editor.sidebarBlock.chatwoot.label': 'Chatwoot',
   'editor.sidebarBlock.openai.label': 'OpenAI',
   'editor.sidebarBlock.pixel.label': 'Pixel',
+  'editor.sidebarBlock.zemanticAi.label': 'Zemantic AI',
   'editor.blockCard.bubbleBlock.tooltip.label':
     'Ein PDF, ein iframe, eine Website einbetten...',
   'editor.blockCard.inputBlock.tooltip.files.label': 'Dateien hochladen',

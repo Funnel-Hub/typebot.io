@@ -118,6 +118,8 @@ export default {
   'billing.currentSubscription.heading': 'Subscription',
   'billing.currentSubscription.subheading': 'Current workspace subscription:',
   'billing.currentSubscription.cancelDate': 'Will be cancelled on',
+  'billing.currentSubscription.pastDueAlert':
+    'The latest payment failed. Head over to the billing portal to proceed and avoid having your subscription canceled.',
   'billing.invoices.heading': 'Invoices',
   'billing.invoices.empty': 'No invoices found for this workspace.',
   'billing.invoices.paidAt': 'Paid at',
@@ -254,6 +256,7 @@ export default {
   'editor.sidebarBlock.chatwoot.label': 'Chatwoot',
   'editor.sidebarBlock.openai.label': 'OpenAI',
   'editor.sidebarBlock.pixel.label': 'Pixel',
+  'editor.sidebarBlock.zemanticAi.label': 'Zemantic AI',
   'editor.blockCard.bubbleBlock.tooltip.label':
     'Embed a pdf, an iframe, a website...',
   'editor.blockCard.inputBlock.tooltip.files.label': 'Upload Files',
