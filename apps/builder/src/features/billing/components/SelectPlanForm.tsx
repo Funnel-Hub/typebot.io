@@ -65,16 +65,13 @@ export const SelectPlanForm = ({ workspace }: Props) => {
   const handlePayClick = async ({
     plan,
     selectedChatsLimitIndex,
-    selectedStorageLimitIndex,
   }: {
     plan: 'STARTER' | 'PRO' | 'LIFETIME'
     selectedChatsLimitIndex: number
-    selectedStorageLimitIndex: number
   }) => {
     if (
       !user ||
-      selectedChatsLimitIndex === undefined ||
-      selectedStorageLimitIndex === undefined
+      selectedChatsLimitIndex === undefined
     )
       return
 
@@ -82,7 +79,6 @@ export const SelectPlanForm = ({ workspace }: Props) => {
       plan,
       workspaceId: workspace.id,
       additionalChats: selectedChatsLimitIndex,
-      additionalStorage: selectedStorageLimitIndex,
       currency: 'brl',
         // data?.subscription?.currency ??
         // (guessIfUserIsEuropean() ? 'eur' : 'usd'),

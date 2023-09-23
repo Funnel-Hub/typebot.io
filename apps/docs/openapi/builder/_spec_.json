@@ -8693,6 +8693,12 @@
                                   "comparisons"
                                 ],
                                 "additionalProperties": false
+                              },
+                              "sessionExpiryTimeout": {
+                                "type": "number",
+                                "maximum": 48,
+                                "minimum": 0.01,
+                                "description": "Expiration delay in hours after latest interaction"
                               }
                             },
                             "additionalProperties": false
@@ -12805,6 +12811,12 @@
                                     "comparisons"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "sessionExpiryTimeout": {
+                                  "type": "number",
+                                  "maximum": 48,
+                                  "minimum": 0.01,
+                                  "description": "Expiration delay in hours after latest interaction"
                                 }
                               },
                               "additionalProperties": false
@@ -16884,6 +16896,12 @@
                                   "comparisons"
                                 ],
                                 "additionalProperties": false
+                              },
+                              "sessionExpiryTimeout": {
+                                "type": "number",
+                                "maximum": 48,
+                                "minimum": 0.01,
+                                "description": "Expiration delay in hours after latest interaction"
                               }
                             },
                             "additionalProperties": false
@@ -21020,6 +21038,12 @@
                                     "comparisons"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "sessionExpiryTimeout": {
+                                  "type": "number",
+                                  "maximum": 48,
+                                  "minimum": 0.01,
+                                  "description": "Expiration delay in hours after latest interaction"
                                 }
                               },
                               "additionalProperties": false
@@ -25123,6 +25147,12 @@
                                     "comparisons"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "sessionExpiryTimeout": {
+                                  "type": "number",
+                                  "maximum": 48,
+                                  "minimum": 0.01,
+                                  "description": "Expiration delay in hours after latest interaction"
                                 }
                               },
                               "additionalProperties": false
@@ -29285,6 +29315,12 @@
                                     "comparisons"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "sessionExpiryTimeout": {
+                                  "type": "number",
+                                  "maximum": 48,
+                                  "minimum": 0.01,
+                                  "description": "Expiration delay in hours after latest interaction"
                                 }
                               },
                               "additionalProperties": false
