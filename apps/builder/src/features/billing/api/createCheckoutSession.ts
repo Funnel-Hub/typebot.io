@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import prisma from '@typebot.io/lib/prisma'
 import { authenticatedProcedure } from '@/helpers/server/trpc'
 import { TRPCError } from '@trpc/server'
 import { Plan } from '@typebot.io/prisma'
@@ -27,7 +27,6 @@ export const createCheckoutSession = authenticatedProcedure
       plan: z.enum([Plan.STARTER, Plan.PRO, Plan.LIFETIME]),
       returnUrl: z.string(),
       additionalChats: z.number(),
-      additionalStorage: z.number(),
       vat: z
         .object({
           type: z.string(),
@@ -53,7 +52,6 @@ export const createCheckoutSession = authenticatedProcedure
         plan,
         returnUrl,
         additionalChats,
-        additionalStorage,
         isYearly,
       },
       ctx: { user },
@@ -119,7 +117,6 @@ export const createCheckoutSession = authenticatedProcedure
         plan,
         returnUrl,
         additionalChats,
-        additionalStorage,
         isYearly,
       })
 
@@ -142,7 +139,6 @@ type Props = {
   plan: 'STARTER' | 'PRO' | 'LIFETIME'
   returnUrl: string
   additionalChats: number
-  additionalStorage: number
   isYearly: boolean
   userId: string
 }
@@ -156,7 +152,6 @@ export const createCheckoutSessionUrl =
     plan,
     returnUrl,
     additionalChats,
-    additionalStorage,
     isYearly,
   }: Props) => {
     const session = await stripe.checkout.sessions.create({
@@ -173,17 +168,11 @@ export const createCheckoutSessionUrl =
         workspaceId,
         plan,
         additionalChats,
-        additionalStorage,
       },
       currency,
       billing_address_collection: 'required',
       automatic_tax: { enabled: currency == 'brl' ? false : true },
-      line_items: parseSubscriptionItems(
-        plan,
-        additionalChats,
-        additionalStorage,
-        isYearly
-      ),
+      line_items: parseSubscriptionItems(plan, additionalChats, isYearly),
     })
 
     return session.url

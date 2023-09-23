@@ -36,9 +36,9 @@ const actionSchema = z.object({
 })
 
 const templateSchema = z.object({
-  name: z.literal('preview_initial_message'),
+  name: z.string(),
   language: z.object({
-    code: z.literal('en'),
+    code: z.string(),
   }),
 })
 
@@ -151,9 +151,6 @@ export const whatsAppWebhookRequestBodySchema = z.object({
                 })
               )
               .optional(),
-            metadata: z.object({
-              display_phone_number: z.string(),
-            }),
             messages: z.array(incomingMessageSchema).optional(),
           }),
         })
@@ -191,9 +188,17 @@ const startConditionSchema = z.object({
 })
 
 export const whatsAppSettingsSchema = z.object({
-  credentialsId: z.string().optional(),
+  isEnabled: z.boolean().optional(),
   startCondition: startConditionSchema.optional(),
+  sessionExpiryTimeout: z
+    .number()
+    .max(48)
+    .min(0.01)
+    .optional()
+    .describe('Expiration delay in hours after latest interaction'),
 })
+
+export const defaultSessionExpiryTimeout = 12
 
 export type WhatsAppIncomingMessage = z.infer<typeof incomingMessageSchema>
 export type WhatsAppSendingMessage = z.infer<typeof sendingMessageSchema>

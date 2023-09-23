@@ -1,15 +1,16 @@
 import { publicProcedure } from '@/helpers/server/trpc'
-import { saveStateToDatabase } from '../helpers/saveStateToDatabase'
-import { getSession } from '../queries/getSession'
-import { continueBotFlow } from '../helpers/continueBotFlow'
-import { parseDynamicTheme } from '../helpers/parseDynamicTheme'
-import { startSession } from '../helpers/startSession'
-import { restartSession } from '../queries/restartSession'
 import {
   chatReplySchema,
   sendMessageInputSchema,
 } from '@typebot.io/schemas/features/chat/schema'
 import { TRPCError } from '@trpc/server'
+import { getSession } from '@typebot.io/bot-engine/queries/getSession'
+import { startSession } from '@typebot.io/bot-engine/startSession'
+import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
+import { restartSession } from '@typebot.io/bot-engine/queries/restartSession'
+import { continueBotFlow } from '@typebot.io/bot-engine/continueBotFlow'
+import { parseDynamicTheme } from '@typebot.io/bot-engine/parseDynamicTheme'
+import { isDefined } from '@typebot.io/lib/utils'
 
 export const sendMessage = publicProcedure
   .meta({
@@ -29,6 +30,17 @@ export const sendMessage = publicProcedure
       ctx: { user },
     }) => {
       const session = sessionId ? await getSession(sessionId) : null
+
+      const isSessionExpired =
+        session &&
+        isDefined(session.state.expiryTimeout) &&
+        session.updatedAt.getTime() + session.state.expiryTimeout < Date.now()
+
+      if (isSessionExpired)
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Session expired. You need to start a new session.',
+        })
 
       if (!session) {
         if (!startParams)

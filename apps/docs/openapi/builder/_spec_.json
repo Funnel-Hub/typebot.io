@@ -234,15 +234,11 @@
                                 },
                                 "additionalChatsIndex": {
                                   "type": "number"
-                                },
-                                "additionalStorageIndex": {
-                                  "type": "number"
                                 }
                               },
                               "required": [
                                 "plan",
-                                "additionalChatsIndex",
-                                "additionalStorageIndex"
+                                "additionalChatsIndex"
                               ],
                               "additionalProperties": false
                             }
@@ -322,21 +318,13 @@
                                 "chatsLimit": {
                                   "type": "number"
                                 },
-                                "storageLimit": {
-                                  "type": "number"
-                                },
                                 "totalChatsUsed": {
-                                  "type": "number"
-                                },
-                                "totalStorageUsed": {
                                   "type": "number"
                                 }
                               },
                               "required": [
                                 "chatsLimit",
-                                "storageLimit",
-                                "totalChatsUsed",
-                                "totalStorageUsed"
+                                "totalChatsUsed"
                               ],
                               "additionalProperties": false
                             }
@@ -1567,7 +1555,8 @@
                                                 "additionalProperties": false
                                               },
                                               "sizeLimit": {
-                                                "type": "number"
+                                                "type": "number",
+                                                "description": "Deprecated"
                                               }
                                             },
                                             "required": [
@@ -5958,7 +5947,8 @@
                                             "additionalProperties": false
                                           },
                                           "sizeLimit": {
-                                            "type": "number"
+                                            "type": "number",
+                                            "description": "Deprecated"
                                           }
                                         },
                                         "required": [
@@ -8649,8 +8639,8 @@
                           "whatsApp": {
                             "type": "object",
                             "properties": {
-                              "credentialsId": {
-                                "type": "string"
+                              "isEnabled": {
+                                "type": "boolean"
                               },
                               "startCondition": {
                                 "type": "object",
@@ -9980,7 +9970,8 @@
                                               "additionalProperties": false
                                             },
                                             "sizeLimit": {
-                                              "type": "number"
+                                              "type": "number",
+                                              "description": "Deprecated"
                                             }
                                           },
                                           "required": [
@@ -12760,8 +12751,8 @@
                             "whatsApp": {
                               "type": "object",
                               "properties": {
-                                "credentialsId": {
-                                  "type": "string"
+                                "isEnabled": {
+                                  "type": "boolean"
                                 },
                                 "startCondition": {
                                   "type": "object",
@@ -12892,6 +12883,10 @@
                         "whatsAppPhoneNumberId": {
                           "type": "string",
                           "nullable": true
+                        },
+                        "whatsAppCredentialsId": {
+                          "type": "string",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -12914,7 +12909,8 @@
                         "resultsTablePreferences",
                         "isArchived",
                         "isClosed",
-                        "whatsAppPhoneNumberId"
+                        "whatsAppPhoneNumberId",
+                        "whatsAppCredentialsId"
                       ],
                       "additionalProperties": false
                     }
@@ -14142,7 +14138,8 @@
                                             "additionalProperties": false
                                           },
                                           "sizeLimit": {
-                                            "type": "number"
+                                            "type": "number",
+                                            "description": "Deprecated"
                                           }
                                         },
                                         "required": [
@@ -16833,8 +16830,8 @@
                           "whatsApp": {
                             "type": "object",
                             "properties": {
-                              "credentialsId": {
-                                "type": "string"
+                              "isEnabled": {
+                                "type": "boolean"
                               },
                               "startCondition": {
                                 "type": "object",
@@ -17030,6 +17027,10 @@
                         "type": "boolean"
                       },
                       "whatsAppPhoneNumberId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "whatsAppCredentialsId": {
                         "type": "string",
                         "nullable": true
                       }
@@ -18184,7 +18185,8 @@
                                               "additionalProperties": false
                                             },
                                             "sizeLimit": {
-                                              "type": "number"
+                                              "type": "number",
+                                              "description": "Deprecated"
                                             }
                                           },
                                           "required": [
@@ -20964,8 +20966,8 @@
                             "whatsApp": {
                               "type": "object",
                               "properties": {
-                                "credentialsId": {
-                                  "type": "string"
+                                "isEnabled": {
+                                  "type": "boolean"
                                 },
                                 "startCondition": {
                                   "type": "object",
@@ -21096,6 +21098,10 @@
                         "whatsAppPhoneNumberId": {
                           "type": "string",
                           "nullable": true
+                        },
+                        "whatsAppCredentialsId": {
+                          "type": "string",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -21118,7 +21124,8 @@
                         "resultsTablePreferences",
                         "isArchived",
                         "isClosed",
-                        "whatsAppPhoneNumberId"
+                        "whatsAppPhoneNumberId",
+                        "whatsAppCredentialsId"
                       ],
                       "additionalProperties": false
                     }
@@ -22281,7 +22288,8 @@
                                               "additionalProperties": false
                                             },
                                             "sizeLimit": {
-                                              "type": "number"
+                                              "type": "number",
+                                              "description": "Deprecated"
                                             }
                                           },
                                           "required": [
@@ -25061,8 +25069,8 @@
                             "whatsApp": {
                               "type": "object",
                               "properties": {
-                                "credentialsId": {
-                                  "type": "string"
+                                "isEnabled": {
+                                  "type": "boolean"
                                 },
                                 "startCondition": {
                                   "type": "object",
@@ -25193,6 +25201,10 @@
                         "whatsAppPhoneNumberId": {
                           "type": "string",
                           "nullable": true
+                        },
+                        "whatsAppCredentialsId": {
+                          "type": "string",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -25215,7 +25227,8 @@
                         "resultsTablePreferences",
                         "isArchived",
                         "isClosed",
-                        "whatsAppPhoneNumberId"
+                        "whatsAppPhoneNumberId",
+                        "whatsAppCredentialsId"
                       ],
                       "additionalProperties": false
                     },
@@ -26441,7 +26454,8 @@
                                               "additionalProperties": false
                                             },
                                             "sizeLimit": {
-                                              "type": "number"
+                                              "type": "number",
+                                              "description": "Deprecated"
                                             }
                                           },
                                           "required": [
@@ -29217,8 +29231,8 @@
                             "whatsApp": {
                               "type": "object",
                               "properties": {
-                                "credentialsId": {
-                                  "type": "string"
+                                "isEnabled": {
+                                  "type": "boolean"
                                 },
                                 "startCondition": {
                                   "type": "object",
@@ -30392,9 +30406,6 @@
                   "additionalChats": {
                     "type": "number"
                   },
-                  "additionalStorage": {
-                    "type": "number"
-                  },
                   "vat": {
                     "type": "object",
                     "properties": {
@@ -30423,7 +30434,6 @@
                   "plan",
                   "returnUrl",
                   "additionalChats",
-                  "additionalStorage",
                   "isYearly"
                 ],
                 "additionalProperties": false
@@ -30494,9 +30504,6 @@
                   "additionalChats": {
                     "type": "number"
                   },
-                  "additionalStorage": {
-                    "type": "number"
-                  },
                   "currency": {
                     "type": "string",
                     "enum": [
@@ -30514,7 +30521,6 @@
                   "workspaceId",
                   "plan",
                   "additionalChats",
-                  "additionalStorage",
                   "currency",
                   "isYearly"
                 ],
@@ -30772,14 +30778,10 @@
                   "properties": {
                     "totalChatsUsed": {
                       "type": "number"
-                    },
-                    "totalStorageUsed": {
-                      "type": "number"
                     }
                   },
                   "required": [
-                    "totalChatsUsed",
-                    "totalStorageUsed"
+                    "totalChatsUsed"
                   ],
                   "additionalProperties": false
                 }
@@ -30878,294 +30880,307 @@
                 "type": "object",
                 "properties": {
                   "credentials": {
-                    "anyOf": [
+                    "allOf": [
                       {
-                        "type": "object",
-                        "properties": {
-                          "data": {
+                        "anyOf": [
+                          {
                             "type": "object",
                             "properties": {
-                              "live": {
+                              "data": {
                                 "type": "object",
                                 "properties": {
-                                  "secretKey": {
+                                  "live": {
+                                    "type": "object",
+                                    "properties": {
+                                      "secretKey": {
+                                        "type": "string"
+                                      },
+                                      "publicKey": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "secretKey",
+                                      "publicKey"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "test": {
+                                    "type": "object",
+                                    "properties": {
+                                      "secretKey": {
+                                        "type": "string"
+                                      },
+                                      "publicKey": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "required": [
+                                  "live",
+                                  "test"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "stripe"
+                                ]
+                              },
+                              "workspaceId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "data",
+                              "type",
+                              "workspaceId",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "host": {
                                     "type": "string"
                                   },
-                                  "publicKey": {
+                                  "username": {
+                                    "type": "string"
+                                  },
+                                  "password": {
+                                    "type": "string"
+                                  },
+                                  "isTlsEnabled": {
+                                    "type": "boolean"
+                                  },
+                                  "port": {
+                                    "type": "number"
+                                  },
+                                  "from": {
+                                    "type": "object",
+                                    "properties": {
+                                      "email": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "required": [
+                                  "port",
+                                  "from"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "smtp"
+                                ]
+                              },
+                              "workspaceId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "data",
+                              "type",
+                              "workspaceId",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "refresh_token": {
+                                    "type": "string",
+                                    "nullable": true
+                                  },
+                                  "expiry_date": {
+                                    "type": "number",
+                                    "nullable": true
+                                  },
+                                  "access_token": {
+                                    "type": "string",
+                                    "nullable": true
+                                  },
+                                  "token_type": {
+                                    "type": "string",
+                                    "nullable": true
+                                  },
+                                  "id_token": {
+                                    "type": "string",
+                                    "nullable": true
+                                  },
+                                  "scope": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "google sheets"
+                                ]
+                              },
+                              "workspaceId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "data",
+                              "type",
+                              "workspaceId",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "apiKey": {
                                     "type": "string"
                                   }
                                 },
                                 "required": [
-                                  "secretKey",
-                                  "publicKey"
+                                  "apiKey"
                                 ],
                                 "additionalProperties": false
                               },
-                              "test": {
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "openai"
+                                ]
+                              },
+                              "workspaceId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "data",
+                              "type",
+                              "workspaceId",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "data": {
                                 "type": "object",
                                 "properties": {
-                                  "secretKey": {
+                                  "systemUserAccessToken": {
                                     "type": "string"
                                   },
-                                  "publicKey": {
+                                  "phoneNumberId": {
                                     "type": "string"
                                   }
                                 },
+                                "required": [
+                                  "systemUserAccessToken",
+                                  "phoneNumberId"
+                                ],
                                 "additionalProperties": false
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "whatsApp"
+                                ]
+                              },
+                              "workspaceId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
                               }
                             },
                             "required": [
-                              "live",
-                              "test"
+                              "data",
+                              "type",
+                              "workspaceId",
+                              "name"
                             ],
                             "additionalProperties": false
                           },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "stripe"
-                            ]
-                          },
-                          "workspaceId": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "data",
-                          "type",
-                          "workspaceId",
-                          "name"
-                        ],
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "data": {
+                          {
                             "type": "object",
                             "properties": {
-                              "host": {
-                                "type": "string"
-                              },
-                              "username": {
-                                "type": "string"
-                              },
-                              "password": {
-                                "type": "string"
-                              },
-                              "isTlsEnabled": {
-                                "type": "boolean"
-                              },
-                              "port": {
-                                "type": "number"
-                              },
-                              "from": {
+                              "data": {
                                 "type": "object",
                                 "properties": {
-                                  "email": {
-                                    "type": "string"
-                                  },
-                                  "name": {
+                                  "apiKey": {
                                     "type": "string"
                                   }
                                 },
+                                "required": [
+                                  "apiKey"
+                                ],
                                 "additionalProperties": false
-                              }
-                            },
-                            "required": [
-                              "port",
-                              "from"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "smtp"
-                            ]
-                          },
-                          "workspaceId": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "data",
-                          "type",
-                          "workspaceId",
-                          "name"
-                        ],
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "data": {
-                            "type": "object",
-                            "properties": {
-                              "refresh_token": {
+                              },
+                              "type": {
                                 "type": "string",
-                                "nullable": true
+                                "enum": [
+                                  "zemanticAi"
+                                ]
                               },
-                              "expiry_date": {
-                                "type": "number",
-                                "nullable": true
-                              },
-                              "access_token": {
-                                "type": "string",
-                                "nullable": true
-                              },
-                              "token_type": {
-                                "type": "string",
-                                "nullable": true
-                              },
-                              "id_token": {
-                                "type": "string",
-                                "nullable": true
-                              },
-                              "scope": {
+                              "workspaceId": {
                                 "type": "string"
-                              }
-                            },
-                            "additionalProperties": false
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "google sheets"
-                            ]
-                          },
-                          "workspaceId": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "data",
-                          "type",
-                          "workspaceId",
-                          "name"
-                        ],
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "data": {
-                            "type": "object",
-                            "properties": {
-                              "apiKey": {
+                              },
+                              "name": {
                                 "type": "string"
                               }
                             },
                             "required": [
-                              "apiKey"
+                              "data",
+                              "type",
+                              "workspaceId",
+                              "name"
                             ],
                             "additionalProperties": false
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "openai"
-                            ]
-                          },
-                          "workspaceId": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
                           }
-                        },
-                        "required": [
-                          "data",
-                          "type",
-                          "workspaceId",
-                          "name"
-                        ],
-                        "additionalProperties": false
+                        ]
                       },
                       {
                         "type": "object",
                         "properties": {
-                          "data": {
-                            "type": "object",
-                            "properties": {
-                              "systemUserAccessToken": {
-                                "type": "string"
-                              },
-                              "phoneNumberId": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "systemUserAccessToken",
-                              "phoneNumberId"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "type": {
+                          "id": {
                             "type": "string",
-                            "enum": [
-                              "whatsApp"
-                            ]
-                          },
-                          "workspaceId": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
+                            "pattern": "^[a-z][a-z0-9]*$"
                           }
-                        },
-                        "required": [
-                          "data",
-                          "type",
-                          "workspaceId",
-                          "name"
-                        ],
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "data": {
-                            "type": "object",
-                            "properties": {
-                              "apiKey": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "apiKey"
-                            ],
-                            "additionalProperties": false
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "zemanticAi"
-                            ]
-                          },
-                          "workspaceId": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "data",
-                          "type",
-                          "workspaceId",
-                          "name"
-                        ],
-                        "additionalProperties": false
+                        }
                       }
                     ]
                   }
@@ -32445,63 +32460,6 @@
           }
         }
       },
-      "delete": {
-        "operationId": "customDomains-deleteCustomDomain",
-        "summary": "Delete custom domain",
-        "tags": [
-          "Custom domains"
-        ],
-        "security": [
-          {
-            "Authorization": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "workspaceId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "enum": [
-                        "success"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "message"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/error"
-          }
-        }
-      },
       "get": {
         "operationId": "customDomains-listCustomDomains",
         "summary": "List custom domains",
@@ -32554,6 +32512,205 @@
                   },
                   "required": [
                     "customDomains"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/custom-domains/{name}": {
+      "delete": {
+        "operationId": "customDomains-deleteCustomDomain",
+        "summary": "Delete custom domain",
+        "tags": [
+          "Custom domains"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "success"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/custom-domains/{name}/verify": {
+      "get": {
+        "operationId": "customDomains-verifyCustomDomain",
+        "summary": "Verify domain config",
+        "tags": [
+          "Custom domains"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "Valid Configuration",
+                        "Invalid Configuration",
+                        "Domain Not Found",
+                        "Pending Verification",
+                        "Unknown Error"
+                      ]
+                    },
+                    "domainJson": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "apexName": {
+                          "type": "string"
+                        },
+                        "projectId": {
+                          "type": "string"
+                        },
+                        "redirect": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "redirectStatusCode": {
+                          "type": "number",
+                          "nullable": true
+                        },
+                        "gitBranch": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "updatedAt": {
+                          "type": "number",
+                          "nullable": true
+                        },
+                        "createdAt": {
+                          "type": "number",
+                          "nullable": true
+                        },
+                        "verified": {
+                          "type": "boolean"
+                        },
+                        "verification": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "string"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "domain",
+                              "value",
+                              "reason"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "apexName",
+                        "projectId",
+                        "redirect",
+                        "redirectStatusCode",
+                        "gitBranch",
+                        "updatedAt",
+                        "createdAt",
+                        "verified"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "domainJson"
                   ],
                   "additionalProperties": false
                 }
@@ -32780,6 +32937,497 @@
         }
       }
     },
+    "/typebots/{typebotId}/whatsapp/start-preview": {
+      "post": {
+        "operationId": "whatsApp-startWhatsAppPreview",
+        "summary": "Start preview",
+        "tags": [
+          "WhatsApp"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "startGroupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "to"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "typebotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
+    "/whatsapp/preview/webhook": {
+      "get": {
+        "operationId": "whatsApp-subscribePreviewWebhook",
+        "summary": "Subscribe webhook",
+        "tags": [
+          "WhatsApp"
+        ],
+        "parameters": [
+          {
+            "name": "hub.challenge",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hub.verify_token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      },
+      "post": {
+        "operationId": "whatsApp-receiveMessagePreview",
+        "summary": "Message webhook",
+        "tags": [
+          "WhatsApp"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "entry": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "object",
+                                "properties": {
+                                  "contacts": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "profile": {
+                                          "type": "object",
+                                          "properties": {
+                                            "name": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "name"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      },
+                                      "required": [
+                                        "profile"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "messages": {
+                                    "type": "array",
+                                    "items": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "from": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                "text"
+                                              ]
+                                            },
+                                            "text": {
+                                              "type": "object",
+                                              "properties": {
+                                                "body": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "body"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            "timestamp": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "from",
+                                            "type",
+                                            "text",
+                                            "timestamp"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "from": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                "button"
+                                              ]
+                                            },
+                                            "button": {
+                                              "type": "object",
+                                              "properties": {
+                                                "text": {
+                                                  "type": "string"
+                                                },
+                                                "payload": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "text",
+                                                "payload"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            "timestamp": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "from",
+                                            "type",
+                                            "button",
+                                            "timestamp"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "from": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                "interactive"
+                                              ]
+                                            },
+                                            "interactive": {
+                                              "type": "object",
+                                              "properties": {
+                                                "button_reply": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "id": {
+                                                      "type": "string"
+                                                    },
+                                                    "title": {
+                                                      "type": "string"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "id",
+                                                    "title"
+                                                  ],
+                                                  "additionalProperties": false
+                                                }
+                                              },
+                                              "required": [
+                                                "button_reply"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            "timestamp": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "from",
+                                            "type",
+                                            "interactive",
+                                            "timestamp"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "from": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                "image"
+                                              ]
+                                            },
+                                            "image": {
+                                              "type": "object",
+                                              "properties": {
+                                                "id": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "id"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            "timestamp": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "from",
+                                            "type",
+                                            "image",
+                                            "timestamp"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "from": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                "video"
+                                              ]
+                                            },
+                                            "video": {
+                                              "type": "object",
+                                              "properties": {
+                                                "id": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "id"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            "timestamp": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "from",
+                                            "type",
+                                            "video",
+                                            "timestamp"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "from": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                "audio"
+                                              ]
+                                            },
+                                            "audio": {
+                                              "type": "object",
+                                              "properties": {
+                                                "id": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "id"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            "timestamp": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "from",
+                                            "type",
+                                            "audio",
+                                            "timestamp"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "from": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "enum": [
+                                                "document"
+                                              ]
+                                            },
+                                            "document": {
+                                              "type": "object",
+                                              "properties": {
+                                                "id": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "required": [
+                                                "id"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            "timestamp": {
+                                              "type": "string"
+                                            }
+                                          },
+                                          "required": [
+                                            "from",
+                                            "type",
+                                            "document",
+                                            "timestamp"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      ]
+                                    }
+                                  }
+                                },
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "changes"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "entry"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/error"
+          }
+        }
+      }
+    },
     "/openai/models": {
       "get": {
         "operationId": "openAI-listModels",
@@ -32979,12 +33627,17 @@
                     "presignedUrl": {
                       "type": "string"
                     },
+                    "formData": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
                     "fileUrl": {
                       "type": "string"
                     }
                   },
                   "required": [
                     "presignedUrl",
+                    "formData",
                     "fileUrl"
                   ],
                   "additionalProperties": false

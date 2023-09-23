@@ -35,6 +35,7 @@ const baseEnv = {
       .transform((string) => string.split(',')),
     NEXT_PUBLIC_VIEWER_INTERNAL_URL: z.string().url().optional(),
     NEXT_PUBLIC_ONBOARDING_TYPEBOT_ID: z.string().min(1).optional(),
+    NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE: z.coerce.number().optional(),
   },
   runtimeEnv: {
     NEXT_PUBLIC_E2E_TEST: getRuntimeVariable('NEXT_PUBLIC_E2E_TEST'),
@@ -44,6 +45,9 @@ const baseEnv = {
     ),
     NEXT_PUBLIC_ONBOARDING_TYPEBOT_ID: getRuntimeVariable(
       'NEXT_PUBLIC_ONBOARDING_TYPEBOT_ID'
+    ),
+    NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE: getRuntimeVariable(
+      'NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE'
     ),
   },
 }
@@ -237,6 +241,8 @@ const whatsAppEnv = {
   server: {
     META_SYSTEM_USER_TOKEN: z.string().min(1).optional(),
     WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID: z.string().min(1).optional(),
+    WHATSAPP_PREVIEW_TEMPLATE_NAME: z.string().min(1).optional(),
+    WHATSAPP_PREVIEW_TEMPLATE_LANG: z.string().min(1).optional().default('en'),
   },
 }
 

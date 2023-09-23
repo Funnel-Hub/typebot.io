@@ -28,7 +28,6 @@ export type PreCheckoutModalProps = {
         plan: 'STARTER' | 'PRO' | 'LIFETIME'
         workspaceId: string
         additionalChats: number
-        additionalStorage: number
         currency: 'eur' | 'usd' | 'brl'
         isYearly: boolean
       }

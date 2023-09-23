@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import prisma from '@typebot.io/lib/prisma'
 import { authenticatedProcedure } from '@/helpers/server/trpc'
 import { TRPCError } from '@trpc/server'
 import { stripeCredentialsSchema } from '@typebot.io/schemas/features/blocks/inputs/payment/schemas'
@@ -31,14 +31,16 @@ export const createCredentials = authenticatedProcedure
   })
   .input(
     z.object({
-      credentials: z.discriminatedUnion('type', [
-        stripeCredentialsSchema.pick(inputShape),
-        smtpCredentialsSchema.pick(inputShape),
-        googleSheetsCredentialsSchema.pick(inputShape),
-        openAICredentialsSchema.pick(inputShape),
-        whatsAppCredentialsSchema.pick(inputShape),
-        zemanticAiCredentialsSchema.pick(inputShape),
-      ]),
+      credentials: z
+        .discriminatedUnion('type', [
+          stripeCredentialsSchema.pick(inputShape),
+          smtpCredentialsSchema.pick(inputShape),
+          googleSheetsCredentialsSchema.pick(inputShape),
+          openAICredentialsSchema.pick(inputShape),
+          whatsAppCredentialsSchema.pick(inputShape),
+          zemanticAiCredentialsSchema.pick(inputShape),
+        ])
+        .and(z.object({ id: z.string().cuid2().optional() })),
     })
   )
   .output(

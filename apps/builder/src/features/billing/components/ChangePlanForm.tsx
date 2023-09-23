@@ -64,24 +64,16 @@ export const ChangePlanForm = ({ workspace }: Props) => {
   const handlePayClick = async ({
     plan,
     selectedChatsLimitIndex,
-    selectedStorageLimitIndex,
   }: {
     plan: 'STARTER' | 'PRO' | 'LIFETIME'
     selectedChatsLimitIndex: number
-    selectedStorageLimitIndex: number
   }) => {
-    if (
-      !user ||
-      selectedChatsLimitIndex === undefined ||
-      selectedStorageLimitIndex === undefined
-    )
-      return
+    if (!user || selectedChatsLimitIndex === undefined) return
 
     const newSubscription = {
       plan,
       workspaceId: workspace.id,
       additionalChats: selectedChatsLimitIndex,
-      additionalStorage: selectedStorageLimitIndex,
       currency:
         data?.subscription?.currency ?? 'brl',
         // (guessIfUserIsEuropean() ? 'eur' : 'usd'),
