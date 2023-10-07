@@ -1,13 +1,10 @@
 import {
-  BubbleBlock,
-  BubbleBlockType,
   ChatReply,
   Group,
   InputBlock,
   InputBlockType,
   RuntimeOptions,
   SessionState,
-  Variable,
 } from '@typebot.io/schemas'
 import {
   isBubbleBlock,
@@ -25,42 +22,85 @@ import { injectVariableValuesInPictureChoiceBlock } from './blocks/inputs/pictur
 import { getPrefilledInputValue } from './getPrefilledValue'
 import { parseDateInput } from './blocks/inputs/date/parseDateInput'
 import { deepParseVariables } from './variables/deepParseVariables'
+import { parseBubbleBlock } from './parseBubbleBlock'
 
-export const executeGroup =
-  (
-    state: SessionState,
-    currentReply?: ChatReply,
-    currentLastBubbleId?: string
-  ) =>
-  async (
-    group: Group
-  ): Promise<ChatReply & { newSessionState: SessionState }> => {
-    const messages: ChatReply['messages'] = currentReply?.messages ?? []
-    let clientSideActions: ChatReply['clientSideActions'] =
-      currentReply?.clientSideActions
-    let logs: ChatReply['logs'] = currentReply?.logs
-    let nextEdgeId = null
-    let lastBubbleBlockId: string | undefined = currentLastBubbleId
+type ContextProps = {
+  version: 1 | 2
+  state: SessionState
+  currentReply?: ChatReply
+  currentLastBubbleId?: string
+}
 
-    let newSessionState = state
+export const executeGroup = async (
+  group: Group,
+  { version, state, currentReply, currentLastBubbleId }: ContextProps
+): Promise<ChatReply & { newSessionState: SessionState }> => {
+  const messages: ChatReply['messages'] = currentReply?.messages ?? []
+  let clientSideActions: ChatReply['clientSideActions'] =
+    currentReply?.clientSideActions
+  let logs: ChatReply['logs'] = currentReply?.logs
+  let nextEdgeId = null
+  let lastBubbleBlockId: string | undefined = currentLastBubbleId
 
-    for (const block of group.blocks) {
-      nextEdgeId = block.outgoingEdgeId
+  let newSessionState = state
 
-      if (isBubbleBlock(block)) {
-        messages.push(
-          parseBubbleBlock(newSessionState.typebotsQueue[0].typebot.variables)(
-            block
-          )
-        )
-        lastBubbleBlockId = block.id
-        continue
+  for (const block of group.blocks) {
+    nextEdgeId = block.outgoingEdgeId
+
+    if (isBubbleBlock(block)) {
+      messages.push(
+        parseBubbleBlock(block, {
+          version,
+          variables: newSessionState.typebotsQueue[0].typebot.variables,
+        })
+      )
+      lastBubbleBlockId = block.id
+      continue
+    }
+
+    if (isInputBlock(block))
+      return {
+        messages,
+        input: await parseInput(newSessionState)(block),
+        newSessionState: {
+          ...newSessionState,
+          currentBlock: {
+            groupId: group.id,
+            blockId: block.id,
+          },
+        },
+        clientSideActions,
+        logs,
       }
+    const executionResponse = isLogicBlock(block)
+      ? await executeLogic(newSessionState)(block)
+      : isIntegrationBlock(block)
+      ? await executeIntegration(newSessionState)(block)
+      : null
 
-      if (isInputBlock(block))
+    if (!executionResponse) continue
+    if (executionResponse.logs)
+      logs = [...(logs ?? []), ...executionResponse.logs]
+    if (executionResponse.newSessionState)
+      newSessionState = executionResponse.newSessionState
+    if (
+      'clientSideActions' in executionResponse &&
+      executionResponse.clientSideActions
+    ) {
+      clientSideActions = [
+        ...(clientSideActions ?? []),
+        ...executionResponse.clientSideActions.map((action) => ({
+          ...action,
+          lastBubbleBlockId,
+        })),
+      ]
+      if (
+        executionResponse.clientSideActions?.find(
+          (action) => action.expectsDedicatedReply
+        )
+      ) {
         return {
           messages,
-          input: await parseInput(newSessionState)(block),
           newSessionState: {
             ...newSessionState,
             currentBlock: {
@@ -71,77 +111,37 @@ export const executeGroup =
           clientSideActions,
           logs,
         }
-      const executionResponse = isLogicBlock(block)
-        ? await executeLogic(newSessionState)(block)
-        : isIntegrationBlock(block)
-        ? await executeIntegration(newSessionState)(block)
-        : null
-
-      if (!executionResponse) continue
-      if (executionResponse.logs)
-        logs = [...(logs ?? []), ...executionResponse.logs]
-      if (executionResponse.newSessionState)
-        newSessionState = executionResponse.newSessionState
-      if (
-        'clientSideActions' in executionResponse &&
-        executionResponse.clientSideActions
-      ) {
-        clientSideActions = [
-          ...(clientSideActions ?? []),
-          ...executionResponse.clientSideActions.map((action) => ({
-            ...action,
-            lastBubbleBlockId,
-          })),
-        ]
-        if (
-          executionResponse.clientSideActions?.find(
-            (action) => action.expectsDedicatedReply
-          )
-        ) {
-          return {
-            messages,
-            newSessionState: {
-              ...newSessionState,
-              currentBlock: {
-                groupId: group.id,
-                blockId: block.id,
-              },
-            },
-            clientSideActions,
-            logs,
-          }
-        }
-      }
-
-      if (executionResponse.outgoingEdgeId) {
-        nextEdgeId = executionResponse.outgoingEdgeId
-        break
       }
     }
 
-    if (!nextEdgeId && state.typebotsQueue.length === 1)
-      return { messages, newSessionState, clientSideActions, logs }
-
-    const nextGroup = await getNextGroup(newSessionState)(
-      nextEdgeId ?? undefined
-    )
-
-    newSessionState = nextGroup.newSessionState
-
-    if (!nextGroup.group) {
-      return { messages, newSessionState, clientSideActions, logs }
+    if (executionResponse.outgoingEdgeId) {
+      nextEdgeId = executionResponse.outgoingEdgeId
+      break
     }
-
-    return executeGroup(
-      newSessionState,
-      {
-        messages,
-        clientSideActions,
-        logs,
-      },
-      lastBubbleBlockId
-    )(nextGroup.group)
   }
+
+  if (!nextEdgeId && newSessionState.typebotsQueue.length === 1)
+    return { messages, newSessionState, clientSideActions, logs }
+
+  const nextGroup = await getNextGroup(newSessionState)(nextEdgeId ?? undefined)
+
+  newSessionState = nextGroup.newSessionState
+
+  if (!nextGroup.group) {
+    return { messages, newSessionState, clientSideActions, logs }
+  }
+
+  return executeGroup(nextGroup.group, {
+    version,
+    state: newSessionState,
+    currentReply: {
+      messages,
+      clientSideActions,
+      logs,
+    },
+    currentLastBubbleId: lastBubbleBlockId,
+  })
+}
 
 const computeRuntimeOptions =
   (state: SessionState) =>
@@ -150,34 +150,6 @@ const computeRuntimeOptions =
       case InputBlockType.PAYMENT: {
         return computePaymentInputRuntimeOptions(state)(block.options)
       }
-    }
-  }
-
-const parseBubbleBlock =
-  (variables: Variable[]) =>
-  (block: BubbleBlock): ChatReply['messages'][0] => {
-    switch (block.type) {
-      case BubbleBlockType.TEXT:
-        return deepParseVariables(
-          variables,
-          {},
-          { takeLatestIfList: true }
-        )(block)
-      case BubbleBlockType.EMBED: {
-        const message = deepParseVariables(variables)(block)
-        return {
-          ...message,
-          content: {
-            ...message.content,
-            height:
-              typeof message.content.height === 'string'
-                ? parseFloat(message.content.height)
-                : message.content.height,
-          },
-        }
-      }
-      default:
-        return deepParseVariables(variables)(block)
     }
   }
 

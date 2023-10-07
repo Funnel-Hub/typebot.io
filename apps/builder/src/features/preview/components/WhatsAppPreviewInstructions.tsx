@@ -6,8 +6,8 @@ import {
   Alert,
   AlertIcon,
   Button,
-  Flex,
   HStack,
+  Link,
   SlideFade,
   Stack,
   StackProps,
@@ -20,6 +20,7 @@ import {
   setPhoneNumberInLocalStorage,
 } from '../helpers/phoneNumberFromLocalStorage'
 import { useEditor } from '@/features/editor/providers/EditorProvider'
+import { BuoyIcon, ExternalLinkIcon } from '@/components/icons'
 
 export const WhatsAppPreviewInstructions = (props: StackProps) => {
   const { typebot, save } = useTypebot()
@@ -70,10 +71,22 @@ export const WhatsAppPreviewInstructions = (props: StackProps) => {
       onSubmit={sendWhatsAppPreviewStartMessage}
       {...props}
     >
+      <HStack justifyContent="flex-end">
+        <Text fontSize="sm">Need help?</Text>
+        <Button
+          as={Link}
+          href="https://docs.typebot.io/embed/whatsapp"
+          leftIcon={<BuoyIcon />}
+          size="sm"
+        >
+          Check the docs
+        </Button>
+      </HStack>
       <Alert status="warning">
         <AlertIcon />
-        The WhatsApp integration is still experimental.
-        <br />I appreciate your bug reports 🧡
+        The WhatsApp integration is still in beta test.
+        <br />
+        Your bug reports are greatly appreciate 🧡
       </Alert>
       <TextInput
         label="Your phone number"
@@ -84,28 +97,39 @@ export const WhatsAppPreviewInstructions = (props: StackProps) => {
         defaultValue={phoneNumber}
         onChange={setPhoneNumber}
       />
-      <Button
-        isDisabled={isEmpty(phoneNumber) || isMessageSent}
-        isLoading={isSendingMessage}
-        type="submit"
-      >
-        {hasMessageBeenSent ? 'Restart' : 'Start'} the chat
-      </Button>
+      {!isMessageSent && (
+        <Button
+          isDisabled={isEmpty(phoneNumber) || isMessageSent}
+          isLoading={isSendingMessage}
+          type="submit"
+          colorScheme="blue"
+        >
+          {hasMessageBeenSent ? 'Restart' : 'Start'} the chat
+        </Button>
+      )}
       <SlideFade offsetY="20px" in={isMessageSent} unmountOnExit>
-        <Flex>
+        <Stack>
+          <Button
+            as={Link}
+            href={`https://web.whatsapp.com/`}
+            isExternal
+            colorScheme="blue"
+            rightIcon={<ExternalLinkIcon />}
+          >
+            Open WhatsApp Web
+          </Button>
           <Alert status="success" w="100%">
             <HStack>
               <AlertIcon />
               <Stack spacing={1}>
                 <Text fontWeight="semibold">Chat started!</Text>
                 <Text fontSize="sm">
-                  Open WhatsApp to test your bot. The first message can take up
-                  to 2 min to be delivered.
+                  The first message can take up to 2 min to be delivered.
                 </Text>
               </Stack>
             </HStack>
           </Alert>
-        </Flex>
+        </Stack>
       </SlideFade>
     </Stack>
   )

@@ -27,7 +27,9 @@ export const startWhatsAppPreview = authenticatedProcedure
       to: z
         .string()
         .min(1)
-        .transform((value) => value.replace(/\s/g, '').replace(/\+/g, '')),
+        .transform((value) =>
+          value.replace(/\s/g, '').replace(/\+/g, '').replace(/-/g, '')
+        ),
       typebotId: z.string(),
       startGroupId: z.string().optional(),
     })
@@ -70,7 +72,7 @@ export const startWhatsAppPreview = authenticatedProcedure
       )
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Typebot not found' })
 
-      const sessionId = `wa-${to}-preview`
+      const sessionId = `wa-preview-${to}`
 
       const existingSession = await prisma.chatSession.findFirst({
         where: {
@@ -89,6 +91,8 @@ export const startWhatsAppPreview = authenticatedProcedure
 
       const { newSessionState, messages, input, clientSideActions, logs } =
         await startSession({
+          version: 2,
+          message: undefined,
           startParams: {
             isOnlyRegistering: !canSendDirectMessagesToUser,
             typebot: typebotId,
@@ -96,6 +100,10 @@ export const startWhatsAppPreview = authenticatedProcedure
             startGroupId,
           },
           userId: user.id,
+          initialSessionState: {
+            whatsApp: (existingSession?.state as SessionState | undefined)
+              ?.whatsApp,
+          },
         })
 
       if (canSendDirectMessagesToUser) {
@@ -109,6 +117,7 @@ export const startWhatsAppPreview = authenticatedProcedure
             phoneNumberId: env.WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID,
             systemUserAccessToken: env.META_SYSTEM_USER_TOKEN,
           },
+          state: newSessionState,
         })
         await saveStateToDatabase({
           clientSideActions: [],
@@ -116,20 +125,13 @@ export const startWhatsAppPreview = authenticatedProcedure
           logs,
           session: {
             id: sessionId,
-            state: {
-              ...newSessionState,
-              currentBlock: !input ? undefined : newSessionState.currentBlock,
-            },
+            state: newSessionState,
           },
         })
       } else {
         await restartSession({
-          state: {
-            ...newSessionState,
-            whatsApp: (existingSession?.state as SessionState | undefined)
-              ?.whatsApp,
-          },
-          id: `wa-${to}-preview`,
+          state: newSessionState,
+          id: sessionId,
         })
         try {
           await sendWhatsAppMessage({

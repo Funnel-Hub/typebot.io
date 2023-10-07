@@ -12,7 +12,7 @@ import { continueBotFlow } from '@typebot.io/bot-engine/continueBotFlow'
 import { parseDynamicTheme } from '@typebot.io/bot-engine/parseDynamicTheme'
 import { isDefined } from '@typebot.io/lib/utils'
 
-export const sendMessage = publicProcedure
+export const sendMessageV1 = publicProcedure
   .meta({
     openapi: {
       method: 'POST',
@@ -57,7 +57,12 @@ export const sendMessage = publicProcedure
           logs,
           clientSideActions,
           newSessionState,
-        } = await startSession({ startParams, userId: user?.id })
+        } = await startSession({
+          version: 1,
+          startParams,
+          userId: user?.id,
+          message,
+        })
 
         const allLogs = clientLogs ? [...(logs ?? []), ...clientLogs] : logs
 
@@ -66,7 +71,6 @@ export const sendMessage = publicProcedure
               state: newSessionState,
             })
           : await saveStateToDatabase({
-              isFirstSave: true,
               session: {
                 state: newSessionState,
               },
@@ -99,7 +103,7 @@ export const sendMessage = publicProcedure
           newSessionState,
           logs,
           lastMessageNewFormat,
-        } = await continueBotFlow(session.state)(message)
+        } = await continueBotFlow(message, { version: 1, state: session.state })
 
         const allLogs = clientLogs ? [...(logs ?? []), ...clientLogs] : logs
 

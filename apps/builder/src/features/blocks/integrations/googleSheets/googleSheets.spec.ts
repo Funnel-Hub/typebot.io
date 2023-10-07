@@ -103,7 +103,7 @@ test.describe.parallel('Google sheets integration', () => {
     await page.click('text=Select an operation')
     await page.click('text=Get data from sheet')
 
-    await page.getByRole('button', { name: 'Rows to filter' }).click()
+    await page.getByRole('button', { name: 'Select row(s)' }).click()
     await page.getByRole('button', { name: 'Add filter rule' }).click()
     await page.click('text=Select a column')
     await page.click('button >> text="Email"')
@@ -142,8 +142,8 @@ test.describe.parallel('Google sheets integration', () => {
       .locator('input[placeholder="Type your email..."]')
       .press('Enter')
     await expect(
-      page.locator('typebot-standard').locator('text=Your name is:')
-    ).toHaveText(`Your name is: Georges2 Last name`)
+      page.locator('typebot-standard').locator('text=Georges2')
+    ).toBeVisible()
   })
 })
 

@@ -8,10 +8,18 @@ import { sendChatReplyToWhatsApp } from './sendChatReplyToWhatsApp'
 import { startWhatsAppSession } from './startWhatsAppSession'
 import { getSession } from '../queries/getSession'
 import { continueBotFlow } from '../continueBotFlow'
-import { decrypt } from '@typebot.io/lib/api'
+import { decrypt } from '@typebot.io/lib/api/encryption/decrypt'
 import { saveStateToDatabase } from '../saveStateToDatabase'
 import prisma from '@typebot.io/lib/prisma'
 import { isDefined } from '@typebot.io/lib/utils'
+
+type Props = {
+  receivedMessage: WhatsAppIncomingMessage
+  sessionId: string
+  credentialsId?: string
+  workspaceId?: string
+  contact: NonNullable<SessionState['whatsApp']>['contact']
+}
 
 export const resumeWhatsAppFlow = async ({
   receivedMessage,
@@ -19,13 +27,7 @@ export const resumeWhatsAppFlow = async ({
   workspaceId,
   credentialsId,
   contact,
-}: {
-  receivedMessage: WhatsAppIncomingMessage
-  sessionId: string
-  credentialsId?: string
-  workspaceId?: string
-  contact: NonNullable<SessionState['whatsApp']>['contact']
-}) => {
+}: Props): Promise<{ message: string }> => {
   const messageSendDate = new Date(Number(receivedMessage.timestamp) * 1000)
   const messageSentBefore3MinutesAgo =
     messageSendDate.getTime() < Date.now() - 180000
@@ -46,16 +48,6 @@ export const resumeWhatsAppFlow = async ({
     typebotId: typebot?.id,
   })
 
-  const sessionState =
-    isPreview && session?.state
-      ? ({
-          ...session?.state,
-          whatsApp: {
-            contact,
-          },
-        } satisfies SessionState)
-      : session?.state
-
   const credentials = await getCredentials({ credentialsId, isPreview })
 
   if (!credentials) {
@@ -71,12 +63,14 @@ export const resumeWhatsAppFlow = async ({
     session?.updatedAt.getTime() + session.state.expiryTimeout < Date.now()
 
   const resumeResponse =
-    sessionState && !isSessionExpired
-      ? await continueBotFlow(sessionState)(messageContent)
+    session && !isSessionExpired
+      ? await continueBotFlow(messageContent, {
+          version: 2,
+          state: { ...session.state, whatsApp: { contact } },
+        })
       : workspaceId
       ? await startWhatsAppSession({
-          message: receivedMessage,
-          sessionId,
+          incomingMessage: messageContent,
           workspaceId,
           credentials: { ...credentials, id: credentialsId as string },
           contact,
@@ -100,10 +94,11 @@ export const resumeWhatsAppFlow = async ({
     typingEmulation: newSessionState.typingEmulation,
     clientSideActions,
     credentials,
+    state: newSessionState,
   })
 
   await saveStateToDatabase({
-    isFirstSave: !session,
+    forceCreateSession: !session && isDefined(input),
     clientSideActions: [],
     input,
     logs,

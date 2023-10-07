@@ -19,12 +19,11 @@ export const SinglePictureChoice = (props: Props) => {
     if (!isMobile() && inputRef) inputRef.focus()
   })
 
-  // eslint-disable-next-line solid/reactivity
-  const handleClick = (itemIndex: number) => () => {
-    const pictureSrc = filteredItems()[itemIndex].pictureSrc
-    if (!pictureSrc) return
+  const handleClick = (itemIndex: number) => {
+    const item = filteredItems()[itemIndex]
     return props.onSubmit({
-      value: filteredItems()[itemIndex].title ?? pictureSrc,
+      label: item.title ?? item.pictureSrc ?? item.id,
+      value: item.id,
     })
   }
 
@@ -65,8 +64,7 @@ export const SinglePictureChoice = (props: Props) => {
         <For each={filteredItems()}>
           {(item, index) => (
             <button
-              // eslint-disable-next-line solid/reactivity
-              on:click={handleClick(index())}
+              on:click={() => handleClick(index())}
               data-itemid={item.id}
               class={
                 'flex flex-col typebot-picture-button focus:outline-none filter hover:brightness-90 active:brightness-75 justify-between  ' +

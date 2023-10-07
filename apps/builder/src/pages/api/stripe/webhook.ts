@@ -197,6 +197,12 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                     ...settings.general,
                     isBrandingEnabled: true,
                   },
+                  whatsApp: settings.whatsApp
+                    ? {
+                        ...settings.whatsApp,
+                        isEnabled: false,
+                      }
+                    : undefined,
                 },
               },
             })

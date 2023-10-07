@@ -26,15 +26,24 @@ import { startBotFlow } from './startBotFlow'
 import { prefillVariables } from './variables/prefillVariables'
 import { deepParseVariables } from './variables/deepParseVariables'
 import { injectVariablesFromExistingResult } from './variables/injectVariablesFromExistingResult'
+import { getNextGroup } from './getNextGroup'
+import { upsertResult } from './queries/upsertResult'
+import { continueBotFlow } from './continueBotFlow'
 
 type Props = {
+  version: 1 | 2
+  message: string | undefined
   startParams: StartParams
   userId: string | undefined
+  initialSessionState?: Pick<SessionState, 'whatsApp' | 'expiryTimeout'>
 }
 
 export const startSession = async ({
+  version,
+  message,
   startParams,
   userId,
+  initialSessionState,
 }: Props): Promise<ChatReply & { newSessionState: SessionState }> => {
   if (!startParams)
     throw new TRPCError({
@@ -108,6 +117,7 @@ export const startSession = async ({
     dynamicTheme: parseDynamicThemeInState(typebot.theme),
     isStreamEnabled: startParams.isStreamEnabled,
     typingEmulation: typebot.settings.typingEmulation,
+    ...initialSessionState,
   }
 
   if (startParams.isOnlyRegistering) {
@@ -127,13 +137,46 @@ export const startSession = async ({
     }
   }
 
+  let chatReply = await startBotFlow({
+    version,
+    state: initialState,
+    startGroupId: startParams.startGroupId,
+  })
+
+  // If params has message and first block is an input block, we can directly continue the bot flow
+  if (message) {
+    const firstEdgeId =
+      chatReply.newSessionState.typebotsQueue[0].typebot.groups[0].blocks[0]
+        .outgoingEdgeId
+    const nextGroup = await getNextGroup(chatReply.newSessionState)(firstEdgeId)
+    const newSessionState = nextGroup.newSessionState
+    const firstBlock = nextGroup.group?.blocks.at(0)
+    if (firstBlock && isInputBlock(firstBlock)) {
+      const resultId = newSessionState.typebotsQueue[0].resultId
+      if (resultId)
+        await upsertResult({
+          hasStarted: true,
+          isCompleted: false,
+          resultId,
+          typebot: newSessionState.typebotsQueue[0].typebot,
+        })
+      chatReply = await continueBotFlow(message, {
+        version,
+        state: {
+          ...newSessionState,
+          currentBlock: { groupId: firstBlock.groupId, blockId: firstBlock.id },
+        },
+      })
+    }
+  }
+
   const {
     messages,
     input,
     clientSideActions: startFlowClientActions,
     newSessionState,
     logs,
-  } = await startBotFlow(initialState, startParams.startGroupId)
+  } = chatReply
 
   const clientSideActions = startFlowClientActions ?? []
 
@@ -144,12 +187,12 @@ export const startSession = async ({
   if (isDefined(startClientSideAction)) {
     if (!result) {
       if ('startPropsToInject' in startClientSideAction) {
-        const { customHeadCode, googleAnalyticsId, pixelId, gtmId } =
+        const { customHeadCode, googleAnalyticsId, pixelId, pixelIds, gtmId } =
           startClientSideAction.startPropsToInject
         let toolsList = ''
         if (customHeadCode) toolsList += 'Custom head code, '
         if (googleAnalyticsId) toolsList += 'Google Analytics, '
-        if (pixelId) toolsList += 'Pixel, '
+        if (pixelId || pixelIds) toolsList += 'Pixel, '
         if (gtmId) toolsList += 'Google Tag Manager, '
         toolsList = toolsList.slice(0, -2)
         startLogs.push({
@@ -318,6 +361,15 @@ const parseStartClientSideAction = (
   typebot: StartTypebot
 ): NonNullable<ChatReply['clientSideActions']>[number] | undefined => {
   const blocks = typebot.groups.flatMap((group) => group.blocks)
+  const pixelBlocks = (
+    blocks.filter(
+      (block) =>
+        block.type === IntegrationBlockType.PIXEL &&
+        isNotEmpty(block.options.pixelId) &&
+        block.options.isInitSkip !== true
+    ) as PixelBlock[]
+  ).map((pixelBlock) => pixelBlock.options.pixelId as string)
+
   const startPropsToInject = {
     customHeadCode: isNotEmpty(typebot.settings.metadata.customHeadCode)
       ? parseHeadCode(typebot.settings.metadata.customHeadCode)
@@ -330,21 +382,14 @@ const parseStartClientSideAction = (
           block.options.trackingId
       ) as GoogleAnalyticsBlock | undefined
     )?.options.trackingId,
-    pixelId: (
-      blocks.find(
-        (block) =>
-          block.type === IntegrationBlockType.PIXEL &&
-          block.options.pixelId &&
-          block.options.isInitSkip !== true
-      ) as PixelBlock | undefined
-    )?.options.pixelId,
+    pixelIds: pixelBlocks.length > 0 ? pixelBlocks : undefined,
   }
 
   if (
     !startPropsToInject.customHeadCode &&
     !startPropsToInject.gtmId &&
     !startPropsToInject.googleAnalyticsId &&
-    !startPropsToInject.pixelId
+    !startPropsToInject.pixelIds
   )
     return
 

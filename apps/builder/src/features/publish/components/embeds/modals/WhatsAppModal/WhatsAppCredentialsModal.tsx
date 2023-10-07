@@ -300,10 +300,10 @@ const Requirements = () => (
     <Text>
       Make sure you have{' '}
       <TextLink
-        href="https://developers.facebook.com/docs/whatsapp/cloud-api/get-started#set-up-developer-assets"
+        href="https://docs.typebot.io/embed/whatsapp/create-meta-app"
         isExternal
       >
-        created a WhatsApp Business Account
+        created a WhatsApp Meta app
       </TextLink>
       . You should be able to get to this page:
     </Text>
@@ -312,13 +312,6 @@ const Requirements = () => (
       alt="WhatsApp quickstart page"
       rounded="md"
     />
-    <Text>
-      You can find your Meta apps here:{' '}
-      <TextLink href="https://developers.facebook.com/apps" isExternal>
-        https://developers.facebook.com/apps
-      </TextLink>
-      .
-    </Text>
   </Stack>
 )
 
@@ -404,12 +397,15 @@ const PhoneNumber = ({
       <HStack>
         <Text>
           Go to your{' '}
-          <TextLink
+          <Button
+            as={Link}
             href={`https://developers.facebook.com/apps/${appId}/whatsapp-business/wa-dev-console`}
             isExternal
+            rightIcon={<ExternalLinkIcon />}
+            size="sm"
           >
-            WhatsApp Dev Console
-          </TextLink>
+            WhatsApp Dev Console{' '}
+          </Button>
         </Text>
       </HStack>
     </ListItem>
@@ -461,12 +457,15 @@ const Webhook = ({
     <Stack spacing={6}>
       <Text>
         In your{' '}
-        <TextLink
+        <Button
+          as={Link}
           href={`https://developers.facebook.com/apps/${appId}/whatsapp-business/wa-settings`}
+          rightIcon={<ExternalLinkIcon />}
           isExternal
+          size="sm"
         >
           WhatsApp Settings page
-        </TextLink>
+        </Button>
         , click on the Edit button and insert the following values:
       </Text>
       <UnorderedList spacing={6}>

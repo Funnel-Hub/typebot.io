@@ -1981,6 +1981,7 @@
                                                 "enum": [
                                                   "Custom",
                                                   "Empty",
+                                                  "Environment name",
                                                   "User ID",
                                                   "Now",
                                                   "Today",
@@ -6373,6 +6374,7 @@
                                             "enum": [
                                               "Custom",
                                               "Empty",
+                                              "Environment name",
                                               "User ID",
                                               "Now",
                                               "Today",
@@ -10402,6 +10404,7 @@
                                               "enum": [
                                                 "Custom",
                                                 "Empty",
+                                                "Environment name",
                                                 "User ID",
                                                 "Now",
                                                 "Today",
@@ -12892,10 +12895,6 @@
                         "isClosed": {
                           "type": "boolean"
                         },
-                        "whatsAppPhoneNumberId": {
-                          "type": "string",
-                          "nullable": true
-                        },
                         "whatsAppCredentialsId": {
                           "type": "string",
                           "nullable": true
@@ -12921,7 +12920,6 @@
                         "resultsTablePreferences",
                         "isArchived",
                         "isClosed",
-                        "whatsAppPhoneNumberId",
                         "whatsAppCredentialsId"
                       ],
                       "additionalProperties": false
@@ -14576,6 +14574,7 @@
                                             "enum": [
                                               "Custom",
                                               "Empty",
+                                              "Environment name",
                                               "User ID",
                                               "Now",
                                               "Today",
@@ -17044,10 +17043,6 @@
                       "isClosed": {
                         "type": "boolean"
                       },
-                      "whatsAppPhoneNumberId": {
-                        "type": "string",
-                        "nullable": true
-                      },
                       "whatsAppCredentialsId": {
                         "type": "string",
                         "nullable": true
@@ -18629,6 +18624,7 @@
                                               "enum": [
                                                 "Custom",
                                                 "Empty",
+                                                "Environment name",
                                                 "User ID",
                                                 "Now",
                                                 "Today",
@@ -21119,10 +21115,6 @@
                         "isClosed": {
                           "type": "boolean"
                         },
-                        "whatsAppPhoneNumberId": {
-                          "type": "string",
-                          "nullable": true
-                        },
                         "whatsAppCredentialsId": {
                           "type": "string",
                           "nullable": true
@@ -21148,7 +21140,6 @@
                         "resultsTablePreferences",
                         "isArchived",
                         "isClosed",
-                        "whatsAppPhoneNumberId",
                         "whatsAppCredentialsId"
                       ],
                       "additionalProperties": false
@@ -22738,6 +22729,7 @@
                                               "enum": [
                                                 "Custom",
                                                 "Empty",
+                                                "Environment name",
                                                 "User ID",
                                                 "Now",
                                                 "Today",
@@ -25228,10 +25220,6 @@
                         "isClosed": {
                           "type": "boolean"
                         },
-                        "whatsAppPhoneNumberId": {
-                          "type": "string",
-                          "nullable": true
-                        },
                         "whatsAppCredentialsId": {
                           "type": "string",
                           "nullable": true
@@ -25257,7 +25245,6 @@
                         "resultsTablePreferences",
                         "isArchived",
                         "isClosed",
-                        "whatsAppPhoneNumberId",
                         "whatsAppCredentialsId"
                       ],
                       "additionalProperties": false
@@ -26910,6 +26897,7 @@
                                               "enum": [
                                                 "Custom",
                                                 "Empty",
+                                                "Environment name",
                                                 "User ID",
                                                 "Now",
                                                 "Today",
@@ -33111,6 +33099,18 @@
                               "value": {
                                 "type": "object",
                                 "properties": {
+                                  "metadata": {
+                                    "type": "object",
+                                    "properties": {
+                                      "phone_number_id": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "phone_number_id"
+                                    ],
+                                    "additionalProperties": false
+                                  },
                                   "contacts": {
                                     "type": "array",
                                     "items": {
@@ -33412,6 +33412,9 @@
                                     }
                                   }
                                 },
+                                "required": [
+                                  "metadata"
+                                ],
                                 "additionalProperties": false
                               }
                             },

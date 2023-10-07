@@ -10,22 +10,20 @@ import {
 } from '@typebot.io/schemas'
 import {
   WhatsAppCredentials,
-  WhatsAppIncomingMessage,
   defaultSessionExpiryTimeout,
 } from '@typebot.io/schemas/features/whatsapp'
 import { isNotDefined } from '@typebot.io/lib/utils'
 import { startSession } from '../startSession'
 
 type Props = {
-  message: WhatsAppIncomingMessage
-  sessionId: string
+  incomingMessage?: string
   workspaceId?: string
   credentials: WhatsAppCredentials['data'] & Pick<WhatsAppCredentials, 'id'>
   contact: NonNullable<SessionState['whatsApp']>['contact']
 }
 
 export const startWhatsAppSession = async ({
-  message,
+  incomingMessage,
   workspaceId,
   credentials,
   contact,
@@ -58,39 +56,42 @@ export const startWhatsAppSession = async ({
       publicTypebot.settings.whatsApp?.isEnabled
   )
 
+  const publicTypebotWithMatchedCondition = botsWithWhatsAppEnabled.find(
+    (publicTypebot) =>
+      (publicTypebot.settings.whatsApp?.startCondition?.comparisons.length ??
+        0) > 0 &&
+      messageMatchStartCondition(
+        incomingMessage ?? '',
+        publicTypebot.settings.whatsApp?.startCondition
+      )
+  )
+
   const publicTypebot =
+    publicTypebotWithMatchedCondition ??
     botsWithWhatsAppEnabled.find(
-      (publicTypebot) =>
-        publicTypebot.settings.whatsApp?.startCondition &&
-        messageMatchStartCondition(
-          getIncomingMessageText(message),
-          publicTypebot.settings.whatsApp?.startCondition
-        )
-    ) ?? botsWithWhatsAppEnabled[0]
+      (publicTypebot) => !publicTypebot.settings.whatsApp?.startCondition
+    )
 
   if (isNotDefined(publicTypebot)) return
-
-  const session = await startSession({
-    startParams: {
-      typebot: publicTypebot.typebot.publicId as string,
-    },
-    userId: undefined,
-  })
 
   const sessionExpiryTimeoutHours =
     publicTypebot.settings.whatsApp?.sessionExpiryTimeout ??
     defaultSessionExpiryTimeout
 
-  return {
-    ...session,
-    newSessionState: {
-      ...session.newSessionState,
+  return startSession({
+    version: 2,
+    message: incomingMessage,
+    startParams: {
+      typebot: publicTypebot.typebot.publicId as string,
+    },
+    userId: undefined,
+    initialSessionState: {
       whatsApp: {
         contact,
       },
       expiryTimeout: sessionExpiryTimeoutHours * 60 * 60 * 1000,
     },
-  }
+  })
 }
 
 export const messageMatchStartCondition = (
@@ -163,24 +164,6 @@ const matchComparison = (
         .trim()
         .toLowerCase()
         .includes(value.trim().toLowerCase())
-    }
-  }
-}
-
-const getIncomingMessageText = (message: WhatsAppIncomingMessage): string => {
-  switch (message.type) {
-    case 'text':
-      return message.text.body
-    case 'button':
-      return message.button.text
-    case 'interactive': {
-      return message.interactive.button_reply.title
-    }
-    case 'video':
-    case 'document':
-    case 'audio':
-    case 'image': {
-      return ''
     }
   }
 }

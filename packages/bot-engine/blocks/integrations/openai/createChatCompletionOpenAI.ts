@@ -1,6 +1,7 @@
 import {
   Block,
   BubbleBlockType,
+  Credentials,
   SessionState,
   TypebotInSession,
 } from '@typebot.io/schemas'
@@ -10,7 +11,7 @@ import {
   chatCompletionMessageRoles,
 } from '@typebot.io/schemas/features/blocks/integrations/openai'
 import { byId, isEmpty } from '@typebot.io/lib'
-import { decrypt, isCredentialsV2 } from '@typebot.io/lib/api/encryption'
+import { decrypt } from '@typebot.io/lib/api/encryption/decrypt'
 import { resumeChatCompletion } from './resumeChatCompletion'
 import { parseChatCompletionMessages } from './parseChatCompletionMessages'
 import { executeChatCompletionOpenAIRequest } from './executeChatCompletionOpenAIRequest'
@@ -105,7 +106,7 @@ export const createChatCompletionOpenAI = async (
     }
   }
 
-  const { response, logs } = await executeChatCompletionOpenAIRequest({
+  const { chatCompletion, logs } = await executeChatCompletionOpenAIRequest({
     apiKey,
     messages,
     model: options.model,
@@ -113,15 +114,15 @@ export const createChatCompletionOpenAI = async (
     baseUrl: options.baseUrl,
     apiVersion: options.apiVersion,
   })
-  if (!response)
+  if (!chatCompletion)
     return {
       outgoingEdgeId,
       logs,
     }
-  const messageContent = response.choices.at(0)?.message?.content
-  const totalTokens = response.usage?.total_tokens
+  const messageContent = chatCompletion.choices.at(0)?.message?.content
+  const totalTokens = chatCompletion.usage?.total_tokens
   if (isEmpty(messageContent)) {
-    console.error('OpenAI block returned empty message', response)
+    console.error('OpenAI block returned empty message', chatCompletion.choices)
     return { outgoingEdgeId, newSessionState }
   }
   return resumeChatCompletion(newSessionState, {
@@ -167,3 +168,6 @@ const getNextBlock =
         )
       : connectedGroup?.blocks.at(0)
   }
+
+const isCredentialsV2 = (credentials: Pick<Credentials, 'iv'>) =>
+  credentials.iv.length === 24

@@ -157,6 +157,7 @@ export default {
     'Para agências e startups em crescimento.',
   'billing.pricingCard.pro.everythingFromStarter': 'Tudo em Starter',
   'billing.pricingCard.pro.includedSeats': '5 lugares incluídos',
+  'billing.pricingCard.pro.whatsAppIntegration': 'Integração do WhatsApp',
   'billing.pricingCard.pro.customDomains': 'Domínios personalizados',
   'billing.pricingCard.pro.analytics': 'Análises aprofundadas',
   'billing.pricingCard.ltd.endsSoon': 'Termina em breve',

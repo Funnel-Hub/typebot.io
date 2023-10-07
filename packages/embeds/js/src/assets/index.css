@@ -94,12 +94,36 @@ textarea {
   font-weight: 300;
 }
 
-.slate-a {
+a {
   text-decoration: underline;
 }
 
-.slate-html-container > div {
-  min-height: 24px;
+ul,
+ol {
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+ul {
+  list-style-type: disc;
+}
+
+li:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-height: 100%;
+  max-width: 100%;
+  overflow: auto;
 }
 
 .slate-bold {

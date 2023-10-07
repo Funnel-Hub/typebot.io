@@ -27,6 +27,13 @@ test('API chat execution should work on preview bot', async ({ request }) => {
     id: 'chat-sub-bot',
     publicId: 'chat-sub-bot-public',
   })
+  await importTypebotInDatabase(
+    getTestAsset('typebots/chat/startingWithInput.json'),
+    {
+      id: 'starting-with-input',
+      publicId: 'starting-with-input-public',
+    }
+  )
   await createWebhook(typebotId, {
     id: 'chat-webhook-id',
     method: HttpMethod.GET,
@@ -35,7 +42,7 @@ test('API chat execution should work on preview bot', async ({ request }) => {
 
   await test.step('Start the chat', async () => {
     const { sessionId, messages, input, resultId } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: {
           startParams: {
             typebot: typebotId,
@@ -76,7 +83,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Start the chat', async () => {
     const { sessionId, messages, input, resultId } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: {
           startParams: {
             typebot: publicId,
@@ -104,12 +111,30 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Answer Name question', async () => {
     const { messages, input } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: { message: 'John', sessionId: chatSessionId },
       })
     ).json()
     expect(messages[0].content.richText).toStrictEqual([
-      { children: [{ text: 'Nice to meet you John' }], type: 'p' },
+      {
+        type: 'p',
+        children: [
+          { text: 'Nice to meet you ' },
+          {
+            type: 'inline-variable',
+            children: [
+              {
+                type: 'p',
+                children: [
+                  {
+                    text: 'John',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ])
     expect(messages[1].content.url).toMatch(new RegExp('giphy.com', 'gm'))
     expect(input.type).toBe('number input')
@@ -117,7 +142,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Answer Age question', async () => {
     const { messages, input } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: { message: '24', sessionId: chatSessionId },
       })
     ).json()
@@ -125,7 +150,25 @@ test('API chat execution should work on published bot', async ({ request }) => {
       { children: [{ text: 'Ok, you are an adult then 😁' }], type: 'p' },
     ])
     expect(messages[1].content.richText).toStrictEqual([
-      { children: [{ text: 'My magic number is 42' }], type: 'p' },
+      {
+        children: [
+          { text: 'My magic number is ' },
+          {
+            type: 'inline-variable',
+            children: [
+              {
+                type: 'p',
+                children: [
+                  {
+                    text: '42',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        type: 'p',
+      },
     ])
     expect(messages[2].content.richText).toStrictEqual([
       {
@@ -138,7 +181,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Answer Rating question', async () => {
     const { messages, input } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: { message: '8', sessionId: chatSessionId },
       })
     ).json()
@@ -153,7 +196,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Answer Email question with wrong input', async () => {
     const { messages, input } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: { message: 'invalid email', sessionId: chatSessionId },
       })
     ).json()
@@ -172,7 +215,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Answer Email question with valid input', async () => {
     const { messages, input } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: { message: 'typebot@email.com', sessionId: chatSessionId },
       })
     ).json()
@@ -182,7 +225,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Answer URL question', async () => {
     const { messages, input } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: { message: 'https://typebot.io', sessionId: chatSessionId },
       })
     ).json()
@@ -192,7 +235,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
 
   await test.step('Answer Buttons question with invalid choice', async () => {
     const { messages } = await (
-      await request.post(`/api/v1/sendMessage`, {
+      await request.post(`/api/v2/sendMessage`, {
         data: { message: 'Yes', sessionId: chatSessionId },
       })
     ).json()
@@ -217,5 +260,27 @@ test('API chat execution should work on published bot', async ({ request }) => {
       },
     ])
     expect(messages[2].content.richText.length).toBeGreaterThan(0)
+  })
+  await test.step('Starting with a message when typebot starts with input should proceed', async () => {
+    const { messages } = await (
+      await request.post(`/api/v2/sendMessage`, {
+        data: {
+          message: 'Hey',
+          startParams: {
+            typebot: 'starting-with-input-public',
+          },
+        } satisfies SendMessageInput,
+      })
+    ).json()
+    expect(messages[0].content.richText).toStrictEqual([
+      {
+        children: [
+          {
+            text: "That's nice!",
+          },
+        ],
+        type: 'p',
+      },
+    ])
   })
 })
