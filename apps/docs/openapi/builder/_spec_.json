@@ -231,14 +231,10 @@
                                     "UNLIMITED",
                                     "UNDEFINED"
                                   ]
-                                },
-                                "additionalChatsIndex": {
-                                  "type": "number"
                                 }
                               },
                               "required": [
-                                "plan",
-                                "additionalChatsIndex"
+                                "plan"
                               ],
                               "additionalProperties": false
                             }
@@ -644,6 +640,14 @@
                                                   "url",
                                                   "youtube",
                                                   "vimeo"
+                                                ]
+                                              },
+                                              "height": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "number"
+                                                  },
+                                                  {}
                                                 ]
                                               }
                                             },
@@ -5038,6 +5042,14 @@
                                               "youtube",
                                               "vimeo"
                                             ]
+                                          },
+                                          "height": {
+                                            "anyOf": [
+                                              {
+                                                "type": "number"
+                                              },
+                                              {}
+                                            ]
                                           }
                                         },
                                         "additionalProperties": false
@@ -9067,6 +9079,14 @@
                                                 "url",
                                                 "youtube",
                                                 "vimeo"
+                                              ]
+                                            },
+                                            "height": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "number"
+                                                },
+                                                {}
                                               ]
                                             }
                                           },
@@ -13238,6 +13258,14 @@
                                               "youtube",
                                               "vimeo"
                                             ]
+                                          },
+                                          "height": {
+                                            "anyOf": [
+                                              {
+                                                "type": "number"
+                                              },
+                                              {}
+                                            ]
                                           }
                                         },
                                         "additionalProperties": false
@@ -17287,6 +17315,14 @@
                                                 "url",
                                                 "youtube",
                                                 "vimeo"
+                                              ]
+                                            },
+                                            "height": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "number"
+                                                },
+                                                {}
                                               ]
                                             }
                                           },
@@ -21392,6 +21428,14 @@
                                                 "url",
                                                 "youtube",
                                                 "vimeo"
+                                              ]
+                                            },
+                                            "height": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "number"
+                                                },
+                                                {}
                                               ]
                                             }
                                           },
@@ -25560,6 +25604,14 @@
                                                 "url",
                                                 "youtube",
                                                 "vimeo"
+                                              ]
+                                            },
+                                            "height": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "number"
+                                                },
+                                                {}
                                               ]
                                             }
                                           },
@@ -29787,10 +29839,12 @@
           {
             "name": "limit",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9]{1,3}$"
+              "type": "number",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
             }
           },
           {
@@ -30427,9 +30481,6 @@
                   "returnUrl": {
                     "type": "string"
                   },
-                  "additionalChats": {
-                    "type": "number"
-                  },
                   "vat": {
                     "type": "object",
                     "properties": {
@@ -30445,9 +30496,6 @@
                       "value"
                     ],
                     "additionalProperties": false
-                  },
-                  "isYearly": {
-                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -30456,9 +30504,7 @@
                   "workspaceId",
                   "currency",
                   "plan",
-                  "returnUrl",
-                  "additionalChats",
-                  "isYearly"
+                  "returnUrl"
                 ],
                 "additionalProperties": false
               }
@@ -30525,9 +30571,6 @@
                       "LIFETIME"
                     ]
                   },
-                  "additionalChats": {
-                    "type": "number"
-                  },
                   "currency": {
                     "type": "string",
                     "enum": [
@@ -30535,18 +30578,13 @@
                       "eur",
                       "brl"
                     ]
-                  },
-                  "isYearly": {
-                    "type": "boolean"
                   }
                 },
                 "required": [
                   "returnUrl",
                   "workspaceId",
                   "plan",
-                  "additionalChats",
-                  "currency",
-                  "isYearly"
+                  "currency"
                 ],
                 "additionalProperties": false
               }
@@ -30717,8 +30755,23 @@
                         {
                           "type": "object",
                           "properties": {
-                            "isYearly": {
-                              "type": "boolean"
+                            "currentBillingPeriod": {
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "end": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                }
+                              },
+                              "required": [
+                                "start",
+                                "end"
+                              ],
+                              "additionalProperties": false
                             },
                             "currency": {
                               "type": "string",
@@ -30741,7 +30794,7 @@
                             }
                           },
                           "required": [
-                            "isYearly",
+                            "currentBillingPeriod",
                             "currency",
                             "status"
                           ],
@@ -30802,10 +30855,15 @@
                   "properties": {
                     "totalChatsUsed": {
                       "type": "number"
+                    },
+                    "resetsAt": {
+                      "type": "string",
+                      "format": "date-time"
                     }
                   },
                   "required": [
-                    "totalChatsUsed"
+                    "totalChatsUsed",
+                    "resetsAt"
                   ],
                   "additionalProperties": false
                 }

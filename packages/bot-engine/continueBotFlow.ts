@@ -30,6 +30,7 @@ import { parseVariables } from './variables/parseVariables'
 import { updateVariablesInSession } from './variables/updateVariablesInSession'
 import { startBotFlow } from './startBotFlow'
 import { TRPCError } from '@trpc/server'
+import { parseNumber } from './blocks/inputs/number/parseNumber'
 
 type Params = {
   version: 1 | 2
@@ -39,6 +40,7 @@ export const continueBotFlow = async (
   reply: string | undefined,
   { state, version }: Params
 ): Promise<ChatReply & { newSessionState: SessionState }> => {
+  let firstBubbleWasStreamed = false
   let newSessionState = { ...state }
 
   if (!newSessionState.currentBlock) return startBotFlow({ state, version })
@@ -81,6 +83,7 @@ export const continueBotFlow = async (
     block.type === IntegrationBlockType.OPEN_AI &&
     block.options.task === 'Create chat completion'
   ) {
+    firstBubbleWasStreamed = true
     if (reply) {
       const result = await resumeChatCompletion(state, {
         options: block.options,
@@ -125,7 +128,7 @@ export const continueBotFlow = async (
         ...group,
         blocks: group.blocks.slice(blockIndex + 1),
       },
-      { version, state: newSessionState }
+      { version, state: newSessionState, firstBubbleWasStreamed }
     )
     return {
       ...chatReply,
@@ -157,6 +160,7 @@ export const continueBotFlow = async (
   const chatReply = await executeGroup(nextGroup.group, {
     version,
     state: newSessionState,
+    firstBubbleWasStreamed,
   })
 
   return {
@@ -341,9 +345,12 @@ const parseReply =
       }
       case InputBlockType.NUMBER: {
         if (!inputValue) return { status: 'fail' }
-        const isValid = validateNumber(inputValue)
+        const isValid = validateNumber(inputValue, {
+          options: block.options,
+          variables: state.typebotsQueue[0].typebot.variables,
+        })
         if (!isValid) return { status: 'fail' }
-        return { status: 'success', reply: inputValue }
+        return { status: 'success', reply: parseNumber(inputValue) }
       }
       case InputBlockType.DATE: {
         if (!inputValue) return { status: 'fail' }

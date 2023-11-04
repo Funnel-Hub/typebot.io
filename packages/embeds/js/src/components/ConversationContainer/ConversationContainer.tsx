@@ -3,7 +3,6 @@ import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/enums
 import {
   createEffect,
   createSignal,
-  createUniqueId,
   For,
   onCleanup,
   onMount,
@@ -109,12 +108,11 @@ export const ConversationContainer = (props: Props) => {
     })()
   })
 
-  const streamMessage = (content: string) => {
+  const streamMessage = ({ id, message }: { id: string; message: string }) => {
     setIsSending(false)
     const lastChunk = [...chatChunks()].pop()
     if (!lastChunk) return
-    const id = lastChunk.streamingMessageId ?? createUniqueId()
-    if (!lastChunk.streamingMessageId)
+    if (lastChunk.streamingMessageId !== id)
       setChatChunks((displayedChunks) => [
         ...displayedChunks,
         {
@@ -122,7 +120,7 @@ export const ConversationContainer = (props: Props) => {
           streamingMessageId: id,
         },
       ])
-    setStreamingMessage({ id, content })
+    setStreamingMessage({ id, content: message })
   }
 
   createEffect(() => {
@@ -173,7 +171,7 @@ export const ConversationContainer = (props: Props) => {
       setFormattedMessages([
         ...formattedMessages(),
         {
-          inputId: [...chatChunks()].pop()?.input?.id ?? '',
+          inputIndex: [...chatChunks()].length - 1,
           formattedMessage: data.lastMessageNewFormat as string,
         },
       ])
@@ -216,9 +214,7 @@ export const ConversationContainer = (props: Props) => {
       ...displayedChunks,
       {
         input: data.input,
-        messages: [...chatChunks()].pop()?.streamingMessageId
-          ? data.messages.slice(1)
-          : data.messages,
+        messages: data.messages,
         clientSideActions: data.clientSideActions,
       },
     ])
@@ -297,8 +293,9 @@ export const ConversationContainer = (props: Props) => {
             context={props.context}
             hideAvatar={
               !chatChunk.input &&
-              !chatChunk.streamingMessageId &&
-              index() < chatChunks().length - 1
+              ((chatChunks()[index() + 1]?.messages ?? 0).length > 0 ||
+                chatChunks()[index() + 1]?.streamingMessageId !== undefined ||
+                isSending())
             }
             hasError={hasError() && index() === chatChunks().length - 1}
             onNewBubbleDisplayed={handleNewBubbleDisplayed}

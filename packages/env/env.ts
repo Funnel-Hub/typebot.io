@@ -140,27 +140,12 @@ const stripeEnv = {
   server: {
     STRIPE_SECRET_KEY: z.string().min(1).optional(),
     STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
-    STRIPE_STARTER_PRODUCT_ID: z.string().min(1).optional(),
-    STRIPE_STARTER_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_STARTER_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_STARTER_CHATS_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_STARTER_CHATS_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_STARTER_STORAGE_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_STARTER_STORAGE_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_PRO_PRODUCT_ID: z.string().min(1).optional(),
-    STRIPE_PRO_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_PRO_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_PRO_CHATS_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_PRO_CHATS_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_PRO_STORAGE_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_PRO_STORAGE_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_LTD_PRODUCT_ID: z.string().min(1).optional(),
-    STRIPE_LTD_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_LTD_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_LTD_CHATS_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_LTD_CHATS_YEARLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_LTD_STORAGE_MONTHLY_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_LTD_STORAGE_YEARLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_STARTER_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_STARTER_CHATS_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_PRO_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_PRO_CHATS_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_LTD_CHATS_PRICE_ID: z.string().min(1).optional()
   },
   client: {
     NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string().min(1).optional(),
@@ -290,6 +275,25 @@ const posthogEnv = {
   },
 }
 
+const tolgeeEnv = {
+  client: {
+    NEXT_PUBLIC_TOLGEE_API_KEY: z.string().min(1).optional(),
+    NEXT_PUBLIC_TOLGEE_API_URL: z
+      .string()
+      .url()
+      .optional()
+      .default('https://tolgee.server.baptistearno.com"'),
+  },
+  runtimeEnv: {
+    NEXT_PUBLIC_TOLGEE_API_KEY: getRuntimeVariable(
+      'NEXT_PUBLIC_TOLGEE_API_KEY'
+    ),
+    NEXT_PUBLIC_TOLGEE_API_URL: getRuntimeVariable(
+      'NEXT_PUBLIC_TOLGEE_API_URL'
+    ),
+  },
+}
+
 export const env = createEnv({
   server: {
     ...baseEnv.server,
@@ -319,6 +323,7 @@ export const env = createEnv({
     ...unsplashEnv.client,
     ...sentryEnv.client,
     ...posthogEnv.client,
+    ...tolgeeEnv.client,
   },
   experimental__runtimeEnv: {
     ...baseEnv.runtimeEnv,
@@ -330,8 +335,11 @@ export const env = createEnv({
     ...unsplashEnv.runtimeEnv,
     ...sentryEnv.runtimeEnv,
     ...posthogEnv.runtimeEnv,
+    ...tolgeeEnv.runtimeEnv,
   },
-  skipValidation: typeof window !== 'undefined' && window.__ENV === undefined,
+  skipValidation:
+    process.env.SKIP_ENV_CHECK === 'true' ||
+    (typeof window !== 'undefined' && window.__ENV === undefined),
   onValidationError(error) {
     console.error(
       '❌ Invalid environment variables:',
