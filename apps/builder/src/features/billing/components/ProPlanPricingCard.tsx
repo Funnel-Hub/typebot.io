@@ -7,7 +7,6 @@ import {
   Text,
   Tooltip,
   Flex,
-  Tag,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react'
@@ -32,7 +31,7 @@ export const ProPlanPricingCard = ({
   isLoading,
   onPayClick,
 }: Props) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onClose } = useDisclosure()
   const { t } = useTranslate()
 
   const getButtonLabel = () => {
@@ -55,7 +54,7 @@ export const ProPlanPricingCard = ({
         borderColor={useColorModeValue('red.500', 'red.300')}
         rounded="lg"
       >
-        <Flex justifyContent="center">
+        {/* <Flex justifyContent="center">
           <Tag
             pos="absolute"
             top="-10px"
@@ -67,7 +66,7 @@ export const ProPlanPricingCard = ({
           >
             {t('billing.pricingCard.pro.mostPopularLabel')}
           </Tag>
-        </Flex>
+        </Flex> */}
         <Stack justifyContent="space-between" h="full">
           <Stack spacing="4" mt={2}>
             <Heading fontSize="2xl">
@@ -91,7 +90,7 @@ export const ProPlanPricingCard = ({
               <Heading>
                 {formatPrice(prices.PRO, { currency })}
                 <chakra.span fontSize="md">
-                  {t('billing.pricingCard.perMonth')}
+                  {t('billing.pricingCard.perYear')}
                 </chakra.span>
               </Heading>
               <Text fontWeight="bold">
@@ -131,14 +130,10 @@ export const ProPlanPricingCard = ({
                       fontSize="sm"
                       color={useColorModeValue('gray.500', 'gray.400')}
                     >
-                      Extra chats:{' '}
-                      <Button size="xs" variant="outline" onClick={onOpen}>
-                        See tiers
-                      </Button>
                     </Text>
                   </Stack>,
                   t('billing.pricingCard.pro.whatsAppIntegration'),
-                  t('billing.pricingCard.pro.customDomains'),
+                  // t('billing.pricingCard.pro.customDomains'),
                   t('billing.pricingCard.pro.analytics'),
                 ]}
               />

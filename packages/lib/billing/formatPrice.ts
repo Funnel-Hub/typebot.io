@@ -1,7 +1,7 @@
 import { guessIfUserIsEuropean } from './guessIfUserIsEuropean'
 
 type FormatPriceParams = {
-  currency?: 'eur' | 'usd'
+  currency?: 'eur' | 'usd' | 'brl'
   maxFractionDigits?: number
 }
 

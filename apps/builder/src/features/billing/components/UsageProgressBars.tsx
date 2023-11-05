@@ -28,10 +28,11 @@ export const UsageProgressBars = ({ workspace }: Props) => {
     },
     defaultQueryOptions
   )
+
   const totalChatsUsed = data?.totalChatsUsed ?? 0
 
   const workspaceChatsLimit = getChatsLimit(workspace)
-
+  console.log(totalChatsUsed, workspaceChatsLimit)
   const chatsPercentage =
     workspaceChatsLimit === 'inf'
       ? 0

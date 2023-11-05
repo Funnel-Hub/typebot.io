@@ -1,4 +1,4 @@
-import { Stack, HStack, Text, Switch, Tag } from '@chakra-ui/react'
+import { Stack, HStack } from '@chakra-ui/react'
 import { Plan } from '@typebot.io/prisma'
 import { useToast } from '@/hooks/useToast'
 import { trpc } from '@/lib/trpc'
@@ -7,35 +7,26 @@ import { PreCheckoutModal, PreCheckoutModalProps } from './PreCheckoutModal'
 import { useState } from 'react'
 import { ParentModalProvider } from '@/features/graph/providers/ParentModalProvider'
 import { useUser } from '@/features/account/hooks/useUser'
-import { StarterPlanPricingCard } from './StarterPlanPricingCard'
 import { ProPlanPricingCard } from './ProPlanPricingCard'
-import { I18nFunction, useScopedI18n } from '@/locales'
-import { LifeTimePlanPricingCard } from './LifeTimePlanPricingCard'
+import { useTranslate } from '@tolgee/react'
 
 type Props = {
   workspace: Workspace
 }
 
 export const SelectPlanForm = ({ workspace }: Props) => {
-  const scopedT = useScopedI18n('billing')
+  const { t } = useTranslate()
 
   const { user } = useUser()
   const { showToast } = useToast()
   const [preCheckoutPlan, setPreCheckoutPlan] =
     useState<PreCheckoutModalProps['selectedSubscription']>()
-  const [isYearly, setIsYearly] = useState(true)
 
   const trpcContext = trpc.useContext()
 
   const { data, refetch } = trpc.billing.getSubscription.useQuery(
     {
       workspaceId: workspace.id,
-    },
-    {
-      onSuccess: ({ subscription }) => {
-        if (isYearly === false) return
-        setIsYearly(subscription?.isYearly ?? true)
-      },
     }
   )
 
@@ -55,34 +46,19 @@ export const SelectPlanForm = ({ workspace }: Props) => {
         trpcContext.workspace.getWorkspace.invalidate()
         showToast({
           status: 'success',
-          description: scopedT('updateSuccessToast.description', {
+          description: t('updateSuccebilling.updateSuccessToast.description', {
             plan: workspace?.plan,
           }),
         })
       },
     })
 
-  const handlePayClick = async ({
-    plan,
-    selectedChatsLimitIndex,
-  }: {
-    plan: 'STARTER' | 'PRO' | 'LIFETIME'
-    selectedChatsLimitIndex: number
-  }) => {
-    if (
-      !user ||
-      selectedChatsLimitIndex === undefined
-    )
-      return
+  const handlePayClick = async (plan: 'STARTER' | 'PRO') => {
 
     const newSubscription = {
       plan,
       workspaceId: workspace.id,
-      additionalChats: selectedChatsLimitIndex,
       currency: 'brl',
-      // data?.subscription?.currency ??
-      // (guessIfUserIsEuropean() ? 'eur' : 'usd'),
-      isYearly,
     } as const
     if (workspace.stripeId) {
       updateSubscription({
@@ -94,19 +70,14 @@ export const SelectPlanForm = ({ workspace }: Props) => {
     }
   }
 
-  if (data?.subscription?.cancelDate) return null
+  if (
+    data?.subscription?.cancelDate ||
+    data?.subscription?.status === 'past_due'
+  )
+    return null
 
   return (
     <Stack spacing={6}>
-      <HStack maxW="500px">
-        {/* <StripeClimateLogo />
-        <Text fontSize="xs" color="gray.500">
-          {scopedT('contribution.preLink')}{' '}
-          <TextLink href="https://climate.stripe.com/5VCRAq" isExternal>
-            {scopedT('contribution.link')}
-          </TextLink>
-        </Text> */}
-      </HStack>
       {!workspace.stripeId && (
         <ParentModalProvider>
           <PreCheckoutModal
@@ -119,69 +90,16 @@ export const SelectPlanForm = ({ workspace }: Props) => {
       )}
       {data && (
         <Stack align="flex-end" spacing={6}>
-          <HStack>
-            <Text>Monthly</Text>
-            <Switch
-              isChecked={isYearly}
-              onChange={() => setIsYearly(!isYearly)}
-            />
-            <HStack>
-              <Text>Yearly</Text>
-              <Tag colorScheme="red">16% off</Tag>
-            </HStack>
-          </HStack>
           <HStack alignItems="stretch" spacing="4" w="full">
-            <StarterPlanPricingCard
-              scopedT={scopedT as I18nFunction}
-              highlights={false}
-              isSelectPlan={true}
-              workspace={workspace}
-              currentSubscription={{ isYearly: data.subscription?.isYearly }}
-              onPayClick={(props) =>
-                handlePayClick({ ...props, plan: Plan.STARTER })
-              }
-              isYearly={isYearly}
-              isLoading={isUpdatingSubscription}
-              currency={data.subscription?.currency}
-            />
-
-            <LifeTimePlanPricingCard
-              scopedT={scopedT as I18nFunction}
-              highlights={true}
-              isSelectPlan={true}
-              workspace={workspace}
-              currentSubscription={{ isYearly: false }}
-              onPayClick={(props) =>
-                handlePayClick({ ...props, plan: Plan.LIFETIME })
-              }
-              isYearly={false}
-              isLoading={isUpdatingSubscription}
-              currency={data.subscription?.currency}
-            />
-
             <ProPlanPricingCard
-              scopedT={scopedT as I18nFunction}
-              highlights={false}
-              isSelectPlan={true}
-              workspace={workspace}
-              currentSubscription={{ isYearly: data.subscription?.isYearly }}
-              onPayClick={(props) =>
-                handlePayClick({ ...props, plan: Plan.PRO })
-              }
-              isYearly={isYearly}
+              currentPlan={workspace.plan}
+              onPayClick={() => handlePayClick(Plan.PRO)}
               isLoading={isUpdatingSubscription}
-              currency={data.subscription?.currency}
+              currency={'brl'}
             />
           </HStack>
         </Stack>
       )}
-
-      {/* <Text color="gray.500">
-        {scopedT('customLimit.preLink')}{' '}
-        <TextLink href={'https://typebot.io/enterprise-lead-form'} isExternal>
-          {scopedT('customLimit.link')}
-        </TextLink>
-      </Text> */}
     </Stack>
   )
 }

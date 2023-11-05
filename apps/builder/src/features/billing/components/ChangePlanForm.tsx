@@ -59,8 +59,7 @@ export const ChangePlanForm = ({ workspace, excludedPlans }: Props) => {
     const newSubscription = {
       plan,
       workspaceId: workspace.id,
-      currency:
-        data?.subscription?.currency ?? 'brl',
+      currency: 'brl',
       // (guessIfUserIsEuropean() ? 'eur' : 'usd'),
     } as const
     if (workspace.stripeId) {
@@ -82,13 +81,6 @@ export const ChangePlanForm = ({ workspace, excludedPlans }: Props) => {
   return (
     <Stack spacing={6}>
       <HStack maxW="500px">
-        {/* <StripeClimateLogo />
-        <Text fontSize="xs" color="gray.500">
-          {t('billing.contribution.preLink')}{' '}
-          <TextLink href="https://climate.stripe.com/5VCRAq" isExternal>
-            {t('billing.contribution.link')}
-          </TextLink>
-        </Text> */}
       </HStack>
       {!workspace.stripeId && (
         <ParentModalProvider>
@@ -100,7 +92,7 @@ export const ChangePlanForm = ({ workspace, excludedPlans }: Props) => {
           />
         </ParentModalProvider>
       )}
-      {data && (
+      {data && workspace?.plan !== Plan.UNDEFINED && (
         <Stack align="flex-end" spacing={6}>
           <HStack alignItems="stretch" spacing="4" w="full">
             {excludedPlans?.includes('STARTER') ? null : (
@@ -123,13 +115,6 @@ export const ChangePlanForm = ({ workspace, excludedPlans }: Props) => {
           </HStack>
         </Stack>
       )}
-
-      {/*<Text color="gray.500">
-        {t('billing.customLimit.preLink')}{' '}
-        <TextLink href={'https://typebot.io/enterprise-lead-form'} isExternal>
-          {t('billing.customLimit.link')}
-        </TextLink>
-      </Text> */}
     </Stack>
   )
 }

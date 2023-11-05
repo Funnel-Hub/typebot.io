@@ -70,7 +70,7 @@ export const DashboardPage = () => {
           <VStack w="full" justifyContent="center" pt="10" spacing={6}>
             <Stack spacing="4">
               <Stack spacing="4">
-                <Heading fontSize="3xl">{t('dashboard.heading')}</Heading>
+                <Heading fontSize="3xl">{t('billing.plans.heading')}</Heading>
               </Stack>
               <SelectPlanForm workspace={workspace} />
             </Stack>

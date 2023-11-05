@@ -138,7 +138,7 @@ export const createCheckoutSessionUrl =
         address: 'auto',
         name: 'never',
       },
-      mode: plan === Plan.LIFETIME ? 'payment' : 'subscription',
+      mode: 'subscription',
       metadata: {
         workspaceId,
         plan,
