@@ -4,16 +4,16 @@ import { useTypebot } from '@/features/editor/providers/TypebotProvider'
 import { useGraph } from '@/features/graph/providers/GraphProvider'
 import { useToast } from '@/hooks/useToast'
 import { Standard } from '@typebot.io/nextjs'
-import { ChatReply } from '@typebot.io/schemas'
+import { ContinueChatResponse } from '@typebot.io/schemas'
 
 export const WebPreview = () => {
   const { typebot } = useTypebot()
-  const { startPreviewAtGroup } = useEditor()
+  const { startPreviewAtGroup, startPreviewAtEvent } = useEditor()
   const { setPreviewingBlock } = useGraph()
 
   const { showToast } = useToast()
 
-  const handleNewLogs = (logs: ChatReply['logs']) => {
+  const handleNewLogs = (logs: ContinueChatResponse['logs']) => {
     logs?.forEach((log) => {
       showToast({
         icon: <WebhookIcon />,
@@ -40,8 +40,21 @@ export const WebPreview = () => {
     <Standard
       key={`web-preview${startPreviewAtGroup ?? ''}`}
       typebot={typebot}
-      startGroupId={startPreviewAtGroup}
-      onNewInputBlock={setPreviewingBlock}
+      startFrom={
+        startPreviewAtGroup
+          ? { type: 'group', groupId: startPreviewAtGroup }
+          : startPreviewAtEvent
+          ? { type: 'event', eventId: startPreviewAtEvent }
+          : undefined
+      }
+      onNewInputBlock={(block) =>
+        setPreviewingBlock({
+          id: block.id,
+          groupId:
+            typebot.groups.find((g) => g.blocks.some((b) => b.id === block.id))
+              ?.id ?? '',
+        })
+      }
       onNewLogs={handleNewLogs}
       style={{
         borderWidth: '1px',

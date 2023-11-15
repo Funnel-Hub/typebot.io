@@ -289,7 +289,8 @@ const tolgeeEnv = {
       'NEXT_PUBLIC_TOLGEE_API_KEY'
     ),
     NEXT_PUBLIC_TOLGEE_API_URL: getRuntimeVariable(
-      'NEXT_PUBLIC_TOLGEE_API_URL'
+      'NEXT_PUBLIC_TOLGEE_API_URL',
+      'https://tolgee.server.baptistearno.com'
     ),
   },
 }

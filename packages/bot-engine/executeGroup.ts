@@ -1,8 +1,7 @@
 import {
-  ChatReply,
+  ContinueChatResponse,
   Group,
   InputBlock,
-  InputBlockType,
   RuntimeOptions,
   SessionState,
 } from '@typebot.io/schemas'
@@ -22,14 +21,20 @@ import { injectVariableValuesInPictureChoiceBlock } from './blocks/inputs/pictur
 import { getPrefilledInputValue } from './getPrefilledValue'
 import { parseDateInput } from './blocks/inputs/date/parseDateInput'
 import { deepParseVariables } from './variables/deepParseVariables'
-import { parseBubbleBlock } from './parseBubbleBlock'
+import {
+  BubbleBlockWithDefinedContent,
+  parseBubbleBlock,
+} from './parseBubbleBlock'
+import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
+import { VisitedEdge } from '@typebot.io/prisma'
 
 type ContextProps = {
   version: 1 | 2
   state: SessionState
-  currentReply?: ChatReply
+  currentReply?: ContinueChatResponse
   currentLastBubbleId?: string
   firstBubbleWasStreamed?: boolean
+  visitedEdges: VisitedEdge[]
 }
 
 export const executeGroup = async (
@@ -37,15 +42,22 @@ export const executeGroup = async (
   {
     version,
     state,
+    visitedEdges,
     currentReply,
     currentLastBubbleId,
     firstBubbleWasStreamed,
   }: ContextProps
-): Promise<ChatReply & { newSessionState: SessionState }> => {
-  const messages: ChatReply['messages'] = currentReply?.messages ?? []
-  let clientSideActions: ChatReply['clientSideActions'] =
+): Promise<
+  ContinueChatResponse & {
+    newSessionState: SessionState
+    visitedEdges: VisitedEdge[]
+  }
+> => {
+  const messages: ContinueChatResponse['messages'] =
+    currentReply?.messages ?? []
+  let clientSideActions: ContinueChatResponse['clientSideActions'] =
     currentReply?.clientSideActions
-  let logs: ChatReply['logs'] = currentReply?.logs
+  let logs: ContinueChatResponse['logs'] = currentReply?.logs
   let nextEdgeId = null
   let lastBubbleBlockId: string | undefined = currentLastBubbleId
 
@@ -57,11 +69,12 @@ export const executeGroup = async (
     nextEdgeId = block.outgoingEdgeId
 
     if (isBubbleBlock(block)) {
-      if (firstBubbleWasStreamed && index === 0) continue
+      if (!block.content || (firstBubbleWasStreamed && index === 0)) continue
       messages.push(
-        parseBubbleBlock(block, {
+        parseBubbleBlock(block as BubbleBlockWithDefinedContent, {
           version,
           variables: newSessionState.typebotsQueue[0].typebot.variables,
+          typebotVersion: newSessionState.typebotsQueue[0].typebot.version,
         })
       )
       lastBubbleBlockId = block.id
@@ -74,13 +87,11 @@ export const executeGroup = async (
         input: await parseInput(newSessionState)(block),
         newSessionState: {
           ...newSessionState,
-          currentBlock: {
-            groupId: group.id,
-            blockId: block.id,
-          },
+          currentBlockId: block.id,
         },
         clientSideActions,
         logs,
+        visitedEdges,
       }
     const executionResponse = isLogicBlock(block)
       ? await executeLogic(newSessionState)(block)
@@ -113,13 +124,11 @@ export const executeGroup = async (
           messages,
           newSessionState: {
             ...newSessionState,
-            currentBlock: {
-              groupId: group.id,
-              blockId: block.id,
-            },
+            currentBlockId: block.id,
           },
           clientSideActions,
           logs,
+          visitedEdges,
         }
       }
     }
@@ -131,19 +140,22 @@ export const executeGroup = async (
   }
 
   if (!nextEdgeId && newSessionState.typebotsQueue.length === 1)
-    return { messages, newSessionState, clientSideActions, logs }
+    return { messages, newSessionState, clientSideActions, logs, visitedEdges }
 
   const nextGroup = await getNextGroup(newSessionState)(nextEdgeId ?? undefined)
 
   newSessionState = nextGroup.newSessionState
 
+  if (nextGroup.visitedEdge) visitedEdges.push(nextGroup.visitedEdge)
+
   if (!nextGroup.group) {
-    return { messages, newSessionState, clientSideActions, logs }
+    return { messages, newSessionState, clientSideActions, logs, visitedEdges }
   }
 
   return executeGroup(nextGroup.group, {
     version,
     state: newSessionState,
+    visitedEdges,
     currentReply: {
       messages,
       clientSideActions,
@@ -165,7 +177,7 @@ const computeRuntimeOptions =
 
 export const parseInput =
   (state: SessionState) =>
-  async (block: InputBlock): Promise<ChatReply['input']> => {
+  async (block: InputBlock): Promise<ContinueChatResponse['input']> => {
     switch (block.type) {
       case InputBlockType.CHOICE: {
         return injectVariableValuesInButtonsInputBlock(state)(block)
@@ -188,14 +200,14 @@ export const parseInput =
           ...parsedBlock,
           options: {
             ...parsedBlock.options,
-            min: isNotEmpty(parsedBlock.options.min as string)
-              ? Number(parsedBlock.options.min)
+            min: isNotEmpty(parsedBlock.options?.min as string)
+              ? Number(parsedBlock.options?.min)
               : undefined,
-            max: isNotEmpty(parsedBlock.options.max as string)
-              ? Number(parsedBlock.options.max)
+            max: isNotEmpty(parsedBlock.options?.max as string)
+              ? Number(parsedBlock.options?.max)
               : undefined,
-            step: isNotEmpty(parsedBlock.options.step as string)
-              ? Number(parsedBlock.options.step)
+            step: isNotEmpty(parsedBlock.options?.step as string)
+              ? Number(parsedBlock.options?.step)
               : undefined,
           },
         }

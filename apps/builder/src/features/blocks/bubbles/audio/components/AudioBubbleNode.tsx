@@ -1,10 +1,10 @@
 import { Text } from '@chakra-ui/react'
-import { AudioBubbleContent } from '@typebot.io/schemas'
 import { isDefined } from '@typebot.io/lib'
 import { useTranslate } from '@tolgee/react'
+import { AudioBubbleBlock } from '@typebot.io/schemas'
 
 type Props = {
-  url: AudioBubbleContent['url']
+  url: NonNullable<AudioBubbleBlock['content']>['url']
 }
 
 export const AudioBubbleNode = ({ url }: Props) => {
@@ -12,8 +12,6 @@ export const AudioBubbleNode = ({ url }: Props) => {
   return isDefined(url) ? (
     <audio src={url} controls />
   ) : (
-    <Text color={'gray.500'}>
-      {t('editor.blocks.bubbles.audio.node.clickToEdit.text')}
-    </Text>
+    <Text color={'gray.500'}>{t('clickToEdit')}</Text>
   )
 }

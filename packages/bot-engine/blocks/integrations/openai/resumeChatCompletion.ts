@@ -1,5 +1,5 @@
 import { byId, isDefined } from '@typebot.io/lib'
-import { ChatReply, SessionState } from '@typebot.io/schemas'
+import { ContinueChatResponse, SessionState } from '@typebot.io/schemas'
 import { ChatCompletionOpenAIOptions } from '@typebot.io/schemas/features/blocks/integrations/openai'
 import { VariableWithUnknowValue } from '@typebot.io/schemas/features/typebot/variable'
 import { updateVariablesInSession } from '../../../variables/updateVariablesInSession'
@@ -14,12 +14,12 @@ export const resumeChatCompletion =
     }: {
       outgoingEdgeId?: string
       options: ChatCompletionOpenAIOptions
-      logs?: ChatReply['logs']
+      logs?: ContinueChatResponse['logs']
     }
   ) =>
   async (message: string, totalTokens?: number) => {
     let newSessionState = state
-    const newVariables = options.responseMapping.reduce<
+    const newVariables = options.responseMapping?.reduce<
       VariableWithUnknowValue[]
     >((newVariables, mapping) => {
       const { typebot } = newSessionState.typebotsQueue[0]
@@ -41,7 +41,7 @@ export const resumeChatCompletion =
       }
       return newVariables
     }, [])
-    if (newVariables.length > 0)
+    if (newVariables && newVariables.length > 0)
       newSessionState = updateVariablesInSession(newSessionState)(newVariables)
     return {
       outgoingEdgeId,

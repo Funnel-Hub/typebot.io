@@ -1,19 +1,21 @@
 import { SearchInput } from '@/components/inputs/SearchInput'
 import { InputSubmitContent } from '@/types'
 import { isMobile } from '@/utils/isMobileSignal'
-import { isSvgSrc } from '@typebot.io/lib/utils'
+import { isDefined, isSvgSrc } from '@typebot.io/lib/utils'
 import { PictureChoiceBlock } from '@typebot.io/schemas/features/blocks/inputs/pictureChoice'
-import { For, Show, createSignal, onMount } from 'solid-js'
+import { For, Show, createEffect, createSignal, onMount } from 'solid-js'
 
 type Props = {
   defaultItems: PictureChoiceBlock['items']
   options: PictureChoiceBlock['options']
   onSubmit: (value: InputSubmitContent) => void
+  onTransitionEnd: () => void
 }
 
 export const SinglePictureChoice = (props: Props) => {
   let inputRef: HTMLInputElement | undefined
   const [filteredItems, setFilteredItems] = createSignal(props.defaultItems)
+  const [totalLoadedImages, setTotalLoadedImages] = createSignal(0)
 
   onMount(() => {
     if (!isMobile() && inputRef) inputRef.focus()
@@ -41,14 +43,26 @@ export const SinglePictureChoice = (props: Props) => {
     )
   }
 
+  createEffect(() => {
+    if (
+      totalLoadedImages() ===
+      props.defaultItems.filter((item) => isDefined(item.pictureSrc)).length
+    )
+      props.onTransitionEnd()
+  })
+
+  const onImageLoad = () => {
+    setTotalLoadedImages((acc) => acc + 1)
+  }
+
   return (
     <div class="flex flex-col gap-2 w-full">
-      <Show when={props.options.isSearchable}>
+      <Show when={props.options?.isSearchable}>
         <div class="flex items-end typebot-input w-full">
           <SearchInput
             ref={inputRef}
             onInput={filterItems}
-            placeholder={props.options.searchInputPlaceholder ?? ''}
+            placeholder={props.options?.searchInputPlaceholder ?? ''}
             onClear={() => setFilteredItems(props.defaultItems)}
           />
         </div>
@@ -56,8 +70,8 @@ export const SinglePictureChoice = (props: Props) => {
       <div
         class={
           'gap-2 flex flex-wrap justify-end' +
-          (props.options.isSearchable
-            ? ' overflow-y-scroll max-h-[464px] rounded-md hide-scrollbar'
+          (props.options?.isSearchable
+            ? ' overflow-y-scroll max-h-[464px] rounded-md'
             : '')
         }
       >
@@ -77,6 +91,7 @@ export const SinglePictureChoice = (props: Props) => {
                 elementtiming={`Picture choice ${index() + 1}`}
                 fetchpriority={'high'}
                 class="m-auto"
+                onLoad={onImageLoad}
               />
               <div
                 class={
