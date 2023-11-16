@@ -3,6 +3,7 @@
   "include": ["**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "target": "es2022"
   }
 }

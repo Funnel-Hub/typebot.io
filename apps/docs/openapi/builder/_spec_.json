@@ -400,7 +400,8 @@
                                     "LIFETIME",
                                     "OFFERED",
                                     "CUSTOM",
-                                    "UNLIMITED"
+                                    "UNLIMITED",
+                                    "UNDEFINED"
                                   ]
                                 }
                               },
