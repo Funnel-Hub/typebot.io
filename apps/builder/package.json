@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "dev": "dotenv -e ./.env -e ../../.env -- next dev -p 3000",
+    "dev": "dotenv -e ./.env -e ../../.env -- next dev -p 3000 --experimental-https",
     "build": "dotenv -e ./.env -e ../../.env -- next build",
     "start": "dotenv -e ./.env -e ../../.env -- next start",
     "lint": "dotenv -e ./.env -e ../../.env -- next lint",
@@ -46,6 +46,7 @@
     "@udecode/plate-link": "21.2.0",
     "@udecode/plate-ui-link": "21.2.0",
     "@udecode/plate-ui-toolbar": "21.1.5",
+    "@funnelhub/sidebar": "file:../../../funnelhub-sidebar",
     "@uiw/codemirror-extensions-langs": "4.21.7",
     "@uiw/codemirror-theme-github": "4.21.7",
     "@uiw/codemirror-theme-tokyo-night": "4.21.7",

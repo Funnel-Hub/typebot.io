@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
-import { ChakraProvider, createStandaloneToast } from '@chakra-ui/react'
+import { ChakraProvider, createStandaloneToast, useDisclosure } from '@chakra-ui/react'
 import { customTheme } from '@/lib/theme'
 import { useRouterProgressBar } from '@/lib/routerProgressBar'
 import '@/assets/styles/routerProgressBar.css'
@@ -21,6 +21,7 @@ import { isCloudProdInstance } from '@/helpers/isCloudProdInstance'
 import { initPostHogIfEnabled } from '@/features/telemetry/posthog'
 import { TolgeeProvider, useTolgeeSSR } from '@tolgee/react'
 import { tolgee } from '@/lib/tolgee'
+import { ChakraSidebar } from '@funnelhub/sidebar'
 
 initPostHogIfEnabled()
 
@@ -30,6 +31,9 @@ const App = ({ Component, pageProps }: AppProps) => {
   useRouterProgressBar()
   const { query, pathname, locale } = useRouter()
   const ssrTolgee = useTolgeeSSR(tolgee, locale)
+
+  const { onClose } = useDisclosure()
+  const [setIsCollapsed] = useState(false)
 
   useEffect(() => {
     if (pathname.endsWith('/edit') || pathname.endsWith('/analytics')) {
@@ -60,6 +64,15 @@ const App = ({ Component, pageProps }: AppProps) => {
       <TolgeeProvider tolgee={ssrTolgee}>
         <ChakraProvider theme={customTheme}>
           <SessionProvider session={pageProps.session}>
+
+            <ChakraSidebar
+              onClose={() => {
+                onClose()
+                setIsCollapsed(true)
+              }}
+              onOpen={() => setIsCollapsed(false)}
+              display={{ base: 'none', md: 'block' }} />
+
             <UserProvider>
               <TypebotProvider typebotId={typebotId}>
                 <WorkspaceProvider typebotId={typebotId}>
