@@ -4,7 +4,7 @@ export enum IntegrationBlockType {
   GOOGLE_ANALYTICS = 'Google Analytics',
   WEBHOOK = 'Webhook',
   EMAIL = 'Email',
-  ZAPIER = 'Zapier',
+  // ZAPIER = 'Zapier',
   MAKE_COM = 'Make.com',
   PABBLY_CONNECT = 'Pabbly',
   CHATWOOT = 'Chatwoot',
