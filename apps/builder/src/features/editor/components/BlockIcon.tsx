@@ -1,6 +1,6 @@
 import { IconProps, useColorModeValue } from '@chakra-ui/react'
 import React from 'react'
-import { FlagIcon, SendEmailIcon, WebhookIcon } from '@/components/icons'
+import { FlagIcon, SendEmailIcon, WebhookIcon, WhatsappIcon } from '@/components/icons'
 import { WaitIcon } from '@/features/blocks/logic/wait/components/WaitIcon'
 import { ScriptIcon } from '@/features/blocks/logic/script/components/ScriptIcon'
 import { JumpIcon } from '@/features/blocks/logic/jump/components/JumpIcon'
@@ -25,7 +25,7 @@ import { GoogleAnalyticsLogo } from '@/features/blocks/integrations/googleAnalyt
 import { GoogleSheetsLogo } from '@/features/blocks/integrations/googleSheets/components/GoogleSheetsLogo'
 import { MakeComLogo } from '@/features/blocks/integrations/makeCom/components/MakeComLogo'
 import { PabblyConnectLogo } from '@/features/blocks/integrations/pabbly/components/PabblyConnectLogo'
-import { ZapierLogo } from '@/features/blocks/integrations/zapier/components/ZapierLogo'
+// import { ZapierLogo } from '@/features/blocks/integrations/zapier/components/ZapierLogo'
 import { ConditionIcon } from '@/features/blocks/logic/condition/components/ConditionIcon'
 import { RedirectIcon } from '@/features/blocks/logic/redirect/components/RedirectIcon'
 import { SetVariableIcon } from '@/features/blocks/logic/setVariable/components/SetVariableIcon'
@@ -103,8 +103,10 @@ export const BlockIcon = ({ type, ...props }: BlockIconProps): JSX.Element => {
       return <GoogleAnalyticsLogo {...props} />
     case IntegrationBlockType.WEBHOOK:
       return <WebhookIcon {...props} />
-    case IntegrationBlockType.ZAPIER:
-      return <ZapierLogo {...props} />
+    case IntegrationBlockType.WHATSAPP:
+      return <WhatsappIcon {...props} />
+    // case IntegrationBlockType.ZAPIER:
+    //   return <ZapierLogo {...props} />
     case IntegrationBlockType.MAKE_COM:
       return <MakeComLogo {...props} />
     case IntegrationBlockType.PABBLY_CONNECT:

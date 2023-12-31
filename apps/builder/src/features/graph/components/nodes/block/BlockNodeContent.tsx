@@ -23,7 +23,7 @@ import { MakeComContent } from '@/features/blocks/integrations/makeCom/component
 import { PabblyConnectContent } from '@/features/blocks/integrations/pabbly/components/PabblyConnectContent'
 import { SendEmailContent } from '@/features/blocks/integrations/sendEmail/components/SendEmailContent'
 import { WebhookContent } from '@/features/blocks/integrations/webhook/components/WebhookContent'
-import { ZapierContent } from '@/features/blocks/integrations/zapier/components/ZapierContent'
+// import { ZapierContent } from '@/features/blocks/integrations/zapier/components/ZapierContent'
 import { RedirectNodeContent } from '@/features/blocks/logic/redirect/components/RedirectNodeContent'
 import { SetVariableContent } from '@/features/blocks/logic/setVariable/components/SetVariableContent'
 import { TypebotLinkNode } from '@/features/blocks/logic/typebotLink/components/TypebotLinkNode'
@@ -38,6 +38,7 @@ import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/con
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
+import { WhatsappNodeBody } from '@/features/blocks/integrations/whatsapp/components/WhatsappNodeBody'
 
 type Props = {
   block: BlockV6
@@ -121,12 +122,24 @@ export const BlockNodeContent = ({ block, indices }: Props): JSX.Element => {
     case IntegrationBlockType.GOOGLE_ANALYTICS: {
       return <GoogleAnalyticsNodeBody action={block.options?.action} />
     }
+    case IntegrationBlockType.WHATSAPP: {
+      return (
+        <WhatsappNodeBody
+          task={block.options?.task}
+          responseMapping={
+            block.options && 'responseMapping' in block.options
+              ? block.options.responseMapping
+              : []
+          }
+        />
+      )
+    }
     case IntegrationBlockType.WEBHOOK: {
       return <WebhookContent block={block} />
     }
-    case IntegrationBlockType.ZAPIER: {
-      return <ZapierContent block={block} />
-    }
+    // case IntegrationBlockType.ZAPIER: {
+    //   return <ZapierContent block={block} />
+    // }
     case IntegrationBlockType.PABBLY_CONNECT: {
       return <PabblyConnectContent block={block} />
     }

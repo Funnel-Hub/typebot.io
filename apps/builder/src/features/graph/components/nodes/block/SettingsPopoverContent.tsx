@@ -25,7 +25,7 @@ import { TextInputSettings } from '@/features/blocks/inputs/textInput/components
 import { GoogleAnalyticsSettings } from '@/features/blocks/integrations/googleAnalytics/components/GoogleAnalyticsSettings'
 import { SendEmailSettings } from '@/features/blocks/integrations/sendEmail/components/SendEmailSettings'
 import { WebhookSettings } from '@/features/blocks/integrations/webhook/components/WebhookSettings'
-import { ZapierSettings } from '@/features/blocks/integrations/zapier/components/ZapierSettings'
+// import { ZapierSettings } from '@/features/blocks/integrations/zapier/components/ZapierSettings'
 import { RedirectSettings } from '@/features/blocks/logic/redirect/components/RedirectSettings'
 import { SetVariableSettings } from '@/features/blocks/logic/setVariable/components/SetVariableSettings'
 import { TypebotLinkForm } from '@/features/blocks/logic/typebotLink/components/TypebotLinkForm'
@@ -44,6 +44,7 @@ import { ZemanticAiSettings } from '@/features/blocks/integrations/zemanticAi/Ze
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
+import { WhatsappSettings } from '@/features/blocks/integrations/whatsapp/components/WhatsappSettings'
 
 type Props = {
   block: BlockWithOptions
@@ -275,9 +276,9 @@ export const BlockSettings = ({
         />
       )
     }
-    case IntegrationBlockType.ZAPIER: {
-      return <ZapierSettings block={block} onOptionsChange={updateOptions} />
-    }
+    // case IntegrationBlockType.ZAPIER: {
+    //   return <ZapierSettings block={block} onOptionsChange={updateOptions} />
+    // }
     case IntegrationBlockType.MAKE_COM: {
       return <MakeComSettings block={block} onOptionsChange={updateOptions} />
     }
@@ -307,6 +308,9 @@ export const BlockSettings = ({
     }
     case IntegrationBlockType.OPEN_AI: {
       return <OpenAISettings block={block} onOptionsChange={updateOptions} />
+    }
+    case IntegrationBlockType.WHATSAPP: {
+      return <WhatsappSettings block={block} onOptionsChange={updateOptions} />
     }
     case IntegrationBlockType.PIXEL: {
       return (
