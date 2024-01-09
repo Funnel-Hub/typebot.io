@@ -4,44 +4,50 @@ import {
   Prisma,
   WorkspaceRole,
   Session,
+  Plan,
 } from '@typebot.io/prisma'
 import type { Adapter, AdapterUser } from 'next-auth/adapters'
-import { createId } from '@paralleldrive/cuid2'
 import { generateId } from '@typebot.io/lib'
 import { sendTelemetryEvents } from '@typebot.io/lib/telemetry/sendTelemetryEvent'
 import { TelemetryEvent } from '@typebot.io/schemas/features/telemetry'
 import { convertInvitationsToCollaborations } from '@/features/auth/helpers/convertInvitationsToCollaborations'
 import { getNewUserInvitations } from '@/features/auth/helpers/getNewUserInvitations'
 import { joinWorkspaces } from '@/features/auth/helpers/joinWorkspaces'
-import { parseWorkspaceDefaultPlan } from '@/features/workspace/helpers/parseWorkspaceDefaultPlan'
 import { env } from '@typebot.io/env'
+import { createId } from '@paralleldrive/cuid2'
 
 export function customAdapter(p: PrismaClient): Adapter {
   return {
     createUser: async (data: Omit<AdapterUser, 'id'>) => {
-      if (!data.email)
-        throw Error('Provider did not forward email but it is required')
-      const user = { id: createId(), email: data.email as string }
+      if (!data.email) {
+		throw Error('Provider did not forward email but it is required')
+	  }
+
+	  const userData = { ...data } as AdapterUser
+
       const { invitations, workspaceInvitations } = await getNewUserInvitations(
         p,
-        user.email
+        data.email
       )
+
       if (
         env.DISABLE_SIGNUP &&
-        env.ADMIN_EMAIL !== user.email &&
+        env.ADMIN_EMAIL !== data.email &&
         invitations.length === 0 &&
         workspaceInvitations.length === 0
-      )
-        throw Error('New users are forbidden')
+      ) {
+		throw Error('New users are forbidden')
+	  }
 
-      const newWorkspaceData = {
-        name: data.name ? `${data.name}'s workspace` : `My workspace`,
-        plan: parseWorkspaceDefaultPlan(data.email),
-      }
+	  const newWorkspaceData = {
+		name: "Meu espaço de trabalho",
+		plan: Plan.PRO
+	  }
+
       const createdUser = await p.user.create({
         data: {
           ...data,
-          id: user.id,
+		  id: userData.id ?? createId(),
           apiTokens: {
             create: { name: 'Default', token: generateId(24) },
           },
@@ -62,8 +68,11 @@ export function customAdapter(p: PrismaClient): Adapter {
           workspaces: { select: { workspaceId: true } },
         },
       })
+
       const newWorkspaceId = createdUser.workspaces.pop()?.workspaceId
+
       const events: TelemetryEvent[] = []
+
       if (newWorkspaceId) {
         events.push({
           name: 'Workspace created',
@@ -72,6 +81,7 @@ export function customAdapter(p: PrismaClient): Adapter {
           data: newWorkspaceData,
         })
       }
+
       events.push({
         name: 'User created',
         userId: createdUser.id,
@@ -80,11 +90,25 @@ export function customAdapter(p: PrismaClient): Adapter {
           name: data.name ? (data.name as string).split(' ')[0] : undefined,
         },
       })
+
       await sendTelemetryEvents(events)
-      if (invitations.length > 0)
-        await convertInvitationsToCollaborations(p, user, invitations)
-      if (workspaceInvitations.length > 0)
-        await joinWorkspaces(p, user, workspaceInvitations)
+
+      if (invitations.length > 0) {
+		await convertInvitationsToCollaborations(
+			p,
+			{ id: createdUser.id, email: data.email },
+			invitations
+		)
+	  }
+
+      if (workspaceInvitations.length > 0) {
+		await joinWorkspaces(
+			p,
+			{ id: createdUser.id, email: data.email },
+			workspaceInvitations
+		)
+	  }
+
       return createdUser as AdapterUser
     },
     getUser: async (id) =>

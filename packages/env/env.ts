@@ -20,22 +20,24 @@ const baseEnv = {
     DISABLE_SIGNUP: boolean.optional().default('false'),
     ADMIN_EMAIL: z.string().email().optional(),
     DEFAULT_WORKSPACE_PLAN: z
-      .enum(['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'])
-      .refine((str) =>
-        ['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'].includes(str)
-      )
-      .default('UNDEFINED'),
+	.enum(['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'])
+	.refine((str) =>
+	['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'].includes(str)
+	)
+	.default('UNDEFINED'),
     DEBUG: boolean.optional().default('false'),
+	WORKSPACE_TOKEN: z.string()
   },
   client: {
-    NEXT_PUBLIC_E2E_TEST: boolean.optional(),
+	NEXT_PUBLIC_E2E_TEST: boolean.optional(),
     NEXT_PUBLIC_VIEWER_URL: z
-      .string()
-      .min(1)
-      .transform((string) => string.split(',')),
+	.string()
+	.min(1)
+	.transform((string) => string.split(',')),
     NEXT_PUBLIC_VIEWER_INTERNAL_URL: z.string().url().optional(),
     NEXT_PUBLIC_ONBOARDING_TYPEBOT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE: z.coerce.number().optional(),
+	NEXT_PUBLIC_FUNNELHUB_API_URL: z.string().url(),
   },
   runtimeEnv: {
     NEXT_PUBLIC_E2E_TEST: getRuntimeVariable('NEXT_PUBLIC_E2E_TEST'),
@@ -48,6 +50,9 @@ const baseEnv = {
     ),
     NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE: getRuntimeVariable(
       'NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE'
+    ),
+	NEXT_PUBLIC_FUNNELHUB_API_URL: getRuntimeVariable(
+      'NEXT_PUBLIC_FUNNELHUB_API_URL'
     ),
   },
 }

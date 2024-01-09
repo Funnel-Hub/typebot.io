@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
 import { ChakraProvider, createStandaloneToast, useDisclosure } from '@chakra-ui/react'
@@ -21,7 +21,7 @@ import { isCloudProdInstance } from '@/helpers/isCloudProdInstance'
 import { initPostHogIfEnabled } from '@/features/telemetry/posthog'
 import { TolgeeProvider, useTolgeeSSR } from '@tolgee/react'
 import { tolgee } from '@/lib/tolgee'
-import { ChakraSidebar } from '@funnelhub/sidebar'
+import { FunnelHubSidebar } from '@/components/FunnelHubSidebar'
 
 initPostHogIfEnabled()
 
@@ -33,7 +33,6 @@ const App = ({ Component, pageProps }: AppProps) => {
   const ssrTolgee = useTolgeeSSR(tolgee, locale)
 
   const { onClose } = useDisclosure()
-  const [setIsCollapsed] = useState(false)
 
   useEffect(() => {
     if (pathname.endsWith('/edit') || pathname.endsWith('/analytics')) {
@@ -59,20 +58,12 @@ const App = ({ Component, pageProps }: AppProps) => {
   const typebotId = query.typebotId?.toString()
 
   return (
-    <>
+	<>
       <ToastContainer />
       <TolgeeProvider tolgee={ssrTolgee}>
         <ChakraProvider theme={customTheme}>
           <SessionProvider session={pageProps.session}>
-
-            <ChakraSidebar
-              onClose={() => {
-                onClose()
-                setIsCollapsed(true)
-              }}
-              onOpen={() => setIsCollapsed(false)}
-              display={{ base: 'none', md: 'block' }} />
-
+			<FunnelHubSidebar onClose={onClose} />
             <UserProvider>
               <TypebotProvider typebotId={typebotId}>
                 <WorkspaceProvider typebotId={typebotId}>

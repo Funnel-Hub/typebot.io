@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { env } from '@typebot.io/env'
 import { mockedUser } from '@typebot.io/lib/mockedUser'
+import { extractBearerToken } from '@/lib/trpc'
 
 export const getAuthenticatedUser = async (
   req: NextApiRequest,
@@ -33,6 +34,3 @@ const authenticateByToken = async (
   Sentry.setUser({ id: user.id })
   return user
 }
-
-const extractBearerToken = (req: NextApiRequest) =>
-  req.headers['authorization']?.slice(7)
