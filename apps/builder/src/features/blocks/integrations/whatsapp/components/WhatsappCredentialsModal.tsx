@@ -21,8 +21,6 @@ type Props = {
   onNewCredentials: (id: string) => void
 }
 
-const credentialsId = createId()
-
 const stepMessages = {
   loadingQrCode: 'Gerando QR code...',
   loadingAuthentication: 'Processando autenticação...'
@@ -91,24 +89,19 @@ export const WhatsappCredentialsModal = ({
           case 'ready':
             mutate({
               credentials: {
-                id: credentialsId,
+                id: createId(),
                 type: 'whatsApp',
                 workspaceId: workspace.id,
-                name: 'whatsApp',
+                name: `whatsApp-${new Date().getTime()}`,
                 data: {
                   clientId: `${workspace.id}_${typebot.id}`,
                   createdAt: new Date().toISOString(),
                 }
               },
             })
-            setStepLoadingMessage(null)
-            setProcessAuthWppLoading(false)
+            setStepLoadingMessage(stepMessages.loadingQrCode)
+            setProcessAuthWppLoading(true)
             setWhatsappQrCode(null)
-            socket.send(JSON.stringify({
-              method: 'sendMessage',
-              phoneNumber: '88988443913',
-              messageBody: 'Eae mano, via typebot!'
-            }))
         }
       }
     };
