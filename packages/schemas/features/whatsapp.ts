@@ -170,7 +170,7 @@ export const whatsAppCredentialsSchema = z
     type: z.literal('whatsApp'),
     data: z.object({
       clientId: z.string(),
-      createdAt: z.string(),
+      phoneNumber: z.string(),
     }),
   })
   .merge(credentialsBaseSchema)
