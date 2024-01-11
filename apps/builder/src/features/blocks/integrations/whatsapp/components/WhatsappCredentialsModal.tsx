@@ -1,53 +1,56 @@
-import { TextInput } from '@/components/inputs/TextInput'
-import { TextLink } from '@/components/TextLink'
+import { useTypebot } from '@/features/editor/providers/TypebotProvider'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import { useToast } from '@/hooks/useToast'
 import { trpc } from '@/lib/trpc'
 import {
+  Flex,
   Modal,
-  ModalOverlay,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Stack,
-  ModalFooter,
-  Button,
-  Alert,
-  AlertIcon,
+  ModalOverlay,
+  Spinner,
+  Text
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
-
-const whatsappTokensPage = 'https://platform.openai.com/account/api-keys'
-
+import { createId } from '@paralleldrive/cuid2'
+import { useQRCode } from 'next-qrcode'
+import { useCallback, useEffect, useRef, useState } from 'react'
 type Props = {
   isOpen: boolean
   onClose: () => void
   onNewCredentials: (id: string) => void
 }
 
+const credentialsId = createId()
+
+const stepMessages = {
+  loadingQrCode: 'Gerando QR code...',
+  loadingAuthentication: 'Processando autenticação...'
+}
+
 export const WhatsappCredentialsModal = ({
   isOpen,
   onClose,
-  onNewCredentials,
+  onNewCredentials
 }: Props) => {
   const { workspace } = useWorkspace()
+  const { typebot } = useTypebot()
+  const { SVG } = useQRCode();
   const { showToast } = useToast()
-  const [systemUserAccessToken, setSystemUserAccessToken] = useState('')
-  const [name, setName] = useState('')
+  const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
+  const [processAuthWppLoading, setProcessAuthWppLoading] = useState(true)
+  const [stepLoadingMessage, setStepLoadingMessage] = useState<string | null>(stepMessages.loadingQrCode)
+  const socketRef = useRef<WebSocket | null>(null)
 
-  const [isCreating, setIsCreating] = useState(false)
-  const phoneNumberId = ''
 
   const {
     credentials: {
       listCredentials: { refetch: refetchCredentials },
     },
   } = trpc.useContext()
+
   const { mutate } = trpc.credentials.createCredentials.useMutation({
-    onMutate: () => setIsCreating(true),
-    onSettled: () => setIsCreating(false),
-    onError: (err) => {
+    onError: (err: { message: string }) => {
       showToast({
         description: err.message,
         status: 'error',
@@ -60,74 +63,98 @@ export const WhatsappCredentialsModal = ({
     },
   })
 
-  const createWhatsappCredentials = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!workspace) return
-    mutate({
-      credentials: {
-        type: 'whatsApp',
-        workspaceId: workspace.id,
-        name,
-        data: {
-          systemUserAccessToken,
-          phoneNumberId
-        },
-      },
-    })
-  }
+
+  const handleStartWebsocket = useCallback(async () => {
+    if (!workspace || !typebot) return;
+
+    if (socketRef.current) {
+      socketRef.current.close()
+      socketRef.current = null
+    }
+
+    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${workspace.id}_${typebot.id}`)
+    socket.onmessage = function (event) {
+      if (!event.data) return
+      if (event.data) {
+        const payloadParsed = JSON.parse(event.data ?? '{}')
+
+        switch (payloadParsed.status) {
+          case 'qr':
+            if (stepLoadingMessage === stepMessages.loadingAuthentication) return
+            setWhatsappQrCode(payloadParsed.qr)
+            setProcessAuthWppLoading(false)
+            break;
+          case 'loading':
+            setProcessAuthWppLoading(true)
+            setStepLoadingMessage(stepMessages.loadingAuthentication)
+            break;
+          case 'ready':
+            mutate({
+              credentials: {
+                id: credentialsId,
+                type: 'whatsApp',
+                workspaceId: workspace.id,
+                name: 'whatsApp',
+                data: {
+                  clientId: `${workspace.id}_${typebot.id}`,
+                  createdAt: new Date().toISOString(),
+                }
+              },
+            })
+            setStepLoadingMessage(null)
+            setProcessAuthWppLoading(false)
+            setWhatsappQrCode(null)
+            socket.send(JSON.stringify({
+              method: 'sendMessage',
+              phoneNumber: '88988443913',
+              messageBody: 'Eae mano, via typebot!'
+            }))
+        }
+      }
+    };
+
+    socketRef.current = socket
+  }, [mutate, typebot, workspace])
+
+  const handleEndWebSocket = useCallback(() => {
+    socketRef.current?.close()
+    onClose()
+  }, [onClose])
+
+
+
+  useEffect(() => {
+    if (isOpen) handleStartWebsocket()
+    else handleEndWebSocket()
+  }, [isOpen, handleStartWebsocket, handleEndWebSocket])
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal isOpen={isOpen} onClose={handleEndWebSocket} size="lg">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add Whatsapp account</ModalHeader>
         <ModalCloseButton />
-        <form onSubmit={createWhatsappCredentials}>
-          <ModalBody as={Stack} spacing="6">
-            <TextInput
-              isRequired
-              label="Name"
-              onChange={setName}
-              placeholder="My account"
-              withVariableButton={false}
-              debounceTimeout={0}
+        <Flex alignItems="center" justifyContent="center" padding={5}>
+          {!!whatsappQrCode && !processAuthWppLoading && !(stepLoadingMessage === stepMessages.loadingAuthentication) && (
+            <SVG
+              text={whatsappQrCode}
+              options={{
+                type: 'image/jpeg',
+                quality: 0.3,
+                errorCorrectionLevel: 'M',
+                margin: 3,
+                scale: 5,
+                width: 200
+              }}
             />
-            <TextInput
-              isRequired
-              type="password"
-              label="API key"
-              helperText={
-                <>
-                  You can generate an API key{' '}
-                  <TextLink href={whatsappTokensPage} isExternal>
-                    here
-                  </TextLink>
-                  .
-                </>
-              }
-              onChange={setSystemUserAccessToken}
-              placeholder="sk-..."
-              withVariableButton={false}
-              debounceTimeout={0}
-            />
-            <Alert status="warning">
-              <AlertIcon />
-              Make sure to add a payment method to your OpenAI account.
-              Otherwise, it will not work after a few messages.
-            </Alert>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              type="submit"
-              isLoading={isCreating}
-              isDisabled={systemUserAccessToken === '' || name === ''}
-              colorScheme="red"
-            >
-              Create
-            </Button>
-          </ModalFooter>
-        </form>
+          )}
+          {processAuthWppLoading && (
+            <Flex alignItems={"center"} direction="column" gap={8}>
+              <Spinner size={"xl"} />
+              <Text>{stepLoadingMessage}</Text>
+            </Flex>
+          )}
+        </Flex>
       </ModalContent>
     </Modal>
   )
