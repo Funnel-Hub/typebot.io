@@ -169,6 +169,16 @@ export const whatsAppCredentialsSchema = z
   .object({
     type: z.literal('whatsApp'),
     data: z.object({
+      systemUserAccessToken: z.string(),
+      phoneNumberId: z.string(),
+    }),
+  })
+  .merge(credentialsBaseSchema)
+
+export const whatsappSocketCredentialsSchema = z
+  .object({
+    type: z.literal('whatsAppSocket'),
+    data: z.object({
       clientId: z.string(),
       phoneNumber: z.string(),
     }),

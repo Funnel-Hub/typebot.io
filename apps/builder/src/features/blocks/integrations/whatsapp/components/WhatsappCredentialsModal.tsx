@@ -90,7 +90,7 @@ export const WhatsappCredentialsModal = ({
             mutate({
               credentials: {
                 id: createId(),
-                type: 'whatsApp',
+                type: 'whatsAppSocket',
                 workspaceId: workspace.id,
                 name: `whatsApp-${payloadParsed.phoneNumber}`,
                 data: {
