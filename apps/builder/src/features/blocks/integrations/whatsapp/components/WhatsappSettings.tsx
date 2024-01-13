@@ -1,3 +1,7 @@
+import { DropdownList } from '@/components/DropdownList'
+import { TextInput } from '@/components/inputs'
+import { CredentialsDropdown } from '@/features/credentials/components/CredentialsDropdown'
+import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import {
   Accordion,
   AccordionButton,
@@ -5,25 +9,20 @@ import {
   AccordionItem,
   AccordionPanel,
   Stack,
-  useDisclosure,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react'
-import React from 'react'
-import { CredentialsDropdown } from '@/features/credentials/components/CredentialsDropdown'
 import {
   ChatWhatsappOptions,
   CreateImageWhatsappOptions,
   WhatsappBlock,
 } from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
-import { WhatsappCredentialsModal } from './WhatsappCredentialsModal'
-import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
-import { DropdownList } from '@/components/DropdownList'
-import { WhatsappChatSettings } from './createChat/WhatsappChatSettings'
-import { TextInput } from '@/components/inputs'
 import {
   defaultWhatsappOptions,
   whatsappTasks,
 } from '@typebot.io/schemas/features/blocks/integrations/whatsapp/constants'
+import { WhatsappCredentialsModal } from './WhatsappCredentialsModal'
+import { WhatsappChatSettings } from './createChat/WhatsappChatSettings'
 
 type WhatsappTask = (typeof whatsappTasks)[number]
 
@@ -79,7 +78,7 @@ export const WhatsappSettings = ({
       {workspace && (
         <>
           <CredentialsDropdown
-            type="whatsApp"
+            type="whatsAppSocket"
             workspaceId={workspace.id}
             currentCredentialsId={options?.credentialsId ?? undefined}
             onCredentialsSelect={updateCredentialsId}
