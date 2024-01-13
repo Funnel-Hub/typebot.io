@@ -1,14 +1,9 @@
-import { BlockIndices, BlockV6 } from '@typebot.io/schemas'
-import { WaitNodeContent } from '@/features/blocks/logic/wait/components/WaitNodeContent'
-import { ScriptNodeContent } from '@/features/blocks/logic/script/components/ScriptNodeContent'
-import { ButtonsBlockNode } from '@/features/blocks/inputs/buttons/components/ButtonsBlockNode'
-import { JumpNodeBody } from '@/features/blocks/logic/jump/components/JumpNodeBody'
-import { OpenAINodeBody } from '@/features/blocks/integrations/openai/components/OpenAINodeBody'
 import { AudioBubbleNode } from '@/features/blocks/bubbles/audio/components/AudioBubbleNode'
 import { EmbedBubbleContent } from '@/features/blocks/bubbles/embed/components/EmbedBubbleContent'
 import { ImageBubbleContent } from '@/features/blocks/bubbles/image/components/ImageBubbleContent'
 import { TextBubbleContent } from '@/features/blocks/bubbles/textBubble/components/TextBubbleContent'
 import { VideoBubbleContent } from '@/features/blocks/bubbles/video/components/VideoBubbleContent'
+import { ButtonsBlockNode } from '@/features/blocks/inputs/buttons/components/ButtonsBlockNode'
 import { DateNodeContent } from '@/features/blocks/inputs/date/components/DateNodeContent'
 import { EmailInputNodeContent } from '@/features/blocks/inputs/emailInput/components/EmailInputNodeContent'
 import { FileInputContent } from '@/features/blocks/inputs/fileUpload/components/FileInputContent'
@@ -20,25 +15,30 @@ import { TextInputNodeContent } from '@/features/blocks/inputs/textInput/compone
 import { UrlNodeContent } from '@/features/blocks/inputs/url/components/UrlNodeContent'
 import { GoogleSheetsNodeContent } from '@/features/blocks/integrations/googleSheets/components/GoogleSheetsNodeContent'
 import { MakeComContent } from '@/features/blocks/integrations/makeCom/components/MakeComContent'
+import { OpenAINodeBody } from '@/features/blocks/integrations/openai/components/OpenAINodeBody'
 import { PabblyConnectContent } from '@/features/blocks/integrations/pabbly/components/PabblyConnectContent'
 import { SendEmailContent } from '@/features/blocks/integrations/sendEmail/components/SendEmailContent'
 import { WebhookContent } from '@/features/blocks/integrations/webhook/components/WebhookContent'
+import { JumpNodeBody } from '@/features/blocks/logic/jump/components/JumpNodeBody'
+import { ScriptNodeContent } from '@/features/blocks/logic/script/components/ScriptNodeContent'
+import { WaitNodeContent } from '@/features/blocks/logic/wait/components/WaitNodeContent'
+import { BlockIndices, BlockV6 } from '@typebot.io/schemas'
 // import { ZapierContent } from '@/features/blocks/integrations/zapier/components/ZapierContent'
+import { PictureChoiceNode } from '@/features/blocks/inputs/pictureChoice/components/PictureChoiceNode'
+import { ChatwootNodeBody } from '@/features/blocks/integrations/chatwoot/components/ChatwootNodeBody'
+import { GoogleAnalyticsNodeBody } from '@/features/blocks/integrations/googleAnalytics/components/GoogleAnalyticsNodeBody'
+import { PixelNodeBody } from '@/features/blocks/integrations/pixel/components/PixelNodeBody'
+import { WhatsappNodeBody } from '@/features/blocks/integrations/whatsapp/components/WhatsappNodeBody'
+import { ZemanticAiNodeBody } from '@/features/blocks/integrations/zemanticAi/ZemanticAiNodeBody'
+import { AbTestNodeBody } from '@/features/blocks/logic/abTest/components/AbTestNodeBody'
 import { RedirectNodeContent } from '@/features/blocks/logic/redirect/components/RedirectNodeContent'
 import { SetVariableContent } from '@/features/blocks/logic/setVariable/components/SetVariableContent'
 import { TypebotLinkNode } from '@/features/blocks/logic/typebotLink/components/TypebotLinkNode'
-import { ItemNodesList } from '../item/ItemNodesList'
-import { GoogleAnalyticsNodeBody } from '@/features/blocks/integrations/googleAnalytics/components/GoogleAnalyticsNodeBody'
-import { ChatwootNodeBody } from '@/features/blocks/integrations/chatwoot/components/ChatwootNodeBody'
-import { AbTestNodeBody } from '@/features/blocks/logic/abTest/components/AbTestNodeBody'
-import { PictureChoiceNode } from '@/features/blocks/inputs/pictureChoice/components/PictureChoiceNode'
-import { PixelNodeBody } from '@/features/blocks/integrations/pixel/components/PixelNodeBody'
-import { ZemanticAiNodeBody } from '@/features/blocks/integrations/zemanticAi/ZemanticAiNodeBody'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
-import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
-import { WhatsappNodeBody } from '@/features/blocks/integrations/whatsapp/components/WhatsappNodeBody'
+import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
+import { ItemNodesList } from '../item/ItemNodesList'
 
 type Props = {
   block: BlockV6
@@ -125,12 +125,7 @@ export const BlockNodeContent = ({ block, indices }: Props): JSX.Element => {
     case IntegrationBlockType.WHATSAPP: {
       return (
         <WhatsappNodeBody
-          task={block.options?.task}
-          responseMapping={
-            block.options && 'responseMapping' in block.options
-              ? block.options.responseMapping
-              : []
-          }
+          credentialsId={block?.options?.credentialsId}
         />
       )
     }

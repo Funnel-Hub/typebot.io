@@ -1,50 +1,50 @@
-import {
-  PopoverContent,
-  PopoverArrow,
-  PopoverBody,
-  useEventListener,
-  Portal,
-  Stack,
-  useColorModeValue,
-  SlideFade,
-  Flex,
-} from '@chakra-ui/react'
-import { Block, BlockOptions, BlockWithOptions } from '@typebot.io/schemas'
-import { useRef, useState } from 'react'
-import { WaitSettings } from '@/features/blocks/logic/wait/components/WaitSettings'
-import { ScriptSettings } from '@/features/blocks/logic/script/components/ScriptSettings'
-import { JumpSettings } from '@/features/blocks/logic/jump/components/JumpSettings'
-import { MakeComSettings } from '@/features/blocks/integrations/makeCom/components/MakeComSettings'
-import { PabblyConnectSettings } from '@/features/blocks/integrations/pabbly/components/PabblyConnectSettings'
-import { OpenAISettings } from '@/features/blocks/integrations/openai/components/OpenAISettings'
 import { ButtonsBlockSettings } from '@/features/blocks/inputs/buttons/components/ButtonsBlockSettings'
 import { FileInputSettings } from '@/features/blocks/inputs/fileUpload/components/FileInputSettings'
 import { PaymentSettings } from '@/features/blocks/inputs/payment/components/PaymentSettings'
 import { RatingInputSettings } from '@/features/blocks/inputs/rating/components/RatingInputSettings'
 import { TextInputSettings } from '@/features/blocks/inputs/textInput/components/TextInputSettings'
 import { GoogleAnalyticsSettings } from '@/features/blocks/integrations/googleAnalytics/components/GoogleAnalyticsSettings'
+import { MakeComSettings } from '@/features/blocks/integrations/makeCom/components/MakeComSettings'
+import { OpenAISettings } from '@/features/blocks/integrations/openai/components/OpenAISettings'
+import { PabblyConnectSettings } from '@/features/blocks/integrations/pabbly/components/PabblyConnectSettings'
 import { SendEmailSettings } from '@/features/blocks/integrations/sendEmail/components/SendEmailSettings'
 import { WebhookSettings } from '@/features/blocks/integrations/webhook/components/WebhookSettings'
+import { JumpSettings } from '@/features/blocks/logic/jump/components/JumpSettings'
+import { ScriptSettings } from '@/features/blocks/logic/script/components/ScriptSettings'
+import { WaitSettings } from '@/features/blocks/logic/wait/components/WaitSettings'
+import {
+  Flex,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  Portal,
+  SlideFade,
+  Stack,
+  useColorModeValue,
+  useEventListener,
+} from '@chakra-ui/react'
+import { Block, BlockOptions, BlockWithOptions } from '@typebot.io/schemas'
+import { useRef, useState } from 'react'
 // import { ZapierSettings } from '@/features/blocks/integrations/zapier/components/ZapierSettings'
+import { DateInputSettings } from '@/features/blocks/inputs/date/components/DateInputSettings'
+import { EmailInputSettings } from '@/features/blocks/inputs/emailInput/components/EmailInputSettings'
+import { NumberInputSettings } from '@/features/blocks/inputs/number/components/NumberInputSettings'
+import { PhoneInputSettings } from '@/features/blocks/inputs/phone/components/PhoneInputSettings'
+import { PictureChoiceSettings } from '@/features/blocks/inputs/pictureChoice/components/PictureChoiceSettings'
+import { UrlInputSettings } from '@/features/blocks/inputs/url/components/UrlInputSettings'
+import { ChatwootSettings } from '@/features/blocks/integrations/chatwoot/components/ChatwootSettings'
+import { GoogleSheetsSettings } from '@/features/blocks/integrations/googleSheets/components/GoogleSheetsSettings'
+import { PixelSettings } from '@/features/blocks/integrations/pixel/components/PixelSettings'
+import { WhatsappSettings } from '@/features/blocks/integrations/whatsapp/components/WhatsappSettings'
+import { ZemanticAiSettings } from '@/features/blocks/integrations/zemanticAi/ZemanticAiSettings'
+import { AbTestSettings } from '@/features/blocks/logic/abTest/components/AbTestSettings'
 import { RedirectSettings } from '@/features/blocks/logic/redirect/components/RedirectSettings'
 import { SetVariableSettings } from '@/features/blocks/logic/setVariable/components/SetVariableSettings'
 import { TypebotLinkForm } from '@/features/blocks/logic/typebotLink/components/TypebotLinkForm'
-import { NumberInputSettings } from '@/features/blocks/inputs/number/components/NumberInputSettings'
-import { EmailInputSettings } from '@/features/blocks/inputs/emailInput/components/EmailInputSettings'
-import { UrlInputSettings } from '@/features/blocks/inputs/url/components/UrlInputSettings'
-import { DateInputSettings } from '@/features/blocks/inputs/date/components/DateInputSettings'
-import { PhoneInputSettings } from '@/features/blocks/inputs/phone/components/PhoneInputSettings'
-import { GoogleSheetsSettings } from '@/features/blocks/integrations/googleSheets/components/GoogleSheetsSettings'
-import { ChatwootSettings } from '@/features/blocks/integrations/chatwoot/components/ChatwootSettings'
-import { AbTestSettings } from '@/features/blocks/logic/abTest/components/AbTestSettings'
-import { PictureChoiceSettings } from '@/features/blocks/inputs/pictureChoice/components/PictureChoiceSettings'
-import { SettingsHoverBar } from './SettingsHoverBar'
-import { PixelSettings } from '@/features/blocks/integrations/pixel/components/PixelSettings'
-import { ZemanticAiSettings } from '@/features/blocks/integrations/zemanticAi/ZemanticAiSettings'
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
-import { WhatsappSettings } from '@/features/blocks/integrations/whatsapp/components/WhatsappSettings'
+import { SettingsHoverBar } from './SettingsHoverBar'
 
 type Props = {
   block: BlockWithOptions
