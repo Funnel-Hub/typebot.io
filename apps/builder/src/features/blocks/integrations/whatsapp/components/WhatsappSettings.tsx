@@ -5,6 +5,7 @@ import {
   Stack,
   useDisclosure
 } from '@chakra-ui/react'
+import { useTranslate } from '@tolgee/react'
 import { isNotEmpty } from '@typebot.io/lib'
 import {
   WhatsappBlock
@@ -20,6 +21,7 @@ export const WhatsappSettings = ({
   block: { options },
   onOptionsChange,
 }: Props) => {
+  const { t } = useTranslate()
   const { workspace } = useWorkspace()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -58,7 +60,7 @@ export const WhatsappSettings = ({
             currentCredentialsId={options?.credentialsId ?? undefined}
             onCredentialsSelect={updateCredentialsId}
             onCreateNewClick={onOpen}
-            credentialsName="Whatsapp account"
+            credentialsName={t('editor.blocks.integrations.whatsapp.WhatsappSettings.CredentialsDropdown.credentialsName')}
           />
           <WhatsappCredentialsModal
             isOpen={isOpen}
@@ -70,16 +72,16 @@ export const WhatsappSettings = ({
       {options?.credentialsId && (
         <>
           <TextInput
-            label="Phones"
+            label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhones.label')}
             onChange={handlePhoneNumbersChange}
             defaultValue={options?.phones?.join(', ')}
             placeholder="5555555, 5555555"
           />
           <Textarea
-            label="Message"
+            label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputMessage.label')}
             onChange={handleMessageChange}
             defaultValue={options?.message}
-            placeholder='Hello, how are you?'
+            placeholder={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputMessage.placeholder')}
           />
         </>
       )}

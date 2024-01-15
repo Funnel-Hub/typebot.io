@@ -13,6 +13,7 @@ import {
   Text
 } from '@chakra-ui/react'
 import { createId } from '@paralleldrive/cuid2'
+import { useTranslate } from '@tolgee/react'
 import { useQRCode } from 'next-qrcode'
 import { useCallback, useEffect, useRef, useState } from 'react'
 type Props = {
@@ -21,25 +22,28 @@ type Props = {
   onNewCredentials: (id: string) => void
 }
 
-const stepMessages = {
-  loadingQrCode: 'Gerando QR code...',
-  loadingAuthentication: 'Processando autenticação...'
-}
-
 export const WhatsappCredentialsModal = ({
   isOpen,
   onClose,
   onNewCredentials
 }: Props) => {
+  const { t } = useTranslate()
+
+
+  const stepMessages = {
+    loadingQrCode: t('editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.loadingQrCode'),
+    loadingAuthentication: t('editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.processingAuthentication')
+  }
+
+
   const { workspace } = useWorkspace()
   const { typebot } = useTypebot()
   const { SVG } = useQRCode();
   const { showToast } = useToast()
   const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
   const [processAuthWppLoading, setProcessAuthWppLoading] = useState(true)
-  const [stepLoadingMessage, setStepLoadingMessage] = useState<string | null>(stepMessages.loadingQrCode)
   const socketRef = useRef<WebSocket | null>(null)
-
+  const [stepLoadingMessage, setStepLoadingMessage] = useState<string | null>(stepMessages.loadingQrCode)
 
   const {
     credentials: {
@@ -125,7 +129,7 @@ export const WhatsappCredentialsModal = ({
     <Modal isOpen={isOpen} onClose={handleEndWebSocket} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add Whatsapp account</ModalHeader>
+        <ModalHeader>{t('editor.blocks.integrations.whatsapp.WhatsappCredentialsModal.ModalHeader')}</ModalHeader>
         <ModalCloseButton />
         <Flex alignItems="center" justifyContent="center" padding={5}>
           {!!whatsappQrCode && !processAuthWppLoading && !(stepLoadingMessage === stepMessages.loadingAuthentication) && (
