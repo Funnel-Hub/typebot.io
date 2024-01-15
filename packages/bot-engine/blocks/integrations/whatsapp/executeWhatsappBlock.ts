@@ -1,11 +1,12 @@
 import { decrypt } from "@typebot.io/lib/api/encryption/decrypt";
 import prisma from "@typebot.io/lib/prisma";
-import { ChatLog, SessionState, WhatsappBlock, WhatsappCredentials } from "@typebot.io/schemas";
+import { ChatLog, SessionState, Variable, WhatsappBlock, WhatsappCredentials } from "@typebot.io/schemas";
 import { ExecuteIntegrationResponse } from "../../../types";
+import { parseVariables } from "../../../variables/parseVariables";
 import { sendSocketMessage } from "./util/sendSocketMessage";
 
 export const executeWhatsappBlock = async (
-  _state: SessionState,
+  state: SessionState,
   {
     outgoingEdgeId,
     options,
@@ -17,6 +18,11 @@ export const executeWhatsappBlock = async (
   }
 
   const logs: ChatLog[] = []
+
+  const allVariables = state.typebotsQueue.reduce<Variable[]>(
+    (allVariables, typebot) => [...allVariables, ...typebot.typebot.variables],
+    []
+  )
 
   if (!options.credentialsId) {
     return {
@@ -53,10 +59,18 @@ export const executeWhatsappBlock = async (
     credentials.iv
   )) as WhatsappCredentials['data']
 
+  const messageWithVariables = parseVariables(allVariables)(
+    options?.message
+  )
+
+  const phonesWithVariables = options.phones.map((phone) => {
+    return parseVariables(allVariables)(phone)
+  })
+
   try {
     await sendSocketMessage(clientId, {
-      message: options.message!,
-      phones: options.phones!,
+      message: messageWithVariables,
+      phones: phonesWithVariables,
     })
   } catch (e) {
     logs.push({
