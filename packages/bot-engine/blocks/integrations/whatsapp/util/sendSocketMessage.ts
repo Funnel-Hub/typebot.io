@@ -12,6 +12,7 @@ export async function sendSocketMessage(clientId: string, { message, phones }: S
       console.log('Connected')
     }
     socket.onerror = (event: ErrorEvent) => {
+      socket.close()
       reject(new Error(event.message))
     }
 
@@ -21,6 +22,11 @@ export async function sendSocketMessage(clientId: string, { message, phones }: S
       const payload = JSON.parse(event.data as string)
       if (payload.status === 'ready') {
         resolve(socket)
+      }
+
+      if(payload.status === 'qr') {
+        socket.close()
+        reject(new Error('Session expired, please configure again the whatsapp credentials'))
       }
     }
   })

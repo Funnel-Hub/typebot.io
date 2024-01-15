@@ -75,7 +75,7 @@ export const executeWhatsappBlock = async (
   } catch (e) {
     logs.push({
       status: 'error',
-      description: 'Failed to send message',
+      description: (e as Error).message,
       details: e,
     })
   }
