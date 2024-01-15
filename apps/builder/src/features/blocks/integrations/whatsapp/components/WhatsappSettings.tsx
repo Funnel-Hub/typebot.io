@@ -1,30 +1,15 @@
-import { DropdownList } from '@/components/DropdownList'
-import { TextInput } from '@/components/inputs'
+import { TextInput, Textarea } from '@/components/inputs'
 import { CredentialsDropdown } from '@/features/credentials/components/CredentialsDropdown'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Stack,
-  Text,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react'
+import { isNotEmpty } from '@typebot.io/lib'
 import {
-  ChatWhatsappOptions,
-  CreateImageWhatsappOptions,
-  WhatsappBlock,
+  WhatsappBlock
 } from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
-import {
-  defaultWhatsappOptions,
-  whatsappTasks,
-} from '@typebot.io/schemas/features/blocks/integrations/whatsapp/constants'
 import { WhatsappCredentialsModal } from './WhatsappCredentialsModal'
-import { WhatsappChatSettings } from './createChat/WhatsappChatSettings'
-
-type WhatsappTask = (typeof whatsappTasks)[number]
 
 type Props = {
   block: WhatsappBlock
@@ -45,33 +30,23 @@ export const WhatsappSettings = ({
     })
   }
 
-  const updateTask = (task: WhatsappTask) => {
-    switch (task) {
-      case 'Create chat ': {
-        onOptionsChange({
-          credentialsId: options?.credentialsId,
-          task,
-        })
-        break
-      }
-    }
-  }
-
-  const updateBaseUrl = (baseUrl: string) => {
+  const handlePhoneNumbersChange = (phones: string) => {
+    const phonesArray: string[] = phones
+      .split(',')
+      .map((str) => str.trim())
+      .filter(isNotEmpty)
     onOptionsChange({
       ...options,
-      baseUrl,
+      phones: phonesArray,
     })
   }
 
-  const updateApiVersion = (apiVersion: string) => {
+  const handleMessageChange = (message: string) => {
     onOptionsChange({
       ...options,
-      apiVersion,
+      message
     })
   }
-
-  const baseUrl = options?.baseUrl ?? defaultWhatsappOptions.baseUrl
 
   return (
     <Stack>
@@ -94,67 +69,20 @@ export const WhatsappSettings = ({
       )}
       {options?.credentialsId && (
         <>
-          <Accordion allowToggle>
-            <AccordionItem>
-              <AccordionButton>
-                <Text w="full" textAlign="left">
-                  Customize provider
-                </Text>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel as={Stack} spacing={4}>
-                <TextInput
-                  label="Base URL"
-                  defaultValue={baseUrl}
-                  onChange={updateBaseUrl}
-                />
-                {baseUrl !== defaultWhatsappOptions.baseUrl && (
-                  <TextInput
-                    label="API version"
-                    defaultValue={options.apiVersion}
-                    onChange={updateApiVersion}
-                  />
-                )}
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
-
-          <DropdownList
-            currentItem={options.task}
-            items={whatsappTasks.slice(0, -1)}
-            onItemSelect={updateTask}
-            placeholder="Select task"
+          <TextInput
+            label="Phones"
+            onChange={handlePhoneNumbersChange}
+            defaultValue={options?.phones?.join(', ')}
+            placeholder="5555555, 5555555"
           />
-          {options.task && (
-            <WhatsappTaskSettings
-              options={options}
-              onOptionsChange={onOptionsChange}
-            />
-          )}
+          <Textarea
+            label="Message"
+            onChange={handleMessageChange}
+            defaultValue={options?.message}
+            placeholder='Hello, how are you?'
+          />
         </>
       )}
     </Stack>
   )
-}
-
-const WhatsappTaskSettings = ({
-  options,
-  onOptionsChange,
-}: {
-  options: ChatWhatsappOptions | CreateImageWhatsappOptions
-  onOptionsChange: (options: WhatsappBlock['options']) => void
-}) => {
-  switch (options.task) {
-    case 'Create chat ': {
-      return (
-        <WhatsappChatSettings
-          options={options}
-          onOptionsChange={onOptionsChange}
-        />
-      )
-    }
-    case 'Create image': {
-      return null
-    }
-  }
 }
