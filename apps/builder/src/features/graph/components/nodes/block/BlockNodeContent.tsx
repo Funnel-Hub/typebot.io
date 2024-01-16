@@ -126,6 +126,7 @@ export const BlockNodeContent = ({ block, indices }: Props): JSX.Element => {
       return (
         <WhatsappNodeBody
           credentialsId={block?.options?.credentialsId}
+          answer={block?.options?.answer}
         />
       )
     }

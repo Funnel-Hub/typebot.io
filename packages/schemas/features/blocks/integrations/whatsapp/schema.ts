@@ -11,6 +11,11 @@ const whatsappOptionsSchema = z
     message: z
       .string().optional(),
     phones: z.string().array().optional(),
+    answer: 
+      z.object({
+        variableId: z.string().optional(),
+      })
+    .optional(),
   })
   .merge(whatsappBaseOptionsSchema)
 

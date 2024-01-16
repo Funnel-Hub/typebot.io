@@ -10,6 +10,7 @@ import { isNotEmpty } from '@typebot.io/lib'
 import {
   WhatsappBlock
 } from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
+import { WhatsappSaveAnswer } from './AnswerMessage/WhatsappSaveAnswer'
 import { WhatsappCredentialsModal } from './WhatsappCredentialsModal'
 
 type Props = {
@@ -83,6 +84,7 @@ export const WhatsappSettings = ({
             defaultValue={options?.message}
             placeholder={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputMessage.placeholder')}
           />
+          <WhatsappSaveAnswer options={options} onOptionsChange={onOptionsChange} />
         </>
       )}
     </Stack>
