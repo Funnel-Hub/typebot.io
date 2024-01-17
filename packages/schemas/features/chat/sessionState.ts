@@ -74,7 +74,7 @@ const sessionStateSchemaV2 = z.object({
     .optional(),
   whatsappComponent: z.object({
     phone: z.string(),
-    clientId: z.string(),
+    clientId: z.string()
   }).optional(),
   expiryTimeout: z
     .number()
@@ -83,6 +83,7 @@ const sessionStateSchemaV2 = z.object({
     .describe('Expiry timeout in milliseconds'),
   typingEmulation: settingsSchema.shape.typingEmulation.optional(),
   currentVisitedEdgeIndex: z.number().optional(),
+  sessionId: z.string().optional(),
 })
 
 const sessionStateSchemaV3 = sessionStateSchemaV2

@@ -4,6 +4,7 @@ import { ContinueChatResponse, SessionState } from "@typebot.io/schemas"
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { HTTPError } from 'got'
 import { continueBotFlow } from '../../continueBotFlow'
+import { convertInputToWhatsAppComponent } from './convertInputToWhatsappComponent'
 import { WhatsappSocketSendingMessage, convertMessageToWhatsappComponent } from './convertMessageToWhatsappCompoent'
 import { sendSocketWhatsappMessage } from './sendWhatsappSocketMessage'
 
@@ -50,6 +51,7 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
       await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
         message: whatsAppMessage.body,
         phones: [state.whatsappComponent.phone],
+        sessionId: state.sessionId,
       })
       sentMessages.push(whatsAppMessage)
       const clientSideActionsAfterMessage =
@@ -79,6 +81,27 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
         console.log('HTTPError', err.response.statusCode, err.response.body)
     }
   }
+
+  if (input) {
+    const inputWhatsAppMessages = convertInputToWhatsAppComponent(
+      input
+    )
+    for(const message of inputWhatsAppMessages) {
+      try {
+        await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
+          message: message.body,
+          phones: [state.whatsappComponent.phone],
+          sessionId: state.sessionId,
+        })
+      } catch (err) {
+        console.log(err)
+        Sentry.captureException(err, { extra: { message } })
+        console.log('Failed to send message:', JSON.stringify(message, null, 2))
+        if (err instanceof HTTPError)
+          console.log('HTTPError', err.response.statusCode, err.response.body)
+      }
+    }
+  }
 }
 
 const isLastMessageIncludedInInput = (
@@ -103,6 +126,8 @@ const executeClientSideAction =
         replyToSend: undefined,
       }
     }
+    console.log('redirect' in clientSideAction && clientSideAction.redirect.url)
+    console.log(clientSideAction)
     // if ('redirect' in clientSideAction && clientSideAction.redirect.url) {
     //   const message = {
     //     type: 'text',

@@ -50,7 +50,7 @@ type Props = {
   version: 1 | 2
   message: string | undefined
   startParams: StartParams
-  initialSessionState?: Pick<SessionState, 'whatsApp' | 'expiryTimeout' | 'whatsappComponent'>
+  initialSessionState?: Pick<SessionState, 'whatsApp' | 'expiryTimeout' | 'whatsappComponent' | 'sessionId'>
 }
 
 export const startSession = async ({

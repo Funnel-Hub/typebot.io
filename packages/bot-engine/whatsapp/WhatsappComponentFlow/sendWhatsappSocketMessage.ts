@@ -3,9 +3,10 @@ import WebSocket, { ErrorEvent } from "ws"
 type SendMessagePayload = {
   phones: string[]
   message: string
+  sessionId?: string
 }
 
-export async function sendSocketWhatsappMessage(clientId: string, { message, phones }: SendMessagePayload) {
+export async function sendSocketWhatsappMessage(clientId: string, { message, phones, sessionId }: SendMessagePayload) {
   const socketClient = await new Promise<WebSocket>((resolve, reject) => {
     const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${clientId}`)
     socket.onopen = () => {
@@ -35,7 +36,8 @@ export async function sendSocketWhatsappMessage(clientId: string, { message, pho
     socketClient.send(JSON.stringify({
       method: 'sendMessage',
       phoneNumber: phone,
-      messageBody: message
+      messageBody: message,
+      sessionId
     }))
   })
 

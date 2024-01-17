@@ -55,7 +55,7 @@ export const continueChat = publicProcedure
       logs,
       lastMessageNewFormat,
       visitedEdges,
-    } = await continueBotFlow(message, { version: 2, state: session.state })
+    } = await continueBotFlow(message, { version: 2, state: {...session.state, sessionId: session.id } })
 
     if (newSessionState)
       await saveStateToDatabase({

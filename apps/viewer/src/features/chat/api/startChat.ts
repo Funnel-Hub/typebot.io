@@ -68,7 +68,7 @@ export const startChat = publicProcedure
 
       if(newSessionState.whatsappComponent) {
         await executeWhatsappFlow({
-          state: newSessionState,
+          state: {...newSessionState, sessionId: session.id },
           messages,
           input,
           clientSideActions,
