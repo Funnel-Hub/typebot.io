@@ -5,7 +5,7 @@ type SendMessagePayload = {
   message: string
 }
 
-export async function sendSocketMessage(clientId: string, { message, phones }: SendMessagePayload) {
+export async function sendSocketWhatsappMessage(clientId: string, { message, phones }: SendMessagePayload) {
   const socketClient = await new Promise<WebSocket>((resolve, reject) => {
     const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${clientId}`)
     socket.onopen = () => {

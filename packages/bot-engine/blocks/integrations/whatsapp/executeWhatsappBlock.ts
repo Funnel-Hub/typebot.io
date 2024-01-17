@@ -2,8 +2,6 @@ import { decrypt } from "@typebot.io/lib/api/encryption/decrypt";
 import prisma from "@typebot.io/lib/prisma";
 import { ChatLog, SessionState, Variable, WhatsappBlock, WhatsappCredentials } from "@typebot.io/schemas";
 import { ExecuteIntegrationResponse } from "../../../types";
-import { parseVariables } from "../../../variables/parseVariables";
-import { sendSocketMessage } from "./util/sendSocketMessage";
 
 export const executeWhatsappBlock = async (
   state: SessionState,
@@ -42,13 +40,13 @@ export const executeWhatsappBlock = async (
     return { outgoingEdgeId, logs: [noCredentialsError] }
   }
 
-  if(!options.message || !options.phones) {
+  if(!options.phones) {
     return {
       outgoingEdgeId,
       logs: [
         {
           status: 'error',
-          description: 'Missing message or phones',
+          description: 'Missing phones',
         },
       ],
     }
@@ -59,27 +57,5 @@ export const executeWhatsappBlock = async (
     credentials.iv
   )) as WhatsappCredentials['data']
 
-  const messageWithVariables = parseVariables(allVariables)(
-    options?.message
-  )
-
-  const phonesWithVariables = options.phones.map((phone) => {
-    return parseVariables(allVariables)(phone)
-  })
-
-  try {
-    await sendSocketMessage(clientId, {
-      message: messageWithVariables,
-      phones: phonesWithVariables,
-    })
-  } catch (e) {
-    logs.push({
-      status: 'error',
-      description: (e as Error).message,
-      details: e,
-    })
-  }
-
-
-  return { outgoingEdgeId, logs }
+  return { outgoingEdgeId, logs, newSessionState: { ...state, whatsappComponent: { phone: options.phones[0]!, clientId }} }
 }

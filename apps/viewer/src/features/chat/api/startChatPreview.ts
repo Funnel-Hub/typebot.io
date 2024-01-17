@@ -1,11 +1,12 @@
+import { publicProcedure } from '@/helpers/server/trpc'
+import { restartSession } from '@typebot.io/bot-engine/queries/restartSession'
+import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
+import { startSession } from '@typebot.io/bot-engine/startSession'
+import { executeWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/executeWhatsappFlow'
 import {
   startPreviewChatInputSchema,
   startPreviewChatResponseSchema,
 } from '@typebot.io/schemas/features/chat/schema'
-import { startSession } from '@typebot.io/bot-engine/startSession'
-import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
-import { restartSession } from '@typebot.io/bot-engine/queries/restartSession'
-import { publicProcedure } from '@/helpers/server/trpc'
 
 export const startChatPreview = publicProcedure
   .meta({
@@ -65,6 +66,30 @@ export const startChatPreview = publicProcedure
             clientSideActions,
             visitedEdges,
           })
+
+      if(newSessionState.whatsappComponent) {
+        await executeWhatsappFlow({
+          state: newSessionState,
+          messages,
+          input,
+          clientSideActions,
+        })
+
+        return {
+          sessionId: session.id,
+          typebot: {
+            id: typebot.id,
+            theme: typebot.theme,
+            settings: typebot.settings,
+          },
+          messages: [],
+          input,
+          dynamicTheme: undefined,
+          logs: [],
+          clientSideActions: [],
+        }
+      }
+    
 
       return {
         sessionId: session.id,

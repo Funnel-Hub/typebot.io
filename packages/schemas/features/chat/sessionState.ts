@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { answerSchema } from '../answer'
 import { resultSchema } from '../result'
-import { typebotInSessionStateSchema, dynamicThemeSchema } from './shared'
 import { settingsSchema } from '../typebot/settings'
+import { dynamicThemeSchema, typebotInSessionStateSchema } from './shared'
 
 const answerInSessionStateSchema = answerSchema.pick({
   content: true,
@@ -72,6 +72,10 @@ const sessionStateSchemaV2 = z.object({
       }),
     })
     .optional(),
+  whatsappComponent: z.object({
+    phone: z.string(),
+    clientId: z.string(),
+  }).optional(),
   expiryTimeout: z
     .number()
     .min(1)
