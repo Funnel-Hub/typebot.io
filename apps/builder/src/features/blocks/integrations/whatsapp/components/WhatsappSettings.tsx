@@ -1,4 +1,4 @@
-import { TextInput, Textarea } from '@/components/inputs'
+import { TextInput } from '@/components/inputs'
 import { CredentialsDropdown } from '@/features/credentials/components/CredentialsDropdown'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import {
@@ -10,7 +10,6 @@ import { isNotEmpty } from '@typebot.io/lib'
 import {
   WhatsappBlock
 } from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
-import { WhatsappSaveAnswer } from './AnswerMessage/WhatsappSaveAnswer'
 import { WhatsappCredentialsModal } from './WhatsappCredentialsModal'
 
 type Props = {
@@ -44,13 +43,6 @@ export const WhatsappSettings = ({
     })
   }
 
-  const handleMessageChange = (message: string) => {
-    onOptionsChange({
-      ...options,
-      message
-    })
-  }
-
   return (
     <Stack>
       {workspace && (
@@ -73,18 +65,11 @@ export const WhatsappSettings = ({
       {options?.credentialsId && (
         <>
           <TextInput
-            label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhones.label')}
+            label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhone.label')}
             onChange={handlePhoneNumbersChange}
             defaultValue={options?.phones?.join(', ')}
-            placeholder="5555555, 5555555"
+            placeholder="55888888888"
           />
-          <Textarea
-            label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputMessage.label')}
-            onChange={handleMessageChange}
-            defaultValue={options?.message}
-            placeholder={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputMessage.placeholder')}
-          />
-          <WhatsappSaveAnswer options={options} onOptionsChange={onOptionsChange} />
         </>
       )}
     </Stack>
