@@ -141,7 +141,7 @@
   "editor.blocks.bubbles.textEditor.plate.label": "Éditeur de texte",
   "editor.blocks.bubbles.textEditor.searchVariable.placeholder": "Rechercher une variable",
   "editor.blocks.start.text": "Démarrer",
-  "editor.blocks.integrations.whatsapp.WhatsappNodeBody.sendMessage": "Envoyer le message",
+  "editor.blocks.integrations.whatsapp.WhatsappNodeBody.wppIntegration": "Intégration WhatsApp",
   "editor.blocks.integrations.whatsapp.WhatsappNodeBody.configure": "Installer",
   "editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhones.label": "Téléphones",
   "editor.blocks.integrations.whatsapp.WhatsappSettings.inputMessage.label": "Message",

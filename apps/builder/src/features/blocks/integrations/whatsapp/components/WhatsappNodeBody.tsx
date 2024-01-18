@@ -16,7 +16,7 @@ export const WhatsappNodeBody = ({ credentialsId, answer }: Props) => {
   return (
     <Stack>
       <Text color={credentialsId ? 'currentcolor' : 'gray.500'} noOfLines={1}>
-        {credentialsId ? t('editor.blocks.integrations.whatsapp.WhatsappNodeBody.sendMessage') : `${t('editor.blocks.integrations.whatsapp.WhatsappNodeBody.configure')}...`}
+        {credentialsId ? t('editor.blocks.integrations.whatsapp.WhatsappNodeBody.wppIntegration') : `${t('editor.blocks.integrations.whatsapp.WhatsappNodeBody.configure')}...`}
       </Text>
       {withVariableAnswer && (<WithVariableContent variableId={withVariableAnswer} />)}
     </Stack>

@@ -144,7 +144,7 @@
   "editor.blocks.bubbles.textEditor.plate.label": "Text editor",
   "editor.blocks.bubbles.textEditor.searchVariable.placeholder": "Search for a variable",
   "editor.blocks.start.text": "Start",
-  "editor.blocks.integrations.whatsapp.WhatsappNodeBody.sendMessage": "Send message",
+  "editor.blocks.integrations.whatsapp.WhatsappNodeBody.wppIntegration": "Whatsapp integration",
   "editor.blocks.integrations.whatsapp.WhatsappNodeBody.configure": "Configure",
   "editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhones.label": "Phones",
   "editor.blocks.integrations.whatsapp.WhatsappSettings.inputMessage.label": "Message",
