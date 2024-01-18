@@ -1,6 +1,6 @@
 import { ContinueChatResponse } from '@typebot.io/schemas'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
-import { convertRichTextToWhatsAppText } from '../convertRichTextToWhatsAppText'
+import { serialize } from 'remark-slate'
 
 
 export type WhatsappSocketSendingMessage = {
@@ -17,7 +17,11 @@ export const convertMessageToWhatsappComponent = (
         return
       return {
         type: 'text',
-        body: convertRichTextToWhatsAppText(message.content.richText)
+        body:  message.content.richText
+        .map((chunk) =>
+          serialize(chunk)?.replaceAll('&amp;amp;#39;', "'").replaceAll('**', '*')
+        )
+        .join('\n')
       }
     }
     default:
