@@ -8,14 +8,7 @@ const whatsappBaseOptionsSchema = z.object({
 
 const whatsappOptionsSchema = z
   .object({
-    message: z
-      .string().optional(),
-    phones: z.string().array().optional(),
-    answer: 
-      z.object({
-        variableId: z.string().optional(),
-      })
-    .optional(),
+    phone: z.string()
   })
   .merge(whatsappBaseOptionsSchema)
 

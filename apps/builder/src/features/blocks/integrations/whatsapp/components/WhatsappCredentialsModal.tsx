@@ -73,8 +73,8 @@ export const WhatsappCredentialsModal = ({
       socketRef.current.close()
       socketRef.current = null
     }
-
-    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${workspace.id}_${typebot.id}`)
+    const now = new Date().getTime()
+    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${workspace.id}_${now}`)
     socket.onmessage = function (event) {
       if (!event.data) return
       if (event.data) {
@@ -98,7 +98,7 @@ export const WhatsappCredentialsModal = ({
                 workspaceId: workspace.id,
                 name: `whatsApp-${payloadParsed.phoneNumber}`,
                 data: {
-                  clientId: `${workspace.id}_${new Date().getTime()}`,
+                  clientId: `${workspace.id}_${now}`,
                   phoneNumber: payloadParsed.phoneNumber as string
                 }
               },

@@ -6,7 +6,6 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 import { useTranslate } from '@tolgee/react'
-import { isNotEmpty } from '@typebot.io/lib'
 import {
   WhatsappBlock
 } from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
@@ -32,14 +31,11 @@ export const WhatsappSettings = ({
     })
   }
 
-  const handlePhoneNumbersChange = (phones: string) => {
-    const phonesArray: string[] = phones
-      .split(',')
-      .map((str) => str.trim())
-      .filter(isNotEmpty)
+  const handlePhoneNumbersChange = (phone: string) => {
+    if (!phone) return
     onOptionsChange({
       ...options,
-      phones: phonesArray,
+      phone: phone.trim(),
     })
   }
 
@@ -67,8 +63,9 @@ export const WhatsappSettings = ({
           <TextInput
             label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhone.label')}
             onChange={handlePhoneNumbersChange}
-            defaultValue={options?.phones?.join(', ')}
+            defaultValue={options?.phone}
             placeholder="55888888888"
+            isRequired
           />
         </>
       )}
