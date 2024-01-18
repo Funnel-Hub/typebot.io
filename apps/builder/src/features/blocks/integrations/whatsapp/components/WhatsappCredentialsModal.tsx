@@ -98,7 +98,7 @@ export const WhatsappCredentialsModal = ({
                 workspaceId: workspace.id,
                 name: `whatsApp-${payloadParsed.phoneNumber}`,
                 data: {
-                  clientId: `${workspace.id}_${typebot.id}`,
+                  clientId: `${workspace.id}_${new Date().getTime()}`,
                   phoneNumber: payloadParsed.phoneNumber as string
                 }
               },
