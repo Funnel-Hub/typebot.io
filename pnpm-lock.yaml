@@ -57,8 +57,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(mjml@4.14.1)(react-dom@18.2.0)(react@18.2.0)
       '@funnelhub/sidebar':
-        specifier: file:../../../funnelhub-sidebar
-        version: file:../funnelhub-sidebar(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 1.0.0
+        version: 1.0.0(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0)
       '@giphy/js-fetch-api':
         specifier: 5.0.0
         version: 5.0.0
@@ -3104,10 +3104,6 @@ packages:
     resolution: {integrity: sha512-pKfOS/mztc4sUXHNc8ypJ1gPWSolWT770jrgVRfolVbYlki8y5Y+As996zMF6k5lewTu6j9DQequ7Cc9a69IVQ==}
     dev: false
 
-  /@chakra-ui/anatomy@2.2.1:
-    resolution: {integrity: sha512-bbmyWTGwQo+aHYDMtLIj7k7hcWvwE7GFVDViLFArrrPhfUTDdQTNqhiDp1N7eh2HLyjNhc2MKXV8s2KTQqkmTg==}
-    dev: false
-
   /@chakra-ui/anatomy@2.2.2:
     resolution: {integrity: sha512-MV6D4VLRIHr4PkW4zMyqfrNS1mPlCTiCXwvYGtDFQYr+xHFfonhAuf9WjsSc0nyp2m0OdkSLnzmVKkZFLo25Tg==}
     dev: false
@@ -5141,12 +5137,12 @@ packages:
       color2k: 2.0.2
     dev: false
 
-  /@chakra-ui/theme-tools@2.1.1(@chakra-ui/styled-system@2.9.1):
-    resolution: {integrity: sha512-n14L5L3ej3Zy+Xm/kDKO1G6/DkmieT7Li1C7NzMRcUj5C9YybQpyo7IZZ0BBUh3u+OVnKVhNC3d4P2NYDGRXmA==}
+  /@chakra-ui/theme-tools@2.1.2(@chakra-ui/styled-system@2.9.1):
+    resolution: {integrity: sha512-Qdj8ajF9kxY4gLrq7gA+Azp8CtFHGO9tWMN2wfF9aQNgG9AuMhPrUzMq9AMQ0MXiYcgNq/FD3eegB43nHVmXVA==}
     peerDependencies:
       '@chakra-ui/styled-system': '>=2.0.0'
     dependencies:
-      '@chakra-ui/anatomy': 2.2.1
+      '@chakra-ui/anatomy': 2.2.2
       '@chakra-ui/shared-utils': 2.0.5
       '@chakra-ui/styled-system': 2.9.1
       color2k: 2.0.2
@@ -7773,6 +7769,42 @@ packages:
 
   /@floating-ui/utils@0.1.6:
     resolution: {integrity: sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==}
+    dev: false
+
+  /@funnelhub/sidebar@1.0.0(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-esWFm/24CKqz7wMsPKx/xVBZSIsjxw6aaH1hYhf+vCKPWtTKcMm+v/MaxArBgR4DfLSsS2AOx/6jQhwOC4Mmpg==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      next: 13.5.6
+      react: ^18
+      react-dom: ^18
+    dependencies:
+      '@chakra-ui/anatomy': 2.2.2
+      '@chakra-ui/color-mode': 2.2.0(react@18.2.0)
+      '@chakra-ui/icons': 2.1.1(@chakra-ui/system@2.6.2)(react@18.2.0)
+      '@chakra-ui/layout': 2.3.1(@chakra-ui/system@2.6.2)(react@18.2.0)
+      '@chakra-ui/react': 2.8.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(framer-motion@10.16.16)(react-dom@18.2.0)(react@18.2.0)
+      '@chakra-ui/shared-utils': 2.0.5
+      '@chakra-ui/theme-tools': 2.1.2(@chakra-ui/styled-system@2.9.1)
+      '@emotion/react': 11.11.1(@types/react@18.2.15)(react@18.2.0)
+      '@emotion/styled': 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.15)(react@18.2.0)
+      '@refinedev/core': 4.46.0(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
+      antd: 5.12.5(react-dom@18.2.0)(react@18.2.0)
+      framer-motion: 10.16.16(react-dom@18.2.0)(react@18.2.0)
+      next: 13.5.4(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-icons: 4.12.0(react@18.2.0)
+    transitivePeerDependencies:
+      - '@chakra-ui/styled-system'
+      - '@chakra-ui/system'
+      - '@tanstack/react-query'
+      - '@types/react'
+      - '@types/react-dom'
+      - date-fns
+      - luxon
+      - moment
+      - react-native
     dev: false
 
   /@giphy/js-analytics@5.0.0:
@@ -20688,12 +20720,14 @@ packages:
     hasBin: true
     dev: true
 
-  /pngjs@5.0.0:
-    resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
-    engines: {node: '>=10.13.0'}
   /pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
+    dev: false
+
+  /pngjs@5.0.0:
+    resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
+    engines: {node: '>=10.13.0'}
     dev: false
 
   /portfinder@1.0.32:
@@ -21561,6 +21595,14 @@ packages:
     resolution: {integrity: sha512-LA0Y9kxMYv47GIPJy6MI84fqTd2HmYZI83W/kM/SkKfDlajnZYfmXFTxkbY+xSBPkLJxltMa9hIkmdc29eguMA==}
     dev: true
 
+  /qrcode.react@3.1.0(react@18.2.0):
+    resolution: {integrity: sha512-oyF+Urr3oAMUG/OiOuONL3HXM+53wvuH3mtIWQrYmsXoAq0DkvZp2RYUWFSMFtbdOpuS++9v+WAkzNVkMlNW6Q==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /qrcode@1.5.3:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
     engines: {node: '>=10.13.0'}
@@ -21570,12 +21612,6 @@ packages:
       encode-utf8: 1.0.3
       pngjs: 5.0.0
       yargs: 15.4.1
-  /qrcode.react@3.1.0(react@18.2.0):
-    resolution: {integrity: sha512-oyF+Urr3oAMUG/OiOuONL3HXM+53wvuH3mtIWQrYmsXoAq0DkvZp2RYUWFSMFtbdOpuS++9v+WAkzNVkMlNW6Q==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
     dev: false
 
   /qs@6.11.0:
@@ -26205,42 +26241,4 @@ packages:
 
   /zwitch@1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
-    dev: false
-
-  file:../funnelhub-sidebar(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {directory: ../funnelhub-sidebar, type: directory}
-    id: file:../funnelhub-sidebar
-    name: '@funnelhub/sidebar'
-    engines: {node: '>=20'}
-    peerDependencies:
-      next: 13.5.6
-      react: ^18
-      react-dom: ^18
-    dependencies:
-      '@chakra-ui/anatomy': 2.2.1
-      '@chakra-ui/color-mode': 2.2.0(react@18.2.0)
-      '@chakra-ui/icons': 2.1.1(@chakra-ui/system@2.6.2)(react@18.2.0)
-      '@chakra-ui/layout': 2.3.1(@chakra-ui/system@2.6.2)(react@18.2.0)
-      '@chakra-ui/react': 2.8.2(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.15)(framer-motion@10.16.16)(react-dom@18.2.0)(react@18.2.0)
-      '@chakra-ui/shared-utils': 2.0.5
-      '@chakra-ui/theme-tools': 2.1.1(@chakra-ui/styled-system@2.9.1)
-      '@emotion/react': 11.11.1(@types/react@18.2.15)(react@18.2.0)
-      '@emotion/styled': 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.15)(react@18.2.0)
-      '@refinedev/core': 4.46.0(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
-      antd: 5.12.5(react-dom@18.2.0)(react@18.2.0)
-      framer-motion: 10.16.16(react-dom@18.2.0)(react@18.2.0)
-      next: 13.5.4(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-icons: 4.12.0(react@18.2.0)
-    transitivePeerDependencies:
-      - '@chakra-ui/styled-system'
-      - '@chakra-ui/system'
-      - '@tanstack/react-query'
-      - '@types/react'
-      - '@types/react-dom'
-      - date-fns
-      - luxon
-      - moment
-      - react-native
     dev: false

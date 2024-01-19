@@ -46,7 +46,7 @@
     "@udecode/plate-link": "21.2.0",
     "@udecode/plate-ui-link": "21.2.0",
     "@udecode/plate-ui-toolbar": "21.1.5",
-    "@funnelhub/sidebar": "file:../../../funnelhub-sidebar",
+    "@funnelhub/sidebar": "1.0.0",
     "@uiw/codemirror-extensions-langs": "4.21.7",
     "@uiw/codemirror-theme-github": "4.21.7",
     "@uiw/codemirror-theme-tokyo-night": "4.21.7",
