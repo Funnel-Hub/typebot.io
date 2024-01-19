@@ -23,7 +23,7 @@ import { JumpNodeBody } from '@/features/blocks/logic/jump/components/JumpNodeBo
 import { ScriptNodeContent } from '@/features/blocks/logic/script/components/ScriptNodeContent'
 import { WaitNodeContent } from '@/features/blocks/logic/wait/components/WaitNodeContent'
 import { BlockIndices, BlockV6 } from '@typebot.io/schemas'
-// import { ZapierContent } from '@/features/blocks/integrations/zapier/components/ZapierContent'
+import { ZapierContent } from '@/features/blocks/integrations/zapier/components/ZapierContent'
 import { PictureChoiceNode } from '@/features/blocks/inputs/pictureChoice/components/PictureChoiceNode'
 import { ChatwootNodeBody } from '@/features/blocks/integrations/chatwoot/components/ChatwootNodeBody'
 import { GoogleAnalyticsNodeBody } from '@/features/blocks/integrations/googleAnalytics/components/GoogleAnalyticsNodeBody'
@@ -133,9 +133,9 @@ export const BlockNodeContent = ({ block, indices }: Props): JSX.Element => {
     case IntegrationBlockType.WEBHOOK: {
       return <WebhookContent block={block} />
     }
-    // case IntegrationBlockType.ZAPIER: {
-    //   return <ZapierContent block={block} />
-    // }
+    case IntegrationBlockType.ZAPIER: {
+      return <ZapierContent block={block} />
+    }
     case IntegrationBlockType.PABBLY_CONNECT: {
       return <PabblyConnectContent block={block} />
     }

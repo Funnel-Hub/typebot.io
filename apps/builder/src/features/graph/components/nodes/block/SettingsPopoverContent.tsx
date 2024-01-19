@@ -25,7 +25,7 @@ import {
 } from '@chakra-ui/react'
 import { Block, BlockOptions, BlockWithOptions } from '@typebot.io/schemas'
 import { useRef, useState } from 'react'
-// import { ZapierSettings } from '@/features/blocks/integrations/zapier/components/ZapierSettings'
+import { ZapierSettings } from '@/features/blocks/integrations/zapier/components/ZapierSettings'
 import { DateInputSettings } from '@/features/blocks/inputs/date/components/DateInputSettings'
 import { EmailInputSettings } from '@/features/blocks/inputs/emailInput/components/EmailInputSettings'
 import { NumberInputSettings } from '@/features/blocks/inputs/number/components/NumberInputSettings'
@@ -276,9 +276,9 @@ export const BlockSettings = ({
         />
       )
     }
-    // case IntegrationBlockType.ZAPIER: {
-    //   return <ZapierSettings block={block} onOptionsChange={updateOptions} />
-    // }
+    case IntegrationBlockType.ZAPIER: {
+      return <ZapierSettings block={block} onOptionsChange={updateOptions} />
+    }
     case IntegrationBlockType.MAKE_COM: {
       return <MakeComSettings block={block} onOptionsChange={updateOptions} />
     }
