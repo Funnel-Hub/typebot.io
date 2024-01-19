@@ -1,8 +1,9 @@
 import WebSocket, { ErrorEvent } from "ws"
+import { WhatsappSocketSendingMessage } from "./convertMessageToWhatsappCompoent"
 
 type SendMessagePayload = {
   phones: string[]
-  message: string
+  message: WhatsappSocketSendingMessage
   sessionId?: string
 }
 
@@ -36,7 +37,7 @@ export async function sendSocketWhatsappMessage(clientId: string, { message, pho
     socketClient.send(JSON.stringify({
       method: 'sendMessage',
       phoneNumber: phone,
-      messageBody: message,
+      message,
       sessionId
     }))
   })

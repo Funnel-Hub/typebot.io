@@ -1,10 +1,11 @@
 import { ContinueChatResponse } from '@typebot.io/schemas'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
 import { serialize } from 'remark-slate'
+import { isImageUrlNotCompatible } from '../convertMessageToWhatsAppMessage'
 
 
 export type WhatsappSocketSendingMessage = {
-  type: 'text'
+  type: 'text' | 'image' | 'audio'
   body: string
 }
 
@@ -24,7 +25,22 @@ export const convertMessageToWhatsappComponent = (
         .join('\n')
       }
     }
+    case BubbleBlockType.IMAGE: {
+      if (!message.content.url || isImageUrlNotCompatible(message.content.url))
+        return
+      return {
+        type: 'image',
+        body: message.content.url,
+      }
+    }
+    case BubbleBlockType.AUDIO: {
+      if (!message.content.url) return
+      return {
+        type: 'audio',
+        body: message.content.url,
+      }
+    }
     default:
-      throw new Error('Unsupported message type')
+      throw new Error(`Unsupported message type: ${message.type}`)
   }
 }
