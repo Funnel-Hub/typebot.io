@@ -55,6 +55,8 @@ export const getHelpDocUrl = (blockType: BlockWithOptions['type']): string => {
       return 'https://docs.typebot.io/editor/blocks/integrations/openai'
     case IntegrationBlockType.MAKE_COM:
       return 'https://docs.typebot.io/editor/blocks/integrations/make-com'
+	case IntegrationBlockType.WHATSAPP:
+      return 'https://docs.typebot.io/editor/blocks/integrations/whatsapp'
     case LogicBlockType.AB_TEST:
       return 'https://docs.typebot.io/editor/blocks/logic/abTest'
     case LogicBlockType.JUMP:
