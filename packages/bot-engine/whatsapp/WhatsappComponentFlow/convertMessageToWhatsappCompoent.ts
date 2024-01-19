@@ -1,11 +1,12 @@
 import { ContinueChatResponse } from '@typebot.io/schemas'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
+import { VideoBubbleContentType } from '@typebot.io/schemas/features/blocks/bubbles/video/constants'
 import { serialize } from 'remark-slate'
-import { isImageUrlNotCompatible } from '../convertMessageToWhatsAppMessage'
+import { isImageUrlNotCompatible, isVideoUrlNotCompatible } from '../convertMessageToWhatsAppMessage'
 
 
 export type WhatsappSocketSendingMessage = {
-  type: 'text' | 'image' | 'audio'
+  type: 'text' | 'image' | 'audio' | 'video' | 'embed'
   body: string
 }
 
@@ -40,7 +41,26 @@ export const convertMessageToWhatsappComponent = (
         body: message.content.url,
       }
     }
+    case BubbleBlockType.VIDEO: {
+      if (
+        !message.content.url ||
+        (message.content.type !== VideoBubbleContentType.URL &&
+          isVideoUrlNotCompatible(message.content.url))
+      )
+        return
+      return {
+        type: 'video',
+        body: message.content.url,
+      }
+    }
+    case BubbleBlockType.EMBED: {
+      if (!message.content.url) return
+      return {
+        type: 'embed',
+        body: message.content.url,
+      }
+    }
     default:
-      throw new Error(`Unsupported message type: ${message.type}`)
+      throw new Error(`Unsupported message type`)
   }
 }
