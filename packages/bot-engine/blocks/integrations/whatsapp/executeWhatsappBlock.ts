@@ -16,7 +16,7 @@ export const executeWhatsappBlock = async (
     description: 'Missing whatsapp credentials',
   }
 
-  if(!options.phone) {
+  if(!options?.phone) {
     return {
       outgoingEdgeId,
       logs: [

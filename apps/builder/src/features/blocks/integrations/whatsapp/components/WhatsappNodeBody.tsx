@@ -1,12 +1,9 @@
 import { Stack, Text } from '@chakra-ui/react'
 import { useTranslate } from '@tolgee/react'
-import {
-  WhatsappBlock,
-} from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
 
 type Props = {
-  credentialsId: WhatsappBlock['options']['credentialsId']
-  phone: WhatsappBlock['options']['phone']
+  credentialsId?: string
+  phone?: string
 }
 
 export const WhatsappNodeBody = ({ credentialsId, phone }: Props) => {

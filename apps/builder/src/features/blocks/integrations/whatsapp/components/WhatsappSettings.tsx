@@ -25,10 +25,16 @@ export const WhatsappSettings = ({
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const updateCredentialsId = (credentialsId: string | undefined) => {
-    onOptionsChange({
-      ...options,
-      credentialsId,
-    })
+    if (options) {
+      onOptionsChange({
+        ...options,
+        credentialsId,
+      })
+    } else {
+      onOptionsChange({
+        credentialsId,
+      })
+    }
   }
 
   const handlePhoneNumbersChange = (phone: string) => {
