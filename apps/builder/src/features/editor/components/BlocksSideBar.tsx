@@ -161,7 +161,7 @@ export const BlocksSideBar = () => {
           </Text>
           <SimpleGrid columns={2} spacing="3">
             {Object.values(IntegrationBlockType).map((type) => (
-              (type !== IntegrationBlockType.ZAPIER)
+              (type !== IntegrationBlockType.ZAPIER && type !== IntegrationBlockType.PABBLY_CONNECT)
               && <BlockCard key={type} type={type} onMouseDown={handleMouseDown} />
             ))}
           </SimpleGrid>

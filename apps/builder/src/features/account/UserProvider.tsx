@@ -57,7 +57,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setCurrentWorkspaceId(
       localStorage.getItem('currentWorkspaceId') ?? undefined
     )
-    const parsedUser = session.user as User
+
+    const parsedUser = session.user as User & { apiToken?: string | null }
+	
+	if (parsedUser.apiToken) delete parsedUser.apiToken	
+
     setUser(parsedUser)
 
     if (parsedUser?.id) {
