@@ -1,14 +1,15 @@
-import { executeOpenAIBlock } from './blocks/integrations/openai/executeOpenAIBlock'
-import { executeSendEmailBlock } from './blocks/integrations/sendEmail/executeSendEmailBlock'
-import { executeWebhookBlock } from './blocks/integrations/webhook/executeWebhookBlock'
+import { IntegrationBlock, SessionState } from '@typebot.io/schemas'
+import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import { executeChatwootBlock } from './blocks/integrations/chatwoot/executeChatwootBlock'
 import { executeGoogleAnalyticsBlock } from './blocks/integrations/googleAnalytics/executeGoogleAnalyticsBlock'
 import { executeGoogleSheetBlock } from './blocks/integrations/googleSheets/executeGoogleSheetBlock'
+import { executeOpenAIBlock } from './blocks/integrations/openai/executeOpenAIBlock'
 import { executePixelBlock } from './blocks/integrations/pixel/executePixelBlock'
+import { executeSendEmailBlock } from './blocks/integrations/sendEmail/executeSendEmailBlock'
+import { executeWebhookBlock } from './blocks/integrations/webhook/executeWebhookBlock'
+import { executeWhatsappBlock } from './blocks/integrations/whatsapp/executeWhatsappBlock'
 import { executeZemanticAiBlock } from './blocks/integrations/zemanticAi/executeZemanticAiBlock'
-import { IntegrationBlock, SessionState } from '@typebot.io/schemas'
 import { ExecuteIntegrationResponse } from './types'
-import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 
 export const executeIntegration =
   (state: SessionState) =>
@@ -22,6 +23,8 @@ export const executeIntegration =
         return executeGoogleAnalyticsBlock(state, block)
       case IntegrationBlockType.EMAIL:
         return executeSendEmailBlock(state, block)
+      case IntegrationBlockType.WHATSAPP:
+        return executeWhatsappBlock(state, block)
       case IntegrationBlockType.WEBHOOK:
       case IntegrationBlockType.ZAPIER:
       case IntegrationBlockType.MAKE_COM:

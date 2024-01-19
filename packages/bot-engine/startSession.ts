@@ -1,16 +1,19 @@
 import { createId } from '@paralleldrive/cuid2'
 import { TRPCError } from '@trpc/server'
-import { isDefined, omit, isNotEmpty, isInputBlock } from '@typebot.io/lib'
+import { env } from '@typebot.io/env'
+import { isDefined, isInputBlock, isNotEmpty, omit } from '@typebot.io/lib'
+import { VisitedEdge } from '@typebot.io/prisma'
 import {
-  Variable,
-  VariableWithValue,
-  Theme,
+  Block,
   GoogleAnalyticsBlock,
   PixelBlock,
   SessionState,
+  Theme,
   TypebotInSession,
-  Block,
+  Variable,
+  VariableWithValue,
 } from '@typebot.io/schemas'
+import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import {
   StartChatInput,
   StartChatResponse,
@@ -18,24 +21,21 @@ import {
   StartTypebot,
   startTypebotSchema,
 } from '@typebot.io/schemas/features/chat/schema'
+import { defaultSettings } from '@typebot.io/schemas/features/typebot/settings/constants'
+import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
 import parse, { NodeType } from 'node-html-parser'
+import { continueBotFlow } from './continueBotFlow'
+import { getNextGroup } from './getNextGroup'
 import { parseDynamicTheme } from './parseDynamicTheme'
-import { findTypebot } from './queries/findTypebot'
 import { findPublicTypebot } from './queries/findPublicTypebot'
 import { findResult } from './queries/findResult'
+import { findTypebot } from './queries/findTypebot'
+import { upsertResult } from './queries/upsertResult'
 import { startBotFlow } from './startBotFlow'
-import { prefillVariables } from './variables/prefillVariables'
 import { deepParseVariables } from './variables/deepParseVariables'
 import { injectVariablesFromExistingResult } from './variables/injectVariablesFromExistingResult'
-import { getNextGroup } from './getNextGroup'
-import { upsertResult } from './queries/upsertResult'
-import { continueBotFlow } from './continueBotFlow'
 import { parseVariables } from './variables/parseVariables'
-import { defaultSettings } from '@typebot.io/schemas/features/typebot/settings/constants'
-import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
-import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
-import { VisitedEdge } from '@typebot.io/prisma'
-import { env } from '@typebot.io/env'
+import { prefillVariables } from './variables/prefillVariables'
 
 type StartParams =
   | ({
@@ -50,7 +50,7 @@ type Props = {
   version: 1 | 2
   message: string | undefined
   startParams: StartParams
-  initialSessionState?: Pick<SessionState, 'whatsApp' | 'expiryTimeout'>
+  initialSessionState?: Pick<SessionState, 'whatsApp' | 'expiryTimeout' | 'whatsappComponent' | 'sessionId'>
 }
 
 export const startSession = async ({

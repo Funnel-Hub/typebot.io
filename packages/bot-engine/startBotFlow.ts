@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server'
+import { VisitedEdge } from '@typebot.io/prisma'
 import {
   ContinueChatResponse,
   SessionState,
@@ -6,7 +7,6 @@ import {
 } from '@typebot.io/schemas'
 import { executeGroup } from './executeGroup'
 import { getNextGroup } from './getNextGroup'
-import { VisitedEdge } from '@typebot.io/prisma'
 
 type Props = {
   version: 1 | 2

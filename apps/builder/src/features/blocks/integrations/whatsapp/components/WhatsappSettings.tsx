@@ -1,11 +1,11 @@
-import { TextInput, Textarea } from '@/components/inputs'
+import { TextInput } from '@/components/inputs'
 import { CredentialsDropdown } from '@/features/credentials/components/CredentialsDropdown'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import {
   Stack,
   useDisclosure
 } from '@chakra-ui/react'
-import { isNotEmpty } from '@typebot.io/lib'
+import { useTranslate } from '@tolgee/react'
 import {
   WhatsappBlock
 } from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
@@ -20,6 +20,7 @@ export const WhatsappSettings = ({
   block: { options },
   onOptionsChange,
 }: Props) => {
+  const { t } = useTranslate()
   const { workspace } = useWorkspace()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -30,21 +31,11 @@ export const WhatsappSettings = ({
     })
   }
 
-  const handlePhoneNumbersChange = (phones: string) => {
-    const phonesArray: string[] = phones
-      .split(',')
-      .map((str) => str.trim())
-      .filter(isNotEmpty)
+  const handlePhoneNumbersChange = (phone: string) => {
+    if (!phone) return
     onOptionsChange({
       ...options,
-      phones: phonesArray,
-    })
-  }
-
-  const handleMessageChange = (message: string) => {
-    onOptionsChange({
-      ...options,
-      message
+      phone: phone.trim(),
     })
   }
 
@@ -58,7 +49,7 @@ export const WhatsappSettings = ({
             currentCredentialsId={options?.credentialsId ?? undefined}
             onCredentialsSelect={updateCredentialsId}
             onCreateNewClick={onOpen}
-            credentialsName="Whatsapp account"
+            credentialsName={t('editor.blocks.integrations.whatsapp.WhatsappSettings.CredentialsDropdown.credentialsName')}
           />
           <WhatsappCredentialsModal
             isOpen={isOpen}
@@ -70,16 +61,11 @@ export const WhatsappSettings = ({
       {options?.credentialsId && (
         <>
           <TextInput
-            label="Phones"
+            label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhone.label')}
             onChange={handlePhoneNumbersChange}
-            defaultValue={options?.phones?.join(', ')}
-            placeholder="5555555, 5555555"
-          />
-          <Textarea
-            label="Message"
-            onChange={handleMessageChange}
-            defaultValue={options?.message}
-            placeholder='Hello, how are you?'
+            defaultValue={options?.phone}
+            placeholder="55888888888"
+            isRequired
           />
         </>
       )}
