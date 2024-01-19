@@ -1,3 +1,6 @@
+import { ChevronLeftIcon, PlusIcon, TrashIcon } from '@/components/icons'
+import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
+import { trpc } from '@/lib/trpc'
 import {
   Button,
   ButtonProps,
@@ -9,13 +12,11 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
-import { ChevronLeftIcon, PlusIcon, TrashIcon } from '@/components/icons'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useToast } from '../../../hooks/useToast'
+import { useTranslate } from '@tolgee/react'
 import { Credentials } from '@typebot.io/schemas'
-import { trpc } from '@/lib/trpc'
-import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
+import { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useToast } from '../../../hooks/useToast'
 
 type Props = Omit<ButtonProps, 'type'> & {
   type: Credentials['type']
@@ -37,6 +38,7 @@ export const CredentialsDropdown = ({
   credentialsName,
   ...props
 }: Props) => {
+  const { t } = useTranslate()
   const router = useRouter()
   const { showToast } = useToast()
   const { currentRole } = useWorkspace()
@@ -112,7 +114,7 @@ export const CredentialsDropdown = ({
         isDisabled={currentRole === 'GUEST'}
         {...props}
       >
-        Add {credentialsName}
+        {t('editor.credentialsDropdown.add.label')} {credentialsName}
       </Button>
     )
   }
@@ -177,7 +179,7 @@ export const CredentialsDropdown = ({
               icon={<PlusIcon />}
               onClick={onCreateNewClick}
             >
-              Connect new
+              {t('editor.credentialsDropdown.ConnectNew.label')}
             </MenuItem>
           )}
         </Stack>

@@ -1,4 +1,4 @@
-import { Flex, HStack, Tooltip, useColorModeValue } from '@chakra-ui/react'
+import { Badge, Flex, HStack, Tooltip, useColorModeValue } from '@chakra-ui/react'
 import { useBlockDnd } from '@/features/graph/providers/GraphDndProvider'
 import React, { useEffect, useState } from 'react'
 import { BlockIcon } from './BlockIcon'
@@ -100,6 +100,17 @@ export const BlockCard = (
         >
           <BlockIcon type={props.type} />
           <BlockLabel type={props.type} />
+        </BlockCardLayout>
+      )
+    case IntegrationBlockType.WHATSAPP:
+      return (
+        <BlockCardLayout
+          {...props}
+          tooltip={t('blocks.integrations.whatsapp.blockCard.tooltip')}
+        >
+          <BlockIcon type={props.type} />
+          <BlockLabel type={props.type} />
+          <Badge fontSize='0.5em' colorScheme='yellow'>Beta</Badge>
         </BlockCardLayout>
       )
     default:

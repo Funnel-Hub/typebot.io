@@ -78,8 +78,10 @@ export const BlockLabel = ({ type }: Props): JSX.Element => {
       )
     case IntegrationBlockType.WEBHOOK:
       return <Text fontSize="sm">{t('editor.sidebarBlock.webhook.label')}</Text>
-    case IntegrationBlockType.ZAPIER:
-      return <Text fontSize="sm">{t('editor.sidebarBlock.zapier.label')}</Text>
+    case IntegrationBlockType.WHATSAPP:
+      return <Text fontSize="0.7em">{t('editor.sidebarBlock.whatsapp.label')}</Text>
+    // case IntegrationBlockType.ZAPIER:
+    //   return <Text fontSize="sm">{t('editor.sidebarBlock.zapier.label')}</Text>
     case IntegrationBlockType.MAKE_COM:
       return <Text fontSize="sm">{t('editor.sidebarBlock.makecom.label')}</Text>
     case IntegrationBlockType.PABBLY_CONNECT:

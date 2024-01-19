@@ -1,11 +1,12 @@
 import { publicProcedure } from '@/helpers/server/trpc'
-import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
 import { TRPCError } from '@trpc/server'
-import { getSession } from '@typebot.io/bot-engine/queries/getSession'
-import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
 import { continueBotFlow } from '@typebot.io/bot-engine/continueBotFlow'
 import { parseDynamicTheme } from '@typebot.io/bot-engine/parseDynamicTheme'
+import { getSession } from '@typebot.io/bot-engine/queries/getSession'
+import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
+import { executeWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/executeWhatsappFlow'
 import { isDefined } from '@typebot.io/lib/utils'
+import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
 import { z } from 'zod'
 
 export const continueChat = publicProcedure
@@ -54,7 +55,7 @@ export const continueChat = publicProcedure
       logs,
       lastMessageNewFormat,
       visitedEdges,
-    } = await continueBotFlow(message, { version: 2, state: session.state })
+    } = await continueBotFlow(message, { version: 2, state: {...session.state, sessionId: session.id } })
 
     if (newSessionState)
       await saveStateToDatabase({
@@ -68,6 +69,24 @@ export const continueChat = publicProcedure
         visitedEdges,
       })
 
+    if(newSessionState.whatsappComponent) {
+      await executeWhatsappFlow({
+        state: newSessionState,
+        messages,
+        input,
+        clientSideActions,
+      })
+      return {
+        messages: [],
+        input: undefined,
+        clientSideActions: undefined,
+        dynamicTheme: undefined,
+        logs: [],
+        lastMessageNewFormat: undefined,
+        whatsappComponent: newSessionState.whatsappComponent,
+      }
+    }
+    
     return {
       messages,
       input,
@@ -77,3 +96,4 @@ export const continueChat = publicProcedure
       lastMessageNewFormat,
     }
   })
+

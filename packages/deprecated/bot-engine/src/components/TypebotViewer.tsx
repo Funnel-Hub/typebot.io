@@ -77,9 +77,8 @@ export const TypebotViewer = ({
       {isNotEmpty(typebot?.theme?.general?.font) && (
         <style
           dangerouslySetInnerHTML={{
-            __html: `@import url('https://fonts.googleapis.com/css2?family=${
-              typebot.theme.general?.font ?? 'Open Sans'
-            }:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');`,
+            __html: `@import url('https://fonts.googleapis.com/css2?family=${typebot.theme.general?.font ?? 'Open Sans'
+              }:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');`,
           }}
         />
       )}
@@ -112,7 +111,6 @@ export const TypebotViewer = ({
                 startGroupId={startGroupId}
               />
             </div>
-            {typebot.settings.general?.isBrandingEnabled && <LiteBadge />}
           </div>
         </AnswersProvider>
       </TypebotProvider>

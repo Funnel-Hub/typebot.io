@@ -1,4 +1,3 @@
-import { LiteBadge } from './LiteBadge'
 import { createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js'
 import { isNotDefined, isNotEmpty } from '@typebot.io/lib'
 import { startChatQuery } from '@/queries/startChatQuery'
@@ -179,15 +178,14 @@ const BotContent = (props: BotContentProps) => {
         ?.getAttribute('href')
         ?.includes(
           props.initialChatReply.typebot?.theme?.general?.font ??
-            defaultTheme.general.font
+          defaultTheme.general.font
         )
     )
       return
     const font = document.createElement('link')
-    font.href = `https://fonts.bunny.net/css2?family=${
-      props.initialChatReply.typebot?.theme?.general?.font ??
+    font.href = `https://fonts.bunny.net/css2?family=${props.initialChatReply.typebot?.theme?.general?.font ??
       defaultTheme.general.font
-    }:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');')`
+      }:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');')`
     font.rel = 'stylesheet'
     font.id = 'bot-font'
     document.head.appendChild(font)
@@ -227,13 +225,6 @@ const BotContent = (props: BotContentProps) => {
           onNewLogs={props.onNewLogs}
         />
       </div>
-      <Show
-        when={
-          props.initialChatReply.typebot.settings.general?.isBrandingEnabled
-        }
-      >
-        <LiteBadge botContainer={botContainer} />
-      </Show>
     </div>
   )
 }

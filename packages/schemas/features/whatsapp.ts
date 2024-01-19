@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { credentialsBaseSchema } from './blocks/shared'
 import {
   ComparisonOperators,
   LogicalOperator,
 } from './blocks/logic/condition/constants'
+import { credentialsBaseSchema } from './blocks/shared'
 
 const mediaSchema = z.object({ link: z.string() })
 
@@ -171,6 +171,16 @@ export const whatsAppCredentialsSchema = z
     data: z.object({
       systemUserAccessToken: z.string(),
       phoneNumberId: z.string(),
+    }),
+  })
+  .merge(credentialsBaseSchema)
+
+export const whatsappSocketCredentialsSchema = z
+  .object({
+    type: z.literal('whatsAppSocket'),
+    data: z.object({
+      clientId: z.string(),
+      phoneNumber: z.string(),
     }),
   })
   .merge(credentialsBaseSchema)
