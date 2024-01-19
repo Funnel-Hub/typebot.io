@@ -2,17 +2,19 @@ import { SendButton } from '@/components/SendButton'
 import { createSignal, onMount, Show } from 'solid-js'
 import type { Stripe, StripeElements } from '@stripe/stripe-js'
 import { BotContext } from '@/types'
-import type { PaymentInputOptions, RuntimeOptions } from '@typebot.io/schemas'
+import type { PaymentInputBlock, RuntimeOptions } from '@typebot.io/schemas'
 import { loadStripe } from '@/lib/stripe'
 import {
   removePaymentInProgressFromStorage,
   setPaymentInProgressInStorage,
 } from '../helpers/paymentInProgressStorage'
+import { defaultPaymentInputOptions } from '@typebot.io/schemas/features/blocks/inputs/payment/constants'
 
 type Props = {
   context: BotContext
-  options: PaymentInputOptions & RuntimeOptions
+  options: PaymentInputBlock['options'] & RuntimeOptions
   onSuccess: () => void
+  onTransitionEnd: () => void
 }
 
 const slotName = 'stripe-payment-form'
@@ -28,7 +30,9 @@ export const StripePaymentForm = (props: Props) => {
 
   onMount(async () => {
     initShadowMountPoint(paymentElementSlot)
-    stripe = await loadStripe(props.options.publicKey)
+    if (!props.options?.publicKey)
+      return setMessage('Missing Stripe public key')
+    stripe = await loadStripe(props.options?.publicKey)
     if (!stripe) return
     elements = stripe.elements({
       appearance: {
@@ -45,7 +49,10 @@ export const StripePaymentForm = (props: Props) => {
       layout: 'tabs',
     })
     paymentElement.mount('#payment-element')
-    setTimeout(() => setIsMounted(true), 1000)
+    setTimeout(() => {
+      setIsMounted(true)
+      props.onTransitionEnd()
+    }, 1000)
   })
 
   const handleSubmit = async (event: Event & { submitter: HTMLElement }) => {
@@ -60,16 +67,16 @@ export const StripePaymentForm = (props: Props) => {
       typebot: props.context.typebot,
     })
     const { postalCode, ...address } =
-      props.options.additionalInformation?.address ?? {}
+      props.options?.additionalInformation?.address ?? {}
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: window.location.href,
         payment_method_data: {
           billing_details: {
-            name: props.options.additionalInformation?.name,
-            email: props.options.additionalInformation?.email,
-            phone: props.options.additionalInformation?.phoneNumber,
+            name: props.options?.additionalInformation?.name,
+            email: props.options?.additionalInformation?.email,
+            phone: props.options?.additionalInformation?.phoneNumber,
             address: {
               ...address,
               postal_code: postalCode,
@@ -100,7 +107,9 @@ export const StripePaymentForm = (props: Props) => {
           class="mt-4 w-full max-w-lg animate-fade-in"
           disableIcon
         >
-          {props.options.labels.button} {props.options.amountLabel}
+          {props.options?.labels?.button ??
+            defaultPaymentInputOptions.labels.button}{' '}
+          {props.options?.amountLabel}
         </SendButton>
       </Show>
 

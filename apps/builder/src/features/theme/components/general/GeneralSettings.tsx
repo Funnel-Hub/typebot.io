@@ -1,5 +1,5 @@
 import { Flex, FormLabel, Stack, Switch, useDisclosure } from '@chakra-ui/react'
-import { Background, GeneralTheme } from '@typebot.io/schemas'
+import { Background, Theme } from '@typebot.io/schemas'
 import React from 'react'
 import { BackgroundSelector } from './BackgroundSelector'
 import { FontSelector } from './FontSelector'
@@ -9,11 +9,12 @@ import { isFreePlan } from '@/features/billing/helpers/isFreePlan'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import { ChangePlanModal } from '@/features/billing/components/ChangePlanModal'
 import { useTranslate } from '@tolgee/react'
+import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
 
 type Props = {
   isBrandingEnabled: boolean
-  generalTheme: GeneralTheme
-  onGeneralThemeChange: (general: GeneralTheme) => void
+  generalTheme: Theme['general']
+  onGeneralThemeChange: (general: Theme['general']) => void
   onBrandingChange: (isBrandingEnabled: boolean) => void
 }
 
@@ -62,11 +63,11 @@ export const GeneralSettings = ({
         />
       </Flex>
       <FontSelector
-        activeFont={generalTheme.font}
+        activeFont={generalTheme?.font ?? defaultTheme.general.font}
         onSelectFont={handleSelectFont}
       />
       <BackgroundSelector
-        background={generalTheme.background}
+        background={generalTheme?.background ?? defaultTheme.general.background}
         onBackgroundChange={handleBackgroundChange}
       />
     </Stack>

@@ -1,5 +1,6 @@
 node_modules
 .next
+certificates
 .env.local
 workspace.code-workspace
 .DS_Store

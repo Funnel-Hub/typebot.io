@@ -1,7 +1,7 @@
 import { LiteBadge } from './LiteBadge'
 import { createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js'
 import { isNotDefined, isNotEmpty } from '@typebot.io/lib'
-import { getInitialChatReplyQuery } from '@/queries/getInitialChatReplyQuery'
+import { startChatQuery } from '@/queries/startChatQuery'
 import { ConversationContainer } from './ConversationContainer'
 import { setIsMobile } from '@/utils/isMobileSignal'
 import { BotContext, InitialChatReply, OutgoingLog } from '@/types'
@@ -12,20 +12,23 @@ import {
 } from '@/utils/storage'
 import { setCssVariablesValue } from '@/utils/setCssVariablesValue'
 import immutableCss from '../assets/immutable.css'
+import { InputBlock } from '@typebot.io/schemas'
+import { StartFrom } from '@typebot.io/schemas'
+import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
 
 export type BotProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   typebot: string | any
   isPreview?: boolean
   resultId?: string
-  startGroupId?: string
   prefilledVariables?: Record<string, unknown>
   apiHost?: string
-  onNewInputBlock?: (ids: { id: string; groupId: string }) => void
+  onNewInputBlock?: (inputBlock: InputBlock) => void
   onAnswer?: (answer: { message: string; blockId: string }) => void
   onInit?: () => void
   onEnd?: () => void
   onNewLogs?: (logs: OutgoingLog[]) => void
+  startFrom?: StartFrom
 }
 
 export const Bot = (props: BotProps & { class?: string }) => {
@@ -46,22 +49,24 @@ export const Bot = (props: BotProps & { class?: string }) => {
     })
     const typebotIdFromProps =
       typeof props.typebot === 'string' ? props.typebot : undefined
-    const { data, error } = await getInitialChatReplyQuery({
+    const isPreview =
+      typeof props.typebot !== 'string' || (props.isPreview ?? false)
+    const { data, error } = await startChatQuery({
       stripeRedirectStatus: urlParams.get('redirect_status') ?? undefined,
       typebot: props.typebot,
       apiHost: props.apiHost,
-      isPreview: props.isPreview ?? false,
+      isPreview,
       resultId: isNotEmpty(props.resultId)
         ? props.resultId
         : getExistingResultIdFromStorage(typebotIdFromProps),
-      startGroupId: props.startGroupId,
       prefilledVariables: {
         ...prefilledVariables,
         ...props.prefilledVariables,
       },
+      startFrom: props.startFrom,
     })
     if (error && 'code' in error && typeof error.code === 'string') {
-      if (typeof props.typebot !== 'string' || (props.isPreview ?? false)) {
+      if (isPreview) {
         return setError(
           new Error('An error occurred while loading the bot.', {
             cause: error.message,
@@ -80,7 +85,7 @@ export const Bot = (props: BotProps & { class?: string }) => {
     }
 
     if (data.resultId && typebotIdFromProps)
-      setResultInStorage(data.typebot.settings.general.rememberUser?.storage)(
+      setResultInStorage(data.typebot.settings.general?.rememberUser?.storage)(
         typebotIdFromProps,
         data.resultId
       )
@@ -88,10 +93,7 @@ export const Bot = (props: BotProps & { class?: string }) => {
     setCustomCss(data.typebot.theme.customCss ?? '')
 
     if (data.input?.id && props.onNewInputBlock)
-      props.onNewInputBlock({
-        id: data.input.id,
-        groupId: data.input.groupId,
-      })
+      props.onNewInputBlock(data.input)
     if (data.logs) props.onNewLogs?.(data.logs)
   }
 
@@ -157,7 +159,7 @@ type BotContentProps = {
   initialChatReply: InitialChatReply
   context: BotContext
   class?: string
-  onNewInputBlock?: (block: { id: string; groupId: string }) => void
+  onNewInputBlock?: (inputBlock: InputBlock) => void
   onAnswer?: (answer: { message: string; blockId: string }) => void
   onEnd?: () => void
   onNewLogs?: (logs: OutgoingLog[]) => void
@@ -176,13 +178,15 @@ const BotContent = (props: BotContentProps) => {
       existingFont
         ?.getAttribute('href')
         ?.includes(
-          props.initialChatReply.typebot?.theme?.general?.font ?? 'Open Sans'
+          props.initialChatReply.typebot?.theme?.general?.font ??
+            defaultTheme.general.font
         )
     )
       return
     const font = document.createElement('link')
     font.href = `https://fonts.bunny.net/css2?family=${
-      props.initialChatReply.typebot?.theme?.general?.font ?? 'Open Sans'
+      props.initialChatReply.typebot?.theme?.general?.font ??
+      defaultTheme.general.font
     }:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');')`
     font.rel = 'stylesheet'
     font.id = 'bot-font'
@@ -224,7 +228,9 @@ const BotContent = (props: BotContentProps) => {
         />
       </div>
       <Show
-        when={props.initialChatReply.typebot.settings.general.isBrandingEnabled}
+        when={
+          props.initialChatReply.typebot.settings.general?.isBrandingEnabled
+        }
       >
         <LiteBadge botContainer={botContainer} />
       </Show>

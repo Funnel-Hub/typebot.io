@@ -31,6 +31,15 @@ const nextConfig = {
   experimental: {
     outputFileTracingRoot: join(__dirname, '../../'),
   },
+  async redirects() {
+    return [
+      {
+        source: '/discord',
+        destination: 'https://discord.gg/xjyQczWAXV',
+        permanent: true,
+      },
+    ]
+  },
   async rewrites() {
     return {
       beforeFiles: (process.env.LANDING_PAGE_URL

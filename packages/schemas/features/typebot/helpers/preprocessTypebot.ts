@@ -1,27 +1,26 @@
-import { Block } from '../../blocks'
 import { edgeSchema } from '../edge'
-import type { Group } from '../typebot'
 
 export const preprocessTypebot = (typebot: any) => {
-  if (!typebot || typebot.version === '5') return typebot
+  if (!typebot || typebot.version === '5' || typebot.version === '6')
+    return typebot
   return {
     ...typebot,
-    version: typebot.version === undefined ? null : typebot.version,
+    version:
+      typebot.version === undefined || typebot.version === null
+        ? '3'
+        : typebot.version,
     groups: typebot.groups ? typebot.groups.map(preprocessGroup) : [],
+    events: null,
     edges: typebot.edges
       ? typebot.edges?.filter((edge: any) => edgeSchema.safeParse(edge).success)
       : [],
   }
 }
 
-const preprocessGroup = (group: Group) => ({
+export const preprocessGroup = (group: any) => ({
   ...group,
-  blocks: group.blocks.map((block) =>
-    preprocessBlock(block, { groupId: group.id })
-  ),
+  blocks: group.blocks ?? [],
 })
 
-const preprocessBlock = (block: Block, { groupId }: { groupId: string }) => ({
-  ...block,
-  groupId: block.groupId ?? groupId,
-})
+export const preprocessColumnsWidthResults = (arg: unknown) =>
+  Array.isArray(arg) && arg.length === 0 ? {} : arg
