@@ -77,7 +77,7 @@ model Workspace {
   updatedAt                     DateTime              @default(now()) @updatedAt
   name                          String                @db.VarChar(255)
   icon                          String?               @db.VarChar(1000)
-  plan                          Plan                  @default(UNDEFINED)
+  plan                          Plan                  @default(PRO)
   stripeId                      String?               @unique
   credentials                   Credentials[]
   customDomains                 CustomDomain[]

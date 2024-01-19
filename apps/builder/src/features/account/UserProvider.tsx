@@ -19,8 +19,8 @@ export const userContext = createContext<{
   updateUser: (newUser: Partial<User>) => void
 }>({
   isLoading: false,
-  logOut: () => {},
-  updateUser: () => {},
+  logOut: () => { },
+  updateUser: () => { },
 })
 
 const debounceTimeout = 1000
