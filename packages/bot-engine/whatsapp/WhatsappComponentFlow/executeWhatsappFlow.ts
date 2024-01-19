@@ -49,7 +49,7 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
     if (isNotDefined(whatsAppMessage)) continue
     try {
       await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
-        message: whatsAppMessage.body,
+        message: whatsAppMessage,
         phones: [state.whatsappComponent.phone],
         sessionId: state.sessionId,
       })
@@ -89,7 +89,7 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
     for(const message of inputWhatsAppMessages) {
       try {
         await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
-          message: message.body,
+          message,
           phones: [state.whatsappComponent.phone],
           sessionId: state.sessionId,
         })
