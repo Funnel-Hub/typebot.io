@@ -8,7 +8,7 @@ const whatsappBaseOptionsSchema = z.object({
 
 const whatsappOptionsSchema = z
   .object({
-    phone: z.string()
+    phone: z.string().optional()
   })
   .merge(whatsappBaseOptionsSchema)
 
@@ -16,7 +16,7 @@ const whatsappOptionsSchema = z
 export const whatsappBlockSchema = blockBaseSchema.merge(
   z.object({
     type: z.enum([IntegrationBlockType.WHATSAPP]),
-    options: whatsappOptionsSchema
+    options: whatsappOptionsSchema.optional()
   })
 )
 
