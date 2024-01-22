@@ -171,15 +171,17 @@ export const BlocksSideBar = () => {
             {Object.values(IntegrationBlockType)
               .concat(enabledBlocks as any)
               .filter((type) => !legacyIntegrationBlocks.includes(type))
-              .map((type) => (
-				type !== IntegrationBlockType.ZAPIER && type !== IntegrationBlockType.PABBLY_CONNECT
-			  ) && (
-                <BlockCard
-                  key={type}
-                  type={type}
-                  onMouseDown={handleMouseDown}
-                />
-              ))}
+              .map(
+                (type) =>
+                  type !== IntegrationBlockType.ZAPIER &&
+                  type !== IntegrationBlockType.PABBLY_CONNECT && (
+                    <BlockCard
+                      key={type}
+                      type={type}
+                      onMouseDown={handleMouseDown}
+                    />
+                  )
+              )}
           </SimpleGrid>
         </Stack>
 

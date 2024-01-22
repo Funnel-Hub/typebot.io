@@ -65,8 +65,8 @@ export const ThemeTemplateCard = ({
     themeTemplate.theme.chat?.roundness === 'large'
       ? 'md'
       : themeTemplate.theme.chat?.roundness === 'none'
-        ? 'none'
-        : 'sm'
+      ? 'none'
+      : 'sm'
 
   const hostAvatar = {
     isEnabled:

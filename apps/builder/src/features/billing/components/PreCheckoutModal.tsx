@@ -13,7 +13,7 @@ import {
   ModalContent,
   ModalOverlay,
   Stack,
-  Text
+  Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
@@ -23,12 +23,12 @@ import { useTranslate } from '@tolgee/react'
 
 export type PreCheckoutModalProps = {
   selectedSubscription:
-  | {
-    plan: 'STARTER' | 'PRO' | 'LIFETIME'
-    workspaceId: string
-    currency: 'eur' | 'usd' | 'brl'
-  }
-  | undefined
+    | {
+        plan: 'STARTER' | 'PRO' | 'LIFETIME'
+        workspaceId: string
+        currency: 'eur' | 'usd' | 'brl'
+      }
+    | undefined
   existingCompany?: string
   existingEmail?: string
   onClose: () => void
@@ -171,7 +171,12 @@ export const PreCheckoutModal = ({
               type="submit"
               isLoading={isCreatingCheckout}
               colorScheme="red"
-              isDisabled={customer.company === '' || customer.email === '' || customer.vat.value === '' || customer.vat.type === undefined}
+              isDisabled={
+                customer.company === '' ||
+                customer.email === '' ||
+                customer.vat.value === '' ||
+                customer.vat.type === undefined
+              }
             >
               {t('billing.preCheckoutModal.submitButton.label')}
             </Button>

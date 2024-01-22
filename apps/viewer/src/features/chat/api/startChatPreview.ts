@@ -69,9 +69,9 @@ export const startChatPreview = publicProcedure
             visitedEdges,
           })
 
-      if(newSessionState.whatsappComponent) {
+      if (newSessionState.whatsappComponent) {
         await executeWhatsappFlow({
-          state: {...newSessionState, sessionId: session.id },
+          state: { ...newSessionState, sessionId: session.id },
           messages,
           input,
           clientSideActions,
@@ -91,7 +91,6 @@ export const startChatPreview = publicProcedure
           clientSideActions: [],
         }
       }
-    
 
       return {
         sessionId: session.id,

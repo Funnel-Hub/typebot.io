@@ -5,12 +5,12 @@ import { GetServerSidePropsContext } from 'next'
 
 export default function Page() {
   const { onClose } = useDisclosure()
-	
+
   return (
-  	<>
-	  <FunnelHubSidebar onClose={onClose} />
-	  <DashboardPage />
-	</>
+    <>
+      <FunnelHubSidebar onClose={onClose} />
+      <DashboardPage />
+    </>
   )
 }
 

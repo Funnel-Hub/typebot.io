@@ -78,9 +78,11 @@ export const updateSubscription = authenticatedProcedure
       })
       const subscription = data[0] as Stripe.Subscription | undefined
       const currentPlanItemId = subscription?.items.data.find((item) =>
-        [env.STRIPE_STARTER_PRICE_ID, env.STRIPE_PRO_PRICE_ID, env.STRIPE_LTD_PRICE_ID].includes(
-          item.price.id
-        )
+        [
+          env.STRIPE_STARTER_PRICE_ID,
+          env.STRIPE_PRO_PRICE_ID,
+          env.STRIPE_LTD_PRICE_ID,
+        ].includes(item.price.id)
       )?.id
       const currentUsageItemId = subscription?.items.data.find(
         (item) =>

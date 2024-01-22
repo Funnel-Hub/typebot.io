@@ -32,7 +32,7 @@ const sentryMiddleware = t.middleware(
 
 const isAuthed = t.middleware(({ next, ctx }) => {
   const bearerToken = extractBearerToken(ctx.req)
-	
+
   if (!ctx.user?.id && bearerToken !== env.WORKSPACE_TOKEN) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',

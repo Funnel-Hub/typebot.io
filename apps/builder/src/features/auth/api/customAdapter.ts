@@ -20,10 +20,10 @@ export function customAdapter(p: PrismaClient): Adapter {
   return {
     createUser: async (data: Omit<AdapterUser, 'id'>) => {
       if (!data.email) {
-		throw Error('Provider did not forward email but it is required')
-	  }
+        throw Error('Provider did not forward email but it is required')
+      }
 
-	  const userData = { ...data } as AdapterUser
+      const userData = { ...data } as AdapterUser
 
       const { invitations, workspaceInvitations } = await getNewUserInvitations(
         p,
@@ -36,18 +36,18 @@ export function customAdapter(p: PrismaClient): Adapter {
         invitations.length === 0 &&
         workspaceInvitations.length === 0
       ) {
-		throw Error('New users are forbidden')
-	  }
+        throw Error('New users are forbidden')
+      }
 
-	  const newWorkspaceData = {
-		name: "Meu espaço de trabalho",
-		plan: Plan.PRO
-	  }
+      const newWorkspaceData = {
+        name: 'Meu espaço de trabalho',
+        plan: Plan.PRO,
+      }
 
       const createdUser = await p.user.create({
         data: {
           ...data,
-		  id: userData.id ?? createId(),
+          id: userData.id ?? createId(),
           apiTokens: {
             create: { name: 'Default', token: generateId(24) },
           },
@@ -94,20 +94,20 @@ export function customAdapter(p: PrismaClient): Adapter {
       await sendTelemetryEvents(events)
 
       if (invitations.length > 0) {
-		await convertInvitationsToCollaborations(
-			p,
-			{ id: createdUser.id, email: data.email },
-			invitations
-		)
-	  }
+        await convertInvitationsToCollaborations(
+          p,
+          { id: createdUser.id, email: data.email },
+          invitations
+        )
+      }
 
       if (workspaceInvitations.length > 0) {
-		await joinWorkspaces(
-			p,
-			{ id: createdUser.id, email: data.email },
-			workspaceInvitations
-		)
-	  }
+        await joinWorkspaces(
+          p,
+          { id: createdUser.id, email: data.email },
+          workspaceInvitations
+        )
+      }
 
       return createdUser as AdapterUser
     },

@@ -73,7 +73,7 @@ export const continueChat = publicProcedure
       visitedEdges,
     } = await continueBotFlow(message, {
       version: 2,
-      state: {...session.state, sessionId: session.id },
+      state: { ...session.state, sessionId: session.id },
       startTime: Date.now(),
     })
 
@@ -89,7 +89,7 @@ export const continueChat = publicProcedure
         visitedEdges,
       })
 
-    if(newSessionState.whatsappComponent) {
+    if (newSessionState.whatsappComponent) {
       await executeWhatsappFlow({
         state: newSessionState,
         messages,
@@ -106,7 +106,7 @@ export const continueChat = publicProcedure
         whatsappComponent: newSessionState.whatsappComponent,
       }
     }
-    
+
     const isPreview = isNotDefined(session.state.typebotsQueue[0].resultId)
 
     return {
@@ -118,4 +118,3 @@ export const continueChat = publicProcedure
       lastMessageNewFormat,
     }
   })
-

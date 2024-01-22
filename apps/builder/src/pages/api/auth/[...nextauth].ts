@@ -169,7 +169,7 @@ export const getAuthOptions = ({
       }
       return token
     },
-	session: async ({ session, user }) => {
+    session: async ({ session, user }) => {
       const userFromDb = user as User
       await updateLastActivityDate(userFromDb)
       return {

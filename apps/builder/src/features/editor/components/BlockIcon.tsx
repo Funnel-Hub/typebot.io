@@ -1,6 +1,11 @@
 import { useColorModeValue } from '@chakra-ui/react'
 import React from 'react'
-import { FlagIcon, SendEmailIcon, WebhookIcon, WhatsappIcon } from '@/components/icons'
+import {
+  FlagIcon,
+  SendEmailIcon,
+  WebhookIcon,
+  WhatsappIcon,
+} from '@/components/icons'
 import { WaitIcon } from '@/features/blocks/logic/wait/components/WaitIcon'
 import { ScriptIcon } from '@/features/blocks/logic/script/components/ScriptIcon'
 import { JumpIcon } from '@/features/blocks/logic/jump/components/JumpIcon'
@@ -122,8 +127,8 @@ export const BlockIcon = ({ type, mt }: BlockIconProps): JSX.Element => {
       return <FlagIcon mt={mt} />
     case IntegrationBlockType.OPEN_AI:
       return <OpenAILogo mt={mt} fill={openAIColor} />
-	case IntegrationBlockType.WHATSAPP:
-	  return <WhatsappIcon mt={mt} />
+    case IntegrationBlockType.WHATSAPP:
+      return <WhatsappIcon mt={mt} />
     default:
       return <ForgedBlockIcon type={type} mt={mt} />
   }

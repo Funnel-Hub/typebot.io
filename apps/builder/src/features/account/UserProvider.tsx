@@ -19,8 +19,8 @@ export const userContext = createContext<{
   updateUser: (newUser: Partial<User>) => void
 }>({
   isLoading: false,
-  logOut: () => { },
-  updateUser: () => { },
+  logOut: () => {},
+  updateUser: () => {},
 })
 
 const debounceTimeout = 1000
@@ -59,8 +59,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     )
 
     const parsedUser = session.user as User & { apiToken?: string | null }
-	
-	if (parsedUser.apiToken) delete parsedUser.apiToken	
+
+    if (parsedUser.apiToken) delete parsedUser.apiToken
 
     setUser(parsedUser)
 

@@ -120,7 +120,9 @@ export const BlockCard = (
         >
           <BlockIcon type={props.type} />
           <BlockLabel type={props.type} />
-          <Badge fontSize='0.5em' colorScheme='yellow'>Beta</Badge>
+          <Badge fontSize="0.5em" colorScheme="yellow">
+            Beta
+          </Badge>
         </BlockCardLayout>
       )
     default:

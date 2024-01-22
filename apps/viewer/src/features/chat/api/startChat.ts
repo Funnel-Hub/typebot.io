@@ -81,9 +81,9 @@ export const startChat = publicProcedure
             visitedEdges,
           })
 
-      if(newSessionState.whatsappComponent) {
+      if (newSessionState.whatsappComponent) {
         await executeWhatsappFlow({
-          state: {...newSessionState, sessionId: session.id },
+          state: { ...newSessionState, sessionId: session.id },
           messages,
           input,
           clientSideActions,
