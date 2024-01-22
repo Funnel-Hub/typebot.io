@@ -1,16 +1,19 @@
 import * as Sentry from '@sentry/nextjs'
 import { isNotDefined } from '@typebot.io/lib/utils'
-import { ContinueChatResponse, SessionState } from "@typebot.io/schemas"
+import { ContinueChatResponse, SessionState, Settings } from "@typebot.io/schemas"
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { HTTPError } from 'got'
+import { computeTypingDuration } from '../../computeTypingDuration'
 import { continueBotFlow } from '../../continueBotFlow'
 import { convertInputToWhatsAppComponent } from './convertInputToWhatsappComponent'
-import { WhatsappSocketSendingMessage, convertMessageToWhatsappComponent } from './convertMessageToWhatsappCompoent'
+import { TypeWhatsappMessage, WhatsappSocketSendingMessage, convertMessageToWhatsappComponent } from './convertMessageToWhatsappCompoent'
 import { sendSocketWhatsappMessage } from './sendWhatsappSocketMessage'
 
 type Props = {
   state: SessionState
 } & Pick<ContinueChatResponse, 'messages' | 'input' | 'clientSideActions'>
+
+const messageAfterMediaTimeout = 5000
 
 export async function executeWhatsappFlow({ state, messages, input, clientSideActions }: Props) {
   if(!state?.whatsappComponent?.clientId)
@@ -88,6 +91,18 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
     )
     for(const message of inputWhatsAppMessages) {
       try {
+        if (isNotDefined(message)) continue
+        const lastSentMessageIsMedia = ['audio', 'video', 'image'].includes(
+          sentMessages.at(-1)?.type ?? ''
+        )
+        const typingDuration = lastSentMessageIsMedia
+        ? messageAfterMediaTimeout
+        : getTypingDuration({
+            message,
+            typingEmulation: state.typingEmulation,
+          })
+        if (typingDuration)
+          await new Promise((resolve) => setTimeout(resolve, typingDuration))
         await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
           message,
           phones: [state.whatsappComponent.phone],
@@ -126,27 +141,31 @@ const executeClientSideAction =
         replyToSend: undefined,
       }
     }
-    console.log('redirect' in clientSideAction && clientSideAction.redirect.url)
-    console.log(clientSideAction)
-    // if ('redirect' in clientSideAction && clientSideAction.redirect.url) {
-    //   const message = {
-    //     type: 'text',
-    //     text: {
-    //       body: clientSideAction.redirect.url,
-    //       preview_url: true,
-    //     },
-    //   } satisfies WhatsAppSendingMessage
-    //   try {
-    //     await sendWhatsAppMessage({
-    //       to: context.to,
-    //       message,
-    //       credentials: context.credentials,
-    //     })
-    //   } catch (err) {
-    //     Sentry.captureException(err, { extra: { message } })
-    //     console.log('Failed to send message:', JSON.stringify(message, null, 2))
-    //     if (err instanceof HTTPError)
-    //       console.log('HTTPError', err.response.statusCode, err.response.body)
-    //   }
-    // }
+
+  }
+
+  const getTypingDuration = ({
+    message,
+    typingEmulation,
+  }: {
+    message: WhatsappSocketSendingMessage
+    typingEmulation?: Settings['typingEmulation']
+  }): number | undefined => {
+    switch (message.type) {
+      case TypeWhatsappMessage.TEXT:
+        return computeTypingDuration({
+          bubbleContent: message.body,
+          typingSettings: typingEmulation,
+        })
+      case TypeWhatsappMessage.INTERACTIVE:
+        if (!message.interactive?.text) return
+        return computeTypingDuration({
+          bubbleContent: message.interactive.body?.text ?? '',
+          typingSettings: typingEmulation,
+        })
+      case 'audio':
+      case 'video':
+      case 'image':
+        return
+    }
   }
