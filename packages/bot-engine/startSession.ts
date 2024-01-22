@@ -32,10 +32,10 @@ import { findResult } from './queries/findResult'
 import { findTypebot } from './queries/findTypebot'
 import { upsertResult } from './queries/upsertResult'
 import { startBotFlow } from './startBotFlow'
-import { deepParseVariables } from './variables/deepParseVariables'
-import { injectVariablesFromExistingResult } from './variables/injectVariablesFromExistingResult'
-import { parseVariables } from './variables/parseVariables'
-import { prefillVariables } from './variables/prefillVariables'
+import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
+import { injectVariablesFromExistingResult } from '@typebot.io/variables/injectVariablesFromExistingResult'
+import { parseVariables } from '@typebot.io/variables/parseVariables'
+import { prefillVariables } from '@typebot.io/variables/prefillVariables'
 
 type StartParams =
   | ({
@@ -59,7 +59,7 @@ export const startSession = async ({
   startParams,
   initialSessionState,
 }: Props): Promise<
-  Omit<StartChatResponse, 'resultId'> & {
+  Omit<StartChatResponse, 'resultId' | 'isStreamEnabled' | 'sessionId'> & {
     newSessionState: SessionState
     visitedEdges: VisitedEdge[]
     resultId?: string
@@ -131,6 +131,10 @@ export const startSession = async ({
     dynamicTheme: parseDynamicThemeInState(typebot.theme),
     isStreamEnabled: startParams.isStreamEnabled,
     typingEmulation: typebot.settings.typingEmulation,
+    allowedOrigins:
+      startParams.type === 'preview'
+        ? undefined
+        : typebot.settings.security?.allowedOrigins,
     ...initialSessionState,
   }
 
@@ -157,6 +161,7 @@ export const startSession = async ({
     state: initialState,
     startFrom:
       startParams.type === 'preview' ? startParams.startFrom : undefined,
+    startTime: Date.now(),
   })
 
   // If params has message and first block is an input block, we can directly continue the bot flow
@@ -424,9 +429,7 @@ const parseStartClientSideAction = (
   )
     return
 
-  return {
-    startPropsToInject,
-  }
+  return { type: 'startPropsToInject', startPropsToInject }
 }
 
 const sanitizeAndParseTheme = (

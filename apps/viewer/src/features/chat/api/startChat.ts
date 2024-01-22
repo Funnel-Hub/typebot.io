@@ -7,6 +7,7 @@ import {
   startChatInputSchema,
   startChatResponseSchema,
 } from '@typebot.io/schemas/features/chat/schema'
+import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filterPotentiallySensitiveLogs'
 
 export const startChat = publicProcedure
   .meta({
@@ -28,6 +29,7 @@ export const startChat = publicProcedure
         prefilledVariables,
         resultId: startResultId,
       },
+      ctx: { origin, res },
     }) => {
       const {
         typebot,
@@ -51,6 +53,19 @@ export const startChat = publicProcedure
         },
         message,
       })
+
+      if (
+        newSessionState.allowedOrigins &&
+        newSessionState.allowedOrigins.length > 0
+      ) {
+        if (origin && newSessionState.allowedOrigins.includes(origin))
+          res.setHeader('Access-Control-Allow-Origin', origin)
+        else
+          res.setHeader(
+            'Access-Control-Allow-Origin',
+            newSessionState.allowedOrigins[0]
+          )
+      }
 
       const session = isOnlyRegistering
         ? await restartSession({
@@ -101,7 +116,7 @@ export const startChat = publicProcedure
         input,
         resultId,
         dynamicTheme,
-        logs,
+        logs: logs?.filter(filterPotentiallySensitiveLogs),
         clientSideActions,
       }
     }

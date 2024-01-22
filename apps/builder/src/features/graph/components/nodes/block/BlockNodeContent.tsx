@@ -1,9 +1,13 @@
+import { BlockIndices, BlockV6 } from '@typebot.io/schemas'
+import { WaitNodeContent } from '@/features/blocks/logic/wait/components/WaitNodeContent'
+import { ScriptNodeContent } from '@/features/blocks/logic/script/components/ScriptNodeContent'
+import { ButtonsBlockNode } from '@/features/blocks/inputs/buttons/components/ButtonsBlockNode'
+import { JumpNodeBody } from '@/features/blocks/logic/jump/components/JumpNodeBody'
 import { AudioBubbleNode } from '@/features/blocks/bubbles/audio/components/AudioBubbleNode'
 import { EmbedBubbleContent } from '@/features/blocks/bubbles/embed/components/EmbedBubbleContent'
 import { ImageBubbleContent } from '@/features/blocks/bubbles/image/components/ImageBubbleContent'
 import { TextBubbleContent } from '@/features/blocks/bubbles/textBubble/components/TextBubbleContent'
 import { VideoBubbleContent } from '@/features/blocks/bubbles/video/components/VideoBubbleContent'
-import { ButtonsBlockNode } from '@/features/blocks/inputs/buttons/components/ButtonsBlockNode'
 import { DateNodeContent } from '@/features/blocks/inputs/date/components/DateNodeContent'
 import { EmailInputNodeContent } from '@/features/blocks/inputs/emailInput/components/EmailInputNodeContent'
 import { FileInputContent } from '@/features/blocks/inputs/fileUpload/components/FileInputContent'
@@ -19,10 +23,6 @@ import { OpenAINodeBody } from '@/features/blocks/integrations/openai/components
 import { PabblyConnectContent } from '@/features/blocks/integrations/pabbly/components/PabblyConnectContent'
 import { SendEmailContent } from '@/features/blocks/integrations/sendEmail/components/SendEmailContent'
 import { WebhookContent } from '@/features/blocks/integrations/webhook/components/WebhookContent'
-import { JumpNodeBody } from '@/features/blocks/logic/jump/components/JumpNodeBody'
-import { ScriptNodeContent } from '@/features/blocks/logic/script/components/ScriptNodeContent'
-import { WaitNodeContent } from '@/features/blocks/logic/wait/components/WaitNodeContent'
-import { BlockIndices, BlockV6 } from '@typebot.io/schemas'
 import { ZapierContent } from '@/features/blocks/integrations/zapier/components/ZapierContent'
 import { PictureChoiceNode } from '@/features/blocks/inputs/pictureChoice/components/PictureChoiceNode'
 import { ChatwootNodeBody } from '@/features/blocks/integrations/chatwoot/components/ChatwootNodeBody'
@@ -37,14 +37,20 @@ import { TypebotLinkNode } from '@/features/blocks/logic/typebotLink/components/
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
+import { ForgedBlockNodeContent } from '@/features/forge/components/ForgedBlockNodeContent'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
 import { ItemNodesList } from '../item/ItemNodesList'
 
 type Props = {
   block: BlockV6
+  groupId: string
   indices: BlockIndices
 }
-export const BlockNodeContent = ({ block, indices }: Props): JSX.Element => {
+export const BlockNodeContent = ({
+  block,
+  indices,
+  groupId,
+}: Props): JSX.Element => {
   switch (block.type) {
     case BubbleBlockType.TEXT: {
       return <TextBubbleContent block={block} />
@@ -110,7 +116,7 @@ export const BlockNodeContent = ({ block, indices }: Props): JSX.Element => {
       return <JumpNodeBody options={block.options} />
     }
     case LogicBlockType.AB_TEST: {
-      return <AbTestNodeBody block={block} />
+      return <AbTestNodeBody block={block} groupId={groupId} />
     }
     case LogicBlockType.TYPEBOT_LINK:
       return <TypebotLinkNode block={block} />
@@ -149,22 +155,16 @@ export const BlockNodeContent = ({ block, indices }: Props): JSX.Element => {
       return <ChatwootNodeBody block={block} />
     }
     case IntegrationBlockType.OPEN_AI: {
-      return (
-        <OpenAINodeBody
-          task={block.options?.task}
-          responseMapping={
-            block.options && 'responseMapping' in block.options
-              ? block.options.responseMapping
-              : []
-          }
-        />
-      )
+      return <OpenAINodeBody options={block.options} />
     }
     case IntegrationBlockType.PIXEL: {
       return <PixelNodeBody options={block.options} />
     }
     case IntegrationBlockType.ZEMANTIC_AI: {
       return <ZemanticAiNodeBody options={block.options} />
+    }
+    default: {
+      return <ForgedBlockNodeContent block={block} />
     }
   }
 }

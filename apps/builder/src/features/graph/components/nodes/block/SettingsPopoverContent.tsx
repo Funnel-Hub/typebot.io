@@ -44,6 +44,7 @@ import { TypebotLinkForm } from '@/features/blocks/logic/typebotLink/components/
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
+import { ForgedBlockSettings } from '../../../../forge/components/ForgedBlockSettings'
 import { SettingsHoverBar } from './SettingsHoverBar'
 
 type Props = {
@@ -327,5 +328,10 @@ export const BlockSettings = ({
     }
     case LogicBlockType.CONDITION:
       return null
+    default: {
+      return (
+        <ForgedBlockSettings block={block} onOptionsChange={updateOptions} />
+      )
+    }
   }
 }

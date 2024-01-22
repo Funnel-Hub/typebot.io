@@ -6,12 +6,11 @@ import got from 'got'
 import { authenticatedProcedure } from '@/helpers/server/trpc'
 import { env } from '@typebot.io/env'
 
-// Only used for the cloud version of Typebot. It's the way it processes telemetry events and inject it to thrid-party services.
 export const processTelemetryEvent = authenticatedProcedure
   .meta({
     openapi: {
       method: 'POST',
-      path: '/t/process',
+      path: '/v1/t/process',
       description:
         "Only used for the cloud version of Typebot. It's the way it processes telemetry events and inject it to thrid-party services.",
       tags: ['Telemetry'],
@@ -81,7 +80,7 @@ export const processTelemetryEvent = authenticatedProcedure
       client.capture({
         distinctId: event.userId,
         event: event.name,
-        properties: event.data,
+        properties: 'data' in event ? event.data : undefined,
         groups,
       })
     })
