@@ -9,6 +9,7 @@ import {
 } from './blocks'
 import { isEmpty } from '@typebot.io/lib'
 import { Coordinates } from '@/features/graph/types'
+import { parseUniqueKey } from '@typebot.io/lib/parseUniqueKey'
 
 export type GroupsActions = {
   createGroup: (
@@ -31,9 +32,11 @@ const groupsActions = (setTypebot: SetTypebot): GroupsActions => ({
     id,
     block,
     indices,
+    groupLabel,
     ...graphCoordinates
   }: Coordinates & {
     id: string
+    groupLabel?: string
     block: BlockV6 | BlockV6['type']
     indices: BlockIndices
   }) =>
@@ -42,7 +45,7 @@ const groupsActions = (setTypebot: SetTypebot): GroupsActions => ({
         const newGroup: GroupV6 = {
           id,
           graphCoordinates,
-          title: `Group #${typebot.groups.length + 1}`,
+          title: `${groupLabel ?? 'Group'} #${typebot.groups.length + 1}`,
           blocks: [],
         }
         typebot.groups.push(newGroup)
@@ -62,19 +65,16 @@ const groupsActions = (setTypebot: SetTypebot): GroupsActions => ({
         const group = typebot.groups[groupIndex]
         const id = createId()
 
-        const totalGroupsWithSameTitle = typebot.groups.filter(
-          (g) => g.title === group.title
-        ).length
+        const groupTitle = isEmpty(group.title)
+          ? ''
+          : parseUniqueKey(
+              group.title,
+              typebot.groups.map((g) => g.title)
+            )
 
         const newGroup: GroupV6 = {
           ...group,
-          title: isEmpty(group.title)
-            ? ''
-            : `${group.title}${
-                totalGroupsWithSameTitle > 0
-                  ? ` (${totalGroupsWithSameTitle})`
-                  : ''
-              }`,
+          title: groupTitle,
           id,
           blocks: group.blocks.map((block) => duplicateBlockDraft(block)),
           graphCoordinates: {

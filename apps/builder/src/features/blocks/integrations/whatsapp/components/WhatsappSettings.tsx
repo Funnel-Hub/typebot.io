@@ -1,14 +1,9 @@
 import { TextInput } from '@/components/inputs'
 import { CredentialsDropdown } from '@/features/credentials/components/CredentialsDropdown'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
-import {
-  Stack,
-  useDisclosure
-} from '@chakra-ui/react'
+import { Stack, useDisclosure } from '@chakra-ui/react'
 import { useTranslate } from '@tolgee/react'
-import {
-  WhatsappBlock
-} from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
+import { WhatsappBlock } from '@typebot.io/schemas/features/blocks/integrations/whatsapp'
 import { WhatsappCredentialsModal } from './WhatsappCredentialsModal'
 
 type Props = {
@@ -55,7 +50,9 @@ export const WhatsappSettings = ({
             currentCredentialsId={options?.credentialsId ?? undefined}
             onCredentialsSelect={updateCredentialsId}
             onCreateNewClick={onOpen}
-            credentialsName={t('editor.blocks.integrations.whatsapp.WhatsappSettings.CredentialsDropdown.credentialsName')}
+            credentialsName={t(
+              'editor.blocks.integrations.whatsapp.WhatsappSettings.CredentialsDropdown.credentialsName'
+            )}
           />
           <WhatsappCredentialsModal
             isOpen={isOpen}
@@ -67,7 +64,9 @@ export const WhatsappSettings = ({
       {options?.credentialsId && (
         <>
           <TextInput
-            label={t('editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhone.label')}
+            label={t(
+              'editor.blocks.integrations.whatsapp.WhatsappSettings.inputPhone.label'
+            )}
             onChange={handlePhoneNumbersChange}
             defaultValue={options?.phone}
             placeholder="55888888888"

@@ -1,8 +1,8 @@
-import { Stack, HStack } from '@chakra-ui/react'
+import { Stack, HStack, Text } from '@chakra-ui/react'
 import { Plan } from '@typebot.io/prisma'
+import { TextLink } from '@/components/TextLink'
 import { useToast } from '@/hooks/useToast'
 import { trpc } from '@/lib/trpc'
-import { Workspace } from '@typebot.io/schemas'
 import { PreCheckoutModal, PreCheckoutModalProps } from './PreCheckoutModal'
 import { useState } from 'react'
 import { ParentModalProvider } from '@/features/graph/providers/ParentModalProvider'
@@ -10,9 +10,11 @@ import { useUser } from '@/features/account/hooks/useUser'
 import { StarterPlanPricingCard } from './StarterPlanPricingCard'
 import { ProPlanPricingCard } from './ProPlanPricingCard'
 import { useTranslate } from '@tolgee/react'
+import { StripeClimateLogo } from './StripeClimateLogo'
+import { WorkspaceInApp } from '@/features/workspace/WorkspaceProvider'
 
 type Props = {
-  workspace: Workspace
+  workspace: WorkspaceInApp
   excludedPlans?: ('STARTER' | 'PRO')[]
 }
 
@@ -53,14 +55,13 @@ export const ChangePlanForm = ({ workspace, excludedPlans }: Props) => {
       },
     })
 
-  const handlePayClick = async (plan: 'STARTER' | 'PRO' | 'LIFETIME') => {
+  const handlePayClick = async (plan: 'STARTER' | 'PRO') => {
     if (!user) return
 
     const newSubscription = {
       plan,
       workspaceId: workspace.id,
       currency: 'brl',
-      // (guessIfUserIsEuropean() ? 'eur' : 'usd'),
     } as const
     if (workspace.stripeId) {
       updateSubscription({
@@ -81,6 +82,13 @@ export const ChangePlanForm = ({ workspace, excludedPlans }: Props) => {
   return (
     <Stack spacing={6}>
       <HStack maxW="500px">
+        <StripeClimateLogo />
+        <Text fontSize="xs" color="gray.500">
+          {t('billing.contribution.preLink')}{' '}
+          <TextLink href="https://climate.stripe.com/5VCRAq" isExternal>
+            {t('billing.contribution.link')}
+          </TextLink>
+        </Text>
       </HStack>
       {!workspace.stripeId && (
         <ParentModalProvider>
@@ -115,6 +123,13 @@ export const ChangePlanForm = ({ workspace, excludedPlans }: Props) => {
           </HStack>
         </Stack>
       )}
+
+      <Text color="gray.500">
+        {t('billing.customLimit.preLink')}{' '}
+        <TextLink href={'https://typebot.io/enterprise-lead-form'} isExternal>
+          {t('billing.customLimit.link')}
+        </TextLink>
+      </Text>
     </Stack>
   )
 }

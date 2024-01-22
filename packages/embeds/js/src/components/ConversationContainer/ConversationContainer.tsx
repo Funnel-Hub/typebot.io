@@ -31,6 +31,7 @@ import {
 } from '@/utils/formattedMessagesSignal'
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { saveClientLogsQuery } from '@/queries/saveClientLogsQuery'
+import { HTTPError } from 'ky'
 
 const parseDynamicTheme = (
   initialTheme: Theme,
@@ -85,31 +86,30 @@ export const ConversationContainer = (props: Props) => {
   onMount(() => {
     ;(async () => {
       const initialChunk = chatChunks()[0]
-      if (initialChunk.clientSideActions) {
-        const actionsBeforeFirstBubble = initialChunk.clientSideActions.filter(
-          (action) => isNotDefined(action.lastBubbleBlockId)
+      if (!initialChunk.clientSideActions) return
+      const actionsBeforeFirstBubble = initialChunk.clientSideActions.filter(
+        (action) => isNotDefined(action.lastBubbleBlockId)
+      )
+      for (const action of actionsBeforeFirstBubble) {
+        if (
+          'streamOpenAiChatCompletion' in action ||
+          'webhookToExecute' in action
         )
-        for (const action of actionsBeforeFirstBubble) {
-          if (
-            'streamOpenAiChatCompletion' in action ||
-            'webhookToExecute' in action
-          )
-            setIsSending(true)
-          const response = await executeClientSideAction({
-            clientSideAction: action,
-            context: {
-              apiHost: props.context.apiHost,
-              sessionId: props.initialChatReply.sessionId,
-            },
-            onMessageStream: streamMessage,
-          })
-          if (response && 'replyToSend' in response) {
-            sendMessage(response.replyToSend, response.logs)
-            return
-          }
-          if (response && 'blockedPopupUrl' in response)
-            setBlockedPopupUrl(response.blockedPopupUrl)
+          setIsSending(true)
+        const response = await executeClientSideAction({
+          clientSideAction: action,
+          context: {
+            apiHost: props.context.apiHost,
+            sessionId: props.initialChatReply.sessionId,
+          },
+          onMessageStream: streamMessage,
+        })
+        if (response && 'replyToSend' in response) {
+          sendMessage(response.replyToSend, response.logs)
+          return
         }
+        if (response && 'blockedPopupUrl' in response)
+          setBlockedPopupUrl(response.blockedPopupUrl)
       }
     })()
   })
@@ -170,13 +170,26 @@ export const ConversationContainer = (props: Props) => {
     setIsSending(false)
     if (error) {
       setHasError(true)
-      props.onNewLogs?.([
+      const errorLogs = [
         {
           description: 'Failed to send the reply',
-          details: error,
+          details:
+            error instanceof HTTPError
+              ? {
+                  status: error.response.status,
+                  body: await error.response.json(),
+                }
+              : error,
           status: 'error',
         },
-      ])
+      ]
+      await saveClientLogsQuery({
+        apiHost: props.context.apiHost,
+        sessionId: props.initialChatReply.sessionId,
+        clientLogs: errorLogs,
+      })
+      props.onNewLogs?.(errorLogs)
+      return
     }
     if (!data) return
     if (data.lastMessageNewFormat) {

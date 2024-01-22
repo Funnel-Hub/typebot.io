@@ -8,7 +8,7 @@ export const deleteWorkspace = authenticatedProcedure
   .meta({
     openapi: {
       method: 'DELETE',
-      path: '/workspaces/{workspaceId}',
+      path: '/v1/workspaces/{workspaceId}',
       protect: true,
       summary: 'Delete workspace',
       tags: ['Workspace'],
@@ -16,7 +16,11 @@ export const deleteWorkspace = authenticatedProcedure
   })
   .input(
     z.object({
-      workspaceId: z.string(),
+      workspaceId: z
+        .string()
+        .describe(
+          '[Where to find my workspace ID?](../how-to#how-to-find-my-workspaceid)'
+        ),
     })
   )
   .output(

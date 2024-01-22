@@ -1,6 +1,6 @@
 import { TRPCError, initTRPC } from '@trpc/server'
 import { Context } from './context'
-import { OpenApiMeta } from 'trpc-openapi'
+import { OpenApiMeta } from '@lilyrose2798/trpc-openapi'
 import superjson from 'superjson'
 import * as Sentry from '@sentry/nextjs'
 import { ZodError } from 'zod'
@@ -32,7 +32,7 @@ const sentryMiddleware = t.middleware(
 
 const isAuthed = t.middleware(({ next, ctx }) => {
   const bearerToken = extractBearerToken(ctx.req)
-	
+
   if (!ctx.user?.id && bearerToken !== env.WORKSPACE_TOKEN) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
@@ -51,6 +51,7 @@ const finalMiddleware = sentryMiddleware.unstable_pipe(isAuthed)
 export const middleware = t.middleware
 
 export const router = t.router
+export const mergeRouters = t.mergeRouters
 
 export const publicProcedure = t.procedure.use(sentryMiddleware)
 

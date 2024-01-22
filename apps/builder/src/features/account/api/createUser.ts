@@ -15,22 +15,22 @@ export const createUser = authenticatedProcedure
     },
   })
   .input(
-	z.object({
-	  id: z.string(),
-	  name: z.string(),
-	  email: z.string().email()
-	})
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      email: z.string().email(),
+    })
   )
   .output(
     z.object({
       id: z.string(),
-	  email: z.string().email()
+      email: z.string().email(),
     })
   )
   .mutation(async ({ input }) => {
     const adapter = customAdapter(prisma)
 
-	return await adapter.createUser?.(
-	  input as unknown as Omit<AdapterUser, "id">
-	)
+    return await adapter.createUser?.(
+      input as unknown as Omit<AdapterUser, 'id'>
+    )
   })

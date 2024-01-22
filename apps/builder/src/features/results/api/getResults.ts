@@ -11,7 +11,7 @@ export const getResults = authenticatedProcedure
   .meta({
     openapi: {
       method: 'GET',
-      path: '/typebots/{typebotId}/results',
+      path: '/v1/typebots/{typebotId}/results',
       protect: true,
       summary: 'List results ordered by descending creation date',
       tags: ['Results'],
@@ -19,7 +19,11 @@ export const getResults = authenticatedProcedure
   })
   .input(
     z.object({
-      typebotId: z.string(),
+      typebotId: z
+        .string()
+        .describe(
+          "[Where to find my bot's ID?](../how-to#how-to-find-my-typebotid)"
+        ),
       limit: z.coerce.number().min(1).max(maxLimit).default(50),
       cursor: z.string().optional(),
     })
@@ -44,12 +48,22 @@ export const getResults = authenticatedProcedure
       },
       select: {
         id: true,
-        workspaceId: true,
         groups: true,
         collaborators: {
           select: {
             userId: true,
             type: true,
+          },
+        },
+        workspace: {
+          select: {
+            isSuspended: true,
+            isPastDue: true,
+            members: {
+              select: {
+                userId: true,
+              },
+            },
           },
         },
       },

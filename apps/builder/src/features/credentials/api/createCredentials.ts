@@ -29,7 +29,7 @@ export const createCredentials = authenticatedProcedure
   .meta({
     openapi: {
       method: 'POST',
-      path: '/credentials',
+      path: '/v1/credentials',
       protect: true,
       summary: 'Create credentials',
       tags: ['Credentials'],

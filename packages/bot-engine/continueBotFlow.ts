@@ -28,23 +28,26 @@ import { formatPhoneNumber } from './blocks/inputs/phone/formatPhoneNumber'
 import { parsePictureChoicesReply } from './blocks/inputs/pictureChoice/parsePictureChoicesReply'
 import { validateRatingReply } from './blocks/inputs/rating/validateRatingReply'
 import { validateUrl } from './blocks/inputs/url/validateUrl'
-import { resumeChatCompletion } from './blocks/integrations/openai/resumeChatCompletion'
 import { resumeWebhookExecution } from './blocks/integrations/webhook/resumeWebhookExecution'
 import { executeGroup, parseInput } from './executeGroup'
 import { getNextGroup } from './getNextGroup'
 import { upsertAnswer } from './queries/upsertAnswer'
 import { startBotFlow } from './startBotFlow'
 import { ParsedReply } from './types'
-import { parseVariables } from './variables/parseVariables'
-import { updateVariablesInSession } from './variables/updateVariablesInSession'
+import { parseVariables } from '@typebot.io/variables/parseVariables'
+import { updateVariablesInSession } from '@typebot.io/variables/updateVariablesInSession'
+import { ForgedBlock, forgedBlocks } from '@typebot.io/forge-schemas'
+import { enabledBlocks } from '@typebot.io/forge-repository'
+import { resumeChatCompletion } from './blocks/integrations/legacy/openai/resumeChatCompletion'
 
 type Params = {
   version: 1 | 2
   state: SessionState
+  startTime?: number
 }
 export const continueBotFlow = async (
   reply: string | undefined,
-  { state, version }: Params
+  { state, version, startTime }: Params
 ): Promise<
   ContinueChatResponse & {
     newSessionState: SessionState
@@ -79,14 +82,9 @@ export const continueBotFlow = async (
       }
       newSessionState = updateVariablesInSession(state)([newVariable])
     }
-  } else if (reply && block.type === IntegrationBlockType.WEBHOOK) {
-    const result = resumeWebhookExecution({
-      state,
-      block,
-      response: JSON.parse(reply),
-    })
-    if (result.newSessionState) newSessionState = result.newSessionState
-  } else if (
+  }
+  // Legacy
+  else if (
     block.type === IntegrationBlockType.OPEN_AI &&
     block.options?.task === 'Create chat completion'
   ) {
@@ -97,6 +95,58 @@ export const continueBotFlow = async (
         outgoingEdgeId: block.outgoingEdgeId,
       })(reply)
       newSessionState = result.newSessionState
+    }
+  } else if (reply && block.type === IntegrationBlockType.WEBHOOK) {
+    const result = resumeWebhookExecution({
+      state,
+      block,
+      response: JSON.parse(reply),
+    })
+    if (result.newSessionState) newSessionState = result.newSessionState
+  } else if (
+    enabledBlocks.includes(block.type as (typeof enabledBlocks)[number])
+  ) {
+    if (reply) {
+      const options = (block as ForgedBlock).options
+      const action = forgedBlocks
+        .find((b) => b.id === block.type)
+        ?.actions.find((a) => a.name === options?.action)
+      if (action) {
+        if (action.run?.stream?.getStreamVariableId) {
+          firstBubbleWasStreamed = true
+          const variableToUpdate =
+            state.typebotsQueue[0].typebot.variables.find(
+              (v) => v.id === action?.run?.stream?.getStreamVariableId(options)
+            )
+          if (variableToUpdate)
+            newSessionState = updateVariablesInSession(state)([
+              {
+                ...variableToUpdate,
+                value: reply,
+              },
+            ])
+        }
+
+        if (
+          action.run?.web?.displayEmbedBubble?.waitForEvent?.getSaveVariableId
+        ) {
+          const variableToUpdate =
+            state.typebotsQueue[0].typebot.variables.find(
+              (v) =>
+                v.id ===
+                action?.run?.web?.displayEmbedBubble?.waitForEvent?.getSaveVariableId?.(
+                  options
+                )
+            )
+          if (variableToUpdate)
+            newSessionState = updateVariablesInSession(state)([
+              {
+                ...variableToUpdate,
+                value: reply,
+              },
+            ])
+        }
+      }
     }
   }
 
@@ -127,7 +177,13 @@ export const continueBotFlow = async (
         ...group,
         blocks: group.blocks.slice(blockIndex + 1),
       } as Group,
-      { version, state: newSessionState, visitedEdges, firstBubbleWasStreamed }
+      {
+        version,
+        state: newSessionState,
+        visitedEdges,
+        firstBubbleWasStreamed,
+        startTime,
+      }
     )
     return {
       ...chatReply,
@@ -165,6 +221,7 @@ export const continueBotFlow = async (
     state: newSessionState,
     firstBubbleWasStreamed,
     visitedEdges,
+    startTime,
   })
 
   return {
@@ -261,15 +318,28 @@ const saveAnswer =
       ? state.typebotsQueue[0].typebot.variables.find(
           (variable) => variable.id === block.options?.variableId
         )?.name
-      : state.typebotsQueue[0].typebot.groups.find((group) =>
-          group.blocks.find((blockInGroup) => blockInGroup.id === block.id)
-        )?.title
+      : parseGroupKey(block.id, { state })
 
     return setNewAnswerInState(state)({
       key: key ?? block.id,
       value: reply,
     })
   }
+
+const parseGroupKey = (blockId: string, { state }: { state: SessionState }) => {
+  const group = state.typebotsQueue[0].typebot.groups.find((group) =>
+    group.blocks.find((b) => b.id === blockId)
+  )
+  if (!group) return
+
+  const inputBlockNumber = group.blocks
+    .filter(isInputBlock)
+    .findIndex((b) => b.id === blockId)
+
+  return inputBlockNumber > 0
+    ? `${group.title} (${inputBlockNumber})`
+    : group?.title
+}
 
 const setNewAnswerInState =
   (state: SessionState) => (newAnswer: AnswerInSessionState) => {
@@ -375,7 +445,9 @@ const parseReply =
           return block.options?.isRequired ?? defaultFileInputOptions.isRequired
             ? { status: 'fail' }
             : { status: 'skip' }
-        return { status: 'success', reply: inputValue }
+        const urls = inputValue.split(', ')
+        const status = urls.some((url) => validateUrl(url)) ? 'success' : 'fail'
+        return { status, reply: inputValue }
       }
       case InputBlockType.PAYMENT: {
         if (!inputValue) return { status: 'fail' }
