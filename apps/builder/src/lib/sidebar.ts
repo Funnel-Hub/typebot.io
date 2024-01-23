@@ -21,7 +21,7 @@ export const sidebarMenuData = [
     name: 'CRM',
     icon: FaFunnelDollar,
     /* url: "https://localhost:3002/", */
-	options: {},
+    options: {},
   },
   { name: 'Pages', icon: FaWindowRestore, /* url: "/#", */ options: {} },
   { name: 'Typebot', icon: FaRobot, url: env.NEXT_PUBLIC_APP_URL, options: {} },
