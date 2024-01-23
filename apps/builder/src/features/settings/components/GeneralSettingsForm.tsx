@@ -1,3 +1,7 @@
+import { DropdownList } from '@/components/DropdownList'
+import { MoreInfoTooltip } from '@/components/MoreInfoTooltip'
+import { SwitchWithRelatedSettings } from '@/components/SwitchWithRelatedSettings'
+import { SwitchWithLabel } from '@/components/inputs/SwitchWithLabel'
 import {
   FormControl,
   FormLabel,
@@ -6,13 +10,9 @@ import {
   Tag,
   Text,
 } from '@chakra-ui/react'
-import { Settings } from '@typebot.io/schemas'
-import React from 'react'
+import { useTranslate } from '@tolgee/react'
 import { isDefined } from '@typebot.io/lib'
-import { SwitchWithLabel } from '@/components/inputs/SwitchWithLabel'
-import { SwitchWithRelatedSettings } from '@/components/SwitchWithRelatedSettings'
-import { DropdownList } from '@/components/DropdownList'
-import { MoreInfoTooltip } from '@/components/MoreInfoTooltip'
+import { Settings } from '@typebot.io/schemas'
 import {
   defaultSettings,
   rememberUserStorages,
@@ -27,6 +27,8 @@ export const GeneralSettingsForm = ({
   generalSettings,
   onGeneralSettingsChange,
 }: Props) => {
+  const { t } = useTranslate()
+
   const toggleRememberUser = (isEnabled: boolean) =>
     onGeneralSettingsChange({
       ...generalSettings,
@@ -64,26 +66,32 @@ export const GeneralSettingsForm = ({
   return (
     <Stack spacing={6}>
       <SwitchWithLabel
-        label="Prefill input"
+        label={t('settings.settingsSideMenu.generalMenu.inputPrefill.label')}
         initialValue={
           generalSettings?.isInputPrefillEnabled ??
           defaultSettings.general.isInputPrefillEnabled
         }
         onCheckChange={handleInputPrefillChange}
-        moreInfoContent="Inputs are automatically pre-filled whenever their associated variable has a value"
+        moreInfoContent={t(
+          'settings.settingsSideMenu.generalMenu.inputPrefill.moreInfoContent'
+        )}
       />
       <SwitchWithLabel
-        label="Hide query params on bot start"
+        label={t('settings.settingsSideMenu.generalMenu.hideQueryParams.label')}
         initialValue={
           generalSettings?.isHideQueryParamsEnabled ??
           defaultSettings.general.isHideQueryParamsEnabled
         }
         onCheckChange={handleHideQueryParamsChange}
-        moreInfoContent="If your URL contains query params, they will be automatically hidden when the bot starts."
+        moreInfoContent={t(
+          'settings.settingsSideMenu.generalMenu.hideQueryParams.moreInfoContent'
+        )}
       />
       <SwitchWithRelatedSettings
-        label={'Remember user'}
-        moreInfoContent="If enabled, user previous variables will be prefilled and his new answers will override the previous ones."
+        label={t('settings.settingsSideMenu.generalMenu.rememberUser.label')}
+        moreInfoContent={t(
+          'settings.settingsSideMenu.generalMenu.rememberUser.moreInfoContent'
+        )}
         initialValue={
           generalSettings?.rememberUser?.isEnabled ??
           (isDefined(generalSettings?.isNewResultOnRefreshEnabled)
@@ -94,16 +102,29 @@ export const GeneralSettingsForm = ({
       >
         <FormControl as={HStack} justifyContent="space-between">
           <FormLabel mb="0">
-            Storage:&nbsp;
+            {t(
+              'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.storage'
+            )}
+            :&nbsp;
             <MoreInfoTooltip>
               <Stack>
                 <Text>
-                  Choose <Tag size="sm">session</Tag> to remember the user as
-                  long as he does not closes the tab or the browser.
+                  {t(
+                    'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose'
+                  )}{' '}
+                  <Tag size="sm">session</Tag>{' '}
+                  {t(
+                    'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose.session'
+                  )}
                 </Text>
                 <Text>
-                  Choose <Tag size="sm">local</Tag> to remember the user
-                  forever.
+                  {t(
+                    'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose'
+                  )}{' '}
+                  <Tag size="sm">local</Tag>{' '}
+                  {t(
+                    'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose.local'
+                  )}
                 </Text>
               </Stack>
             </MoreInfoTooltip>
