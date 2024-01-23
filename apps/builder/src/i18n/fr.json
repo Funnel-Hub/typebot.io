@@ -115,6 +115,7 @@
   "blocks.inputs.fileUpload.blockCard.tooltip": "Télécharger des fichiers",
   "blocks.integrations.googleAnalytics.blockCard.tooltip": "Google Analytics",
   "blocks.integrations.googleSheets.blockCard.tooltip": "Google Sheets",
+  "blocks.integrations.whatsapp.blockCard.tooltip": "Whatsapp",
   "cancel": "Annuler",
   "clickToEdit": "Clique pour modifier...",
   "collaboration.roles.edit.label": "Éditeur",
