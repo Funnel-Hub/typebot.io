@@ -85,7 +85,7 @@ export const PlanTag = ({
       )
     }
     case Plan.UNDEFINED: {
-      return (<></>)
+      return <></>
     }
   }
 }

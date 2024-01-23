@@ -8,17 +8,17 @@ export async function createContext(opts: trpcNext.CreateNextContextOptions) {
   const bearerToken = extractBearerToken(opts.req)
 
   if (bearerToken && bearerToken === env.WORKSPACE_TOKEN) {
-	return {
-	  user: opts.req.body,
-	  req: opts.req
-	}
+    return {
+      user: opts.req.body,
+      req: opts.req,
+    }
   }
 
   const user = await getAuthenticatedUser(opts.req, opts.res)
 
   return {
     user,
-	req: opts.req
+    req: opts.req,
   }
 }
 

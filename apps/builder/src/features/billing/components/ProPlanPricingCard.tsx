@@ -129,8 +129,7 @@ export const ProPlanPricingCard = ({
                     <Text
                       fontSize="sm"
                       color={useColorModeValue('gray.500', 'gray.400')}
-                    >
-                    </Text>
+                    ></Text>
                   </Stack>,
                   t('billing.pricingCard.pro.whatsAppIntegration'),
                   // t('billing.pricingCard.pro.customDomains'),

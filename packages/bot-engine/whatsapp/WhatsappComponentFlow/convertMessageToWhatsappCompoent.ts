@@ -4,10 +4,21 @@ import { VideoBubbleContentType } from '@typebot.io/schemas/features/blocks/bubb
 import { serialize } from 'remark-slate'
 import { isImageUrlNotCompatible, isVideoUrlNotCompatible } from '../convertMessageToWhatsAppMessage'
 
+export enum TypeWhatsappMessage {
+  TEXT = 'text',
+  IMAGE = 'image',
+  AUDIO = 'audio',
+  VIDEO = 'video',
+  EMBED = 'embed',
+  INTERACTIVE = 'interactive'
+}
 
 export type WhatsappSocketSendingMessage = {
-  type: 'text' | 'image' | 'audio' | 'video' | 'embed'
+  type: TypeWhatsappMessage.TEXT | TypeWhatsappMessage.EMBED | TypeWhatsappMessage.IMAGE | TypeWhatsappMessage.VIDEO | TypeWhatsappMessage.AUDIO
   body: string
+} | {
+  type: TypeWhatsappMessage.INTERACTIVE
+  interactive: Record<string, any>
 }
 
 export const convertMessageToWhatsappComponent = (
@@ -18,7 +29,7 @@ export const convertMessageToWhatsappComponent = (
       if (!message.content.richText || message.content.richText.length === 0)
         return
       return {
-        type: 'text',
+        type: TypeWhatsappMessage.TEXT,
         body:  message.content.richText
         .map((chunk) =>
           serialize(chunk)?.replaceAll('&amp;amp;#39;', "'").replaceAll('**', '*')
@@ -30,14 +41,14 @@ export const convertMessageToWhatsappComponent = (
       if (!message.content.url || isImageUrlNotCompatible(message.content.url))
         return
       return {
-        type: 'image',
+        type: TypeWhatsappMessage.IMAGE,
         body: message.content.url,
       }
     }
     case BubbleBlockType.AUDIO: {
       if (!message.content.url) return
       return {
-        type: 'audio',
+        type: TypeWhatsappMessage.AUDIO,
         body: message.content.url,
       }
     }
@@ -49,14 +60,14 @@ export const convertMessageToWhatsappComponent = (
       )
         return
       return {
-        type: 'video',
+        type: TypeWhatsappMessage.VIDEO,
         body: message.content.url,
       }
     }
     case BubbleBlockType.EMBED: {
       if (!message.content.url) return
       return {
-        type: 'embed',
+        type: TypeWhatsappMessage.EMBED,
         body: message.content.url,
       }
     }

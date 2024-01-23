@@ -14,6 +14,8 @@ import immutableCss from '../assets/immutable.css'
 import { InputBlock } from '@typebot.io/schemas'
 import { StartFrom } from '@typebot.io/schemas'
 import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
+import { clsx } from 'clsx'
+import { HTTPError } from 'ky'
 
 export type BotProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,23 +66,42 @@ export const Bot = (props: BotProps & { class?: string }) => {
       },
       startFrom: props.startFrom,
     })
-    if (error && 'code' in error && typeof error.code === 'string') {
+    if (error instanceof HTTPError) {
       if (isPreview) {
         return setError(
-          new Error('An error occurred while loading the bot.', {
-            cause: error.message,
+          new Error(`An error occurred while loading the bot.`, {
+            cause: {
+              status: error.response.status,
+              body: await error.response.json(),
+            },
           })
         )
       }
-      if (['BAD_REQUEST', 'FORBIDDEN'].includes(error.code))
+      if (error.response.status === 400 || error.response.status === 403)
         return setError(new Error('This bot is now closed.'))
-      if (error.code === 'NOT_FOUND')
+      if (error.response.status === 404)
         return setError(new Error("The bot you're looking for doesn't exist."))
+      return setError(
+        new Error(
+          `Error! Couldn't initiate the chat. (${error.response.statusText})`
+        )
+      )
     }
 
     if (!data) {
-      if (error) console.error(error)
-      return setError(new Error("Error! Couldn't initiate the chat."))
+      if (error) {
+        console.error(error)
+        if (isPreview) {
+          return setError(
+            new Error(`Error! Could not reach server. Check your connection.`, {
+              cause: error,
+            })
+          )
+        }
+      }
+      return setError(
+        new Error('Error! Could not reach server. Check your connection.')
+      )
     }
 
     if (data.resultId && typebotIdFromProps)
@@ -178,14 +199,15 @@ const BotContent = (props: BotContentProps) => {
         ?.getAttribute('href')
         ?.includes(
           props.initialChatReply.typebot?.theme?.general?.font ??
-          defaultTheme.general.font
+            defaultTheme.general.font
         )
     )
       return
     const font = document.createElement('link')
-    font.href = `https://fonts.bunny.net/css2?family=${props.initialChatReply.typebot?.theme?.general?.font ??
+    font.href = `https://fonts.bunny.net/css2?family=${
+      props.initialChatReply.typebot?.theme?.general?.font ??
       defaultTheme.general.font
-      }:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');')`
+    }:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');')`
     font.rel = 'stylesheet'
     font.id = 'bot-font'
     document.head.appendChild(font)
@@ -210,10 +232,10 @@ const BotContent = (props: BotContentProps) => {
   return (
     <div
       ref={botContainer}
-      class={
-        'relative flex w-full h-full text-base overflow-hidden bg-cover bg-center flex-col items-center typebot-container ' +
+      class={clsx(
+        'relative flex w-full h-full text-base overflow-hidden bg-cover bg-center flex-col items-center typebot-container @container',
         props.class
-      }
+      )}
     >
       <div class="flex w-full h-full justify-center">
         <ConversationContainer

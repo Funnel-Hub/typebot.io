@@ -8,7 +8,12 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { AlignLeftTextIcon } from '@/components/icons'
-import { ResultHeaderCell, ResultsTablePreferences } from '@typebot.io/schemas'
+import {
+  CellValueType,
+  ResultHeaderCell,
+  ResultsTablePreferences,
+  TableData,
+} from '@typebot.io/schemas'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { LoadingRows } from './LoadingRows'
 import {
@@ -22,11 +27,10 @@ import { useTypebot } from '@/features/editor/providers/TypebotProvider'
 import { SelectionToolbar } from './SelectionToolbar'
 import { Row } from './Row'
 import { HeaderRow } from './HeaderRow'
-import { CellValueType, TableData } from '../../types'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox'
 import { colors } from '@/lib/theme'
-import { parseColumnOrder } from '../../helpers/parseColumnsOrder'
 import { HeaderIcon } from '../HeaderIcon'
+import { parseColumnsOrder } from '@typebot.io/lib/results/parseColumnsOrder'
 
 type ResultsTableProps = {
   resultHeader: ResultHeaderCell[]
@@ -48,7 +52,7 @@ export const ResultsTable = ({
   onResultExpandIndex,
 }: ResultsTableProps) => {
   const background = useColorModeValue('white', colors.gray[900])
-  const { updateTypebot, isReadOnly } = useTypebot()
+  const { updateTypebot, currentUserMode } = useTypebot()
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
   const [isTableScrolled, setIsTableScrolled] = useState(false)
   const bottomElement = useRef<HTMLDivElement | null>(null)
@@ -60,7 +64,7 @@ export const ResultsTable = ({
     columnsWidth = {},
   } = {
     ...preferences,
-    columnsOrder: parseColumnOrder(preferences?.columnsOrder, resultHeader),
+    columnsOrder: parseColumnsOrder(preferences?.columnsOrder, resultHeader),
   }
 
   const changeColumnOrder = (newColumnOrder: string[]) => {
@@ -212,7 +216,7 @@ export const ResultsTable = ({
   return (
     <Stack maxW="1600px" px="4" overflowY="hidden" spacing={6}>
       <HStack w="full" justifyContent="flex-end">
-        {isReadOnly ? null : (
+        {currentUserMode === 'write' && (
           <SelectionToolbar
             selectedResultsId={Object.keys(rowSelection)}
             onClearSelection={() => setRowSelection({})}

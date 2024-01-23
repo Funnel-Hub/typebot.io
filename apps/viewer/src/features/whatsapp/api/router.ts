@@ -6,5 +6,5 @@ import { subscribeWebhook } from './subscribeWebhook'
 export const whatsAppRouter = router({
   subscribeWebhook,
   receiveMessage,
-  receiveWhatsappComponentMessage
+  receiveWhatsappComponentMessage,
 })

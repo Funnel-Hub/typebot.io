@@ -25,6 +25,8 @@ const localeHumanReadable = {
   de: 'Deutsch',
   pt: 'Português',
   'pt-BR': 'Português (BR)',
+  ro: 'Română',
+  es: 'Español',
 } as const
 
 export const UserPreferencesForm = () => {
@@ -49,7 +51,14 @@ export const UserPreferencesForm = () => {
 
   const updateLocale = (locale: keyof typeof localeHumanReadable) => () => {
     document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000`
-    router.replace(router.pathname, undefined, { locale })
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: router.query,
+      },
+      undefined,
+      { locale }
+    )
   }
 
   const currentLanguage = getLanguage()

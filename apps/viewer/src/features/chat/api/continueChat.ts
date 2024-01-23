@@ -5,9 +5,10 @@ import { parseDynamicTheme } from '@typebot.io/bot-engine/parseDynamicTheme'
 import { getSession } from '@typebot.io/bot-engine/queries/getSession'
 import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
 import { executeWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/executeWhatsappFlow'
-import { isDefined } from '@typebot.io/lib/utils'
+import { isDefined, isNotDefined } from '@typebot.io/lib/utils'
 import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
 import { z } from 'zod'
+import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filterPotentiallySensitiveLogs'
 
 export const continueChat = publicProcedure
   .meta({
@@ -15,18 +16,20 @@ export const continueChat = publicProcedure
       method: 'POST',
       path: '/v1/sessions/{sessionId}/continueChat',
       summary: 'Continue chat',
-      description:
-        'To initiate a chat, do not provide a `sessionId` nor a `message`.\n\nContinue the conversation by providing the `sessionId` and the `message` that should answer the previous question.\n\nSet the `isPreview` option to `true` to chat with the non-published version of the typebot.',
     },
   })
   .input(
     z.object({
       message: z.string().optional(),
-      sessionId: z.string(),
+      sessionId: z
+        .string()
+        .describe(
+          'The session ID you got from the [startChat](./start-chat) response.'
+        ),
     })
   )
   .output(continueChatResponseSchema)
-  .mutation(async ({ input: { sessionId, message } }) => {
+  .mutation(async ({ input: { sessionId, message }, ctx: { res, origin } }) => {
     const session = await getSession(sessionId)
 
     if (!session) {
@@ -47,6 +50,19 @@ export const continueChat = publicProcedure
         message: 'Session expired. You need to start a new session.',
       })
 
+    if (
+      session?.state.allowedOrigins &&
+      session.state.allowedOrigins.length > 0
+    ) {
+      if (origin && session.state.allowedOrigins.includes(origin))
+        res.setHeader('Access-Control-Allow-Origin', origin)
+      else
+        res.setHeader(
+          'Access-Control-Allow-Origin',
+          session.state.allowedOrigins[0]
+        )
+    }
+
     const {
       messages,
       input,
@@ -55,7 +71,11 @@ export const continueChat = publicProcedure
       logs,
       lastMessageNewFormat,
       visitedEdges,
-    } = await continueBotFlow(message, { version: 2, state: {...session.state, sessionId: session.id } })
+    } = await continueBotFlow(message, {
+      version: 2,
+      state: { ...session.state, sessionId: session.id },
+      startTime: Date.now(),
+    })
 
     if (newSessionState)
       await saveStateToDatabase({
@@ -69,7 +89,7 @@ export const continueChat = publicProcedure
         visitedEdges,
       })
 
-    if(newSessionState.whatsappComponent) {
+    if (newSessionState.whatsappComponent) {
       await executeWhatsappFlow({
         state: newSessionState,
         messages,
@@ -86,14 +106,15 @@ export const continueChat = publicProcedure
         whatsappComponent: newSessionState.whatsappComponent,
       }
     }
-    
+
+    const isPreview = isNotDefined(session.state.typebotsQueue[0].resultId)
+
     return {
       messages,
       input,
       clientSideActions,
       dynamicTheme: parseDynamicTheme(newSessionState),
-      logs,
+      logs: isPreview ? logs : logs?.filter(filterPotentiallySensitiveLogs),
       lastMessageNewFormat,
     }
   })
-

@@ -16,7 +16,7 @@ export const startWhatsAppPreview = authenticatedProcedure
   .meta({
     openapi: {
       method: 'POST',
-      path: '/typebots/{typebotId}/whatsapp/start-preview',
+      path: '/v1/typebots/{typebotId}/whatsapp/start-preview',
       summary: 'Start preview',
       tags: ['WhatsApp'],
       protect: true,
@@ -57,7 +57,17 @@ export const startWhatsAppPreview = authenticatedProcedure
       },
       select: {
         id: true,
-        workspaceId: true,
+        workspace: {
+          select: {
+            isSuspended: true,
+            isPastDue: true,
+            members: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        },
         collaborators: {
           select: {
             userId: true,

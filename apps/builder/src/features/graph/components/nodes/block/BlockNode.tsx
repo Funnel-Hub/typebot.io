@@ -59,8 +59,7 @@ export const BlockNode = ({
   const bg = useColorModeValue('gray.50', 'gray.850')
   const previewingBorderColor = useColorModeValue('red.400', 'red.300')
   const borderColor = useColorModeValue('gray.200', 'gray.800')
-  const { pathname } = useRouter()
-  const { query } = useRouter()
+  const { pathname, query } = useRouter()
   const {
     setConnectingIds,
     connectingIds,
@@ -151,7 +150,7 @@ export const BlockNode = ({
   const handleClick = (e: React.MouseEvent) => {
     setFocusedGroupId(groupId)
     e.stopPropagation()
-    if (isTextBubbleBlock(block)) setIsEditing(true)
+    if (isTextBubbleBlock(block) && !isReadOnly) setIsEditing(true)
     setOpenedBlockId(block.id)
   }
 
@@ -210,7 +209,7 @@ export const BlockNode = ({
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               onClick={handleClick}
-              data-testid={`block`}
+              data-testid={`block ${block.id}`}
               w="full"
               className="prevent-group-drag"
             >
@@ -234,12 +233,14 @@ export const BlockNode = ({
                 w="full"
                 transition="border-color 0.2s"
               >
-                <BlockIcon
-                  type={block.type}
-                  mt="1"
-                  data-testid={`${block.id}-icon`}
-                />
-                <BlockNodeContent block={block} indices={indices} />
+                <BlockIcon type={block.type} mt=".25rem" />
+                {typebot?.groups[indices.groupIndex].id && (
+                  <BlockNodeContent
+                    block={block}
+                    indices={indices}
+                    groupId={typebot.groups[indices.groupIndex].id}
+                  />
+                )}
                 {(hasIcomingEdge || isDefined(connectingIds)) && (
                   <TargetEndpoint
                     pos="absolute"
@@ -252,6 +253,7 @@ export const BlockNode = ({
                 {(isConnectable ||
                   (pathname.endsWith('analytics') && isInputBlock(block))) &&
                   hasDefaultConnector(block) &&
+                  groupId &&
                   block.type !== LogicBlockType.JUMP && (
                     <BlockSourceEndpoint
                       source={{

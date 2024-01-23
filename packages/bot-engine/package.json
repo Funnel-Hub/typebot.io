@@ -16,9 +16,10 @@
     "@typebot.io/prisma": "workspace:*",
     "@typebot.io/schemas": "workspace:*",
     "@typebot.io/tsconfig": "workspace:*",
+    "@typebot.io/variables": "workspace:*",
     "@udecode/plate-common": "21.1.5",
     "@udecode/plate-serializer-md": "24.4.0",
-    "ai": "2.2.14",
+    "ai": "2.2.31",
     "bufferutil": "^4.0.8",
     "chrono-node": "2.7.0",
     "date-fns": "2.30.0",
@@ -28,7 +29,7 @@
     "libphonenumber-js": "1.10.37",
     "node-html-parser": "6.1.5",
     "nodemailer": "6.9.3",
-    "openai": "4.11.1",
+    "openai": "4.24.1",
     "qs": "6.11.2",
     "remark-slate": "1.8.6",
     "stripe": "12.13.0",
@@ -36,6 +37,9 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@typebot.io/forge": "workspace:*",
+    "@typebot.io/forge-repository": "workspace:*",
+    "@typebot.io/forge-schemas": "workspace:*",
     "@types/nodemailer": "6.4.8",
     "@types/qs": "6.9.7",
     "@types/ws": "^8.5.10"

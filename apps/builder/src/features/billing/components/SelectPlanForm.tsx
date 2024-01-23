@@ -24,11 +24,9 @@ export const SelectPlanForm = ({ workspace }: Props) => {
 
   const trpcContext = trpc.useContext()
 
-  const { data, refetch } = trpc.billing.getSubscription.useQuery(
-    {
-      workspaceId: workspace.id,
-    }
-  )
+  const { data, refetch } = trpc.billing.getSubscription.useQuery({
+    workspaceId: workspace.id,
+  })
 
   const { mutate: updateSubscription, isLoading: isUpdatingSubscription } =
     trpc.billing.updateSubscription.useMutation({
@@ -54,7 +52,6 @@ export const SelectPlanForm = ({ workspace }: Props) => {
     })
 
   const handlePayClick = async (plan: 'STARTER' | 'PRO') => {
-
     const newSubscription = {
       plan,
       workspaceId: workspace.id,

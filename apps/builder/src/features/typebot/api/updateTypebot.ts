@@ -35,6 +35,7 @@ const typebotUpdateSchemaPick = {
   customDomain: true,
   isClosed: true,
   whatsAppCredentialsId: true,
+  riskLevel: true,
   events: true,
 } as const
 
@@ -42,7 +43,7 @@ export const updateTypebot = authenticatedProcedure
   .meta({
     openapi: {
       method: 'PATCH',
-      path: '/typebots/{typebotId}',
+      path: '/v1/typebots/{typebotId}',
       protect: true,
       summary: 'Update a typebot',
       tags: ['Typebot'],
@@ -50,10 +51,21 @@ export const updateTypebot = authenticatedProcedure
   })
   .input(
     z.object({
-      typebotId: z.string(),
+      typebotId: z
+        .string()
+        .describe(
+          "[Where to find my bot's ID?](../how-to#how-to-find-my-typebotid)"
+        ),
       typebot: z.union([
-        typebotV5Schema._def.schema.pick(typebotUpdateSchemaPick).partial(),
-        typebotV6Schema.pick(typebotUpdateSchemaPick).partial(),
+        typebotV6Schema.pick(typebotUpdateSchemaPick).partial().openapi({
+          title: 'Typebot V6',
+        }),
+        typebotV5Schema._def.schema
+          .pick(typebotUpdateSchemaPick)
+          .partial()
+          .openapi({
+            title: 'Typebot V5',
+          }),
       ]),
       updatedAt: z
         .date()
@@ -79,7 +91,6 @@ export const updateTypebot = authenticatedProcedure
           id: true,
           customDomain: true,
           publicId: true,
-          workspaceId: true,
           collaborators: {
             select: {
               userId: true,
@@ -88,7 +99,16 @@ export const updateTypebot = authenticatedProcedure
           },
           workspace: {
             select: {
+              id: true,
               plan: true,
+              isSuspended: true,
+              isPastDue: true,
+              members: {
+                select: {
+                  userId: true,
+                  role: true,
+                },
+              },
             },
           },
           updatedAt: true,
@@ -160,7 +180,7 @@ export const updateTypebot = authenticatedProcedure
           selectedThemeTemplateId: typebot.selectedThemeTemplateId,
           events: typebot.events ?? undefined,
           groups: typebot.groups
-            ? await sanitizeGroups(existingTypebot.workspaceId)(typebot.groups)
+            ? await sanitizeGroups(existingTypebot.workspace.id)(typebot.groups)
             : undefined,
           theme: typebot.theme ? typebot.theme : undefined,
           settings: typebot.settings

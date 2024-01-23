@@ -10,7 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Text
+  Text,
 } from '@chakra-ui/react'
 import { createId } from '@paralleldrive/cuid2'
 import { useTranslate } from '@tolgee/react'
@@ -25,25 +25,29 @@ type Props = {
 export const WhatsappCredentialsModal = ({
   isOpen,
   onClose,
-  onNewCredentials
+  onNewCredentials,
 }: Props) => {
   const { t } = useTranslate()
 
-
   const stepMessages = {
-    loadingQrCode: t('editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.loadingQrCode'),
-    loadingAuthentication: t('editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.processingAuthentication')
+    loadingQrCode: t(
+      'editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.loadingQrCode'
+    ),
+    loadingAuthentication: t(
+      'editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.processingAuthentication'
+    ),
   }
-
 
   const { workspace } = useWorkspace()
   const { typebot } = useTypebot()
-  const { SVG } = useQRCode();
+  const { SVG } = useQRCode()
   const { showToast } = useToast()
   const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
   const [processAuthWppLoading, setProcessAuthWppLoading] = useState(true)
   const socketRef = useRef<WebSocket | null>(null)
-  const [stepLoadingMessage, setStepLoadingMessage] = useState<string | null>(stepMessages.loadingQrCode)
+  const [stepLoadingMessage, setStepLoadingMessage] = useState<string | null>(
+    stepMessages.loadingQrCode
+  )
 
   const {
     credentials: {
@@ -65,16 +69,19 @@ export const WhatsappCredentialsModal = ({
     },
   })
 
-
   const handleStartWebsocket = useCallback(async () => {
-    if (!workspace || !typebot) return;
+    if (!workspace || !typebot) return
 
     if (socketRef.current) {
       socketRef.current.close()
       socketRef.current = null
     }
     const now = new Date().getTime()
-    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${workspace.id}_${now}`)
+    const socket = new WebSocket(
+      `${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${
+        workspace.id
+      }_${now}`
+    )
     socket.onmessage = function (event) {
       if (!event.data) return
       if (event.data) {
@@ -82,14 +89,15 @@ export const WhatsappCredentialsModal = ({
 
         switch (payloadParsed.status) {
           case 'qr':
-            if (stepLoadingMessage === stepMessages.loadingAuthentication) return
+            if (stepLoadingMessage === stepMessages.loadingAuthentication)
+              return
             setWhatsappQrCode(payloadParsed.qr)
             setProcessAuthWppLoading(false)
-            break;
+            break
           case 'loading':
             setProcessAuthWppLoading(true)
             setStepLoadingMessage(stepMessages.loadingAuthentication)
-            break;
+            break
           case 'ready':
             mutate({
               credentials: {
@@ -99,8 +107,8 @@ export const WhatsappCredentialsModal = ({
                 name: `whatsApp-${payloadParsed.phoneNumber}`,
                 data: {
                   clientId: `${workspace.id}_${now}`,
-                  phoneNumber: payloadParsed.phoneNumber as string
-                }
+                  phoneNumber: payloadParsed.phoneNumber as string,
+                },
               },
             })
             setStepLoadingMessage(stepMessages.loadingQrCode)
@@ -108,7 +116,7 @@ export const WhatsappCredentialsModal = ({
             setWhatsappQrCode(null)
         }
       }
-    };
+    }
 
     socketRef.current = socket
   }, [mutate, typebot, workspace])
@@ -117,8 +125,6 @@ export const WhatsappCredentialsModal = ({
     socketRef.current?.close()
     onClose()
   }, [onClose])
-
-
 
   useEffect(() => {
     if (isOpen) handleStartWebsocket()
@@ -129,25 +135,31 @@ export const WhatsappCredentialsModal = ({
     <Modal isOpen={isOpen} onClose={handleEndWebSocket} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('editor.blocks.integrations.whatsapp.WhatsappCredentialsModal.ModalHeader')}</ModalHeader>
+        <ModalHeader>
+          {t(
+            'editor.blocks.integrations.whatsapp.WhatsappCredentialsModal.ModalHeader'
+          )}
+        </ModalHeader>
         <ModalCloseButton />
         <Flex alignItems="center" justifyContent="center" padding={5}>
-          {!!whatsappQrCode && !processAuthWppLoading && !(stepLoadingMessage === stepMessages.loadingAuthentication) && (
-            <SVG
-              text={whatsappQrCode}
-              options={{
-                type: 'image/jpeg',
-                quality: 0.3,
-                errorCorrectionLevel: 'M',
-                margin: 3,
-                scale: 5,
-                width: 200
-              }}
-            />
-          )}
+          {!!whatsappQrCode &&
+            !processAuthWppLoading &&
+            !(stepLoadingMessage === stepMessages.loadingAuthentication) && (
+              <SVG
+                text={whatsappQrCode}
+                options={{
+                  type: 'image/jpeg',
+                  quality: 0.3,
+                  errorCorrectionLevel: 'M',
+                  margin: 3,
+                  scale: 5,
+                  width: 200,
+                }}
+              />
+            )}
           {processAuthWppLoading && (
-            <Flex alignItems={"center"} direction="column" gap={8}>
-              <Spinner size={"xl"} />
+            <Flex alignItems={'center'} direction="column" gap={8}>
+              <Spinner size={'xl'} />
               <Text>{stepLoadingMessage}</Text>
             </Flex>
           )}

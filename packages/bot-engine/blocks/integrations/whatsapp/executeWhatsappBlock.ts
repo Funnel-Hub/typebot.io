@@ -2,7 +2,7 @@ import { decrypt } from "@typebot.io/lib/api/encryption/decrypt";
 import prisma from "@typebot.io/lib/prisma";
 import { ChatLog, SessionState, Variable, WhatsappBlock, WhatsappCredentials } from "@typebot.io/schemas";
 import { ExecuteIntegrationResponse } from "../../../types";
-import { parseVariables } from "../../../variables/parseVariables";
+import { parseVariables } from '@typebot.io/variables/parseVariables'
 
 export const executeWhatsappBlock = async (
   state: SessionState,

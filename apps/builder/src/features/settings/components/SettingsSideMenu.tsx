@@ -1,4 +1,4 @@
-import { ChatIcon, CodeIcon, MoreVerticalIcon } from '@/components/icons'
+import { ChatIcon, CodeIcon, LockedIcon, MoreVerticalIcon } from '@/components/icons'
 import { headerHeight } from '@/features/editor/constants'
 import { useTypebot } from '@/features/editor/providers/TypebotProvider'
 import {
@@ -15,6 +15,7 @@ import { useTranslate } from '@tolgee/react'
 import { Settings } from '@typebot.io/schemas'
 import { GeneralSettingsForm } from './GeneralSettingsForm'
 import { MetadataForm } from './MetadataForm'
+import { SecurityForm } from './SecurityForm'
 import { TypingEmulationForm } from './TypingEmulationForm'
 
 export const SettingsSideMenu = () => {
@@ -27,6 +28,12 @@ export const SettingsSideMenu = () => {
     typebot &&
     updateTypebot({
       updates: { settings: { ...typebot.settings, typingEmulation } },
+    })
+
+  const updateSecurity = (security: Settings['security']) =>
+    typebot &&
+    updateTypebot({
+      updates: { settings: { ...typebot.settings, security } },
     })
 
   const handleGeneralSettingsChange = (general: Settings['general']) =>
@@ -82,6 +89,23 @@ export const SettingsSideMenu = () => {
               <TypingEmulationForm
                 typingEmulation={typebot.settings.typingEmulation}
                 onUpdate={updateTypingEmulation}
+              />
+            )}
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem>
+          <AccordionButton py={6}>
+            <HStack flex="1" pl={2}>
+              <LockedIcon />
+              <Heading fontSize="lg">Security</Heading>
+            </HStack>
+            <AccordionIcon />
+          </AccordionButton>
+          <AccordionPanel pb={4} px="6">
+            {typebot && (
+              <SecurityForm
+                security={typebot.settings.security}
+                onUpdate={updateSecurity}
               />
             )}
           </AccordionPanel>
