@@ -170,10 +170,10 @@ export const getAuthOptions = ({
       return token
     },
     session: async ({ session, token }) => {
-	  if (token?.user) session.user = token.user
-	
+      if (token?.user) session.user = token.user
+
       const userFromDb = session.user as User
-	
+
       await updateLastActivityDate(userFromDb)
       return {
         ...session,

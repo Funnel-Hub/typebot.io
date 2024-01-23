@@ -3,10 +3,10 @@ import { sidebarMenuData } from '@/lib/sidebar'
 
 export const FunnelHubSidebar = ({ onClose }: { onClose?: () => void }) => (
   <ChakraSidebar
-  	onClose={() => {
+    onClose={() => {
       onClose?.()
-  	}}
-  	display={{ base: 'none', md: 'block' }}
-  	menuData={sidebarMenuData}
+    }}
+    display={{ base: 'none', md: 'block' }}
+    menuData={sidebarMenuData}
   />
 )
