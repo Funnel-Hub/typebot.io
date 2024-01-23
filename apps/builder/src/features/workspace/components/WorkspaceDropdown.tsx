@@ -2,7 +2,7 @@ import { EmojiOrImageIcon } from '@/components/EmojiOrImageIcon'
 import {
   HardDriveIcon,
   ChevronLeftIcon,
-  PlusIcon,
+  // PlusIcon,
   LogOutIcon,
 } from '@/components/icons'
 import { PlanTag } from '@/features/billing/components/PlanTag'
@@ -30,8 +30,8 @@ export const WorkspaceDropdown = ({
   currentWorkspace,
   onWorkspaceSelected,
   onLogoutClick,
-  onCreateNewWorkspaceClick,
-}: Props) => {
+}: // onCreateNewWorkspaceClick,
+Props) => {
   const { t } = useTranslate()
   const { data } = trpc.workspace.listWorkspaces.useQuery()
 
@@ -71,9 +71,9 @@ export const WorkspaceDropdown = ({
               </HStack>
             </MenuItem>
           ))}
-        <MenuItem onClick={onCreateNewWorkspaceClick} icon={<PlusIcon />}>
+        {/* <MenuItem onClick={onCreateNewWorkspaceClick} icon={<PlusIcon />}>
           {t('workspace.dropdown.newButton.label')}
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
           onClick={onLogoutClick}
           icon={<LogOutIcon />}

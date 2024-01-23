@@ -57,8 +57,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(mjml@4.14.1)(react-dom@18.2.0)(react@18.2.0)
       '@funnelhub/sidebar':
-        specifier: 1.0.0
-        version: 1.0.0(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 1.0.1
+        version: 1.0.1(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
       '@giphy/js-fetch-api':
         specifier: 5.0.0
         version: 5.0.0
@@ -251,6 +251,9 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      react-icons:
+        specifier: ^5.0.1
+        version: 5.0.1(react@18.2.0)
       react-markdown:
         specifier: ^9.0.1
         version: 9.0.1(@types/react@18.2.15)(react@18.2.0)
@@ -6893,8 +6896,8 @@ packages:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
     dev: false
 
-  /@funnelhub/sidebar@1.0.0(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-esWFm/24CKqz7wMsPKx/xVBZSIsjxw6aaH1hYhf+vCKPWtTKcMm+v/MaxArBgR4DfLSsS2AOx/6jQhwOC4Mmpg==}
+  /@funnelhub/sidebar@1.0.1(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.18)(@types/react@18.2.15)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Jd00tNaG/CZHftHhXsd8VXPHCSxi4S1zNp6h4xsQ23DMWgVi0AUXkanCLMwambTOu+oYQR04UWuRUwnj6t2dGQ==}
     engines: {node: '>=20'}
     peerDependencies:
       next: 13.5.6
@@ -20875,6 +20878,14 @@ packages:
 
   /react-icons@4.12.0(react@18.2.0):
     resolution: {integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /react-icons@5.0.1(react@18.2.0):
+    resolution: {integrity: sha512-WqLZJ4bLzlhmsvme6iFdgO8gfZP17rfjYEJ2m9RsZjZ+cc4k1hTzknEz63YS1MeT50kVzoa1Nz36f4BEx+Wigw==}
     peerDependencies:
       react: '*'
     dependencies:
