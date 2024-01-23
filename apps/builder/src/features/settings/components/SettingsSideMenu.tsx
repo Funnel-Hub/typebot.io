@@ -1,4 +1,9 @@
-import { ChatIcon, CodeIcon, LockedIcon, MoreVerticalIcon } from '@/components/icons'
+import {
+  ChatIcon,
+  CodeIcon,
+  LockedIcon,
+  MoreVerticalIcon,
+} from '@/components/icons'
 import { headerHeight } from '@/features/editor/constants'
 import { useTypebot } from '@/features/editor/providers/TypebotProvider'
 import {
@@ -63,7 +68,9 @@ export const SettingsSideMenu = () => {
           <AccordionButton py={6}>
             <HStack flex="1" pl={2}>
               <MoreVerticalIcon transform={'rotate(90deg)'} />
-              <Heading fontSize="lg">{t('settings.settingsSideMenu.menu.general')}</Heading>
+              <Heading fontSize="lg">
+                {t('settings.settingsSideMenu.menu.general')}
+              </Heading>
             </HStack>
             <AccordionIcon />
           </AccordionButton>
@@ -80,7 +87,9 @@ export const SettingsSideMenu = () => {
           <AccordionButton py={6}>
             <HStack flex="1" pl={2}>
               <ChatIcon />
-              <Heading fontSize="lg">{t('settings.settingsSideMenu.menu.typingEmulation')}</Heading>
+              <Heading fontSize="lg">
+                {t('settings.settingsSideMenu.menu.typingEmulation')}
+              </Heading>
             </HStack>
             <AccordionIcon />
           </AccordionButton>
@@ -114,7 +123,9 @@ export const SettingsSideMenu = () => {
           <AccordionButton py={6}>
             <HStack flex="1" pl={2}>
               <CodeIcon />
-              <Heading fontSize="lg">{t('settings.settingsSideMenu.menu.metadata')}</Heading>
+              <Heading fontSize="lg">
+                {t('settings.settingsSideMenu.menu.metadata')}
+              </Heading>
             </HStack>
             <AccordionIcon />
           </AccordionButton>
