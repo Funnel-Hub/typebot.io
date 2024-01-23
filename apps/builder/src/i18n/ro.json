@@ -219,6 +219,7 @@
   "settings.settingsSideMenu.menu.general": "General",
   "settings.settingsSideMenu.menu.typingEmulation": "Emulare tastare",
   "settings.settingsSideMenu.menu.metadata": "Metadate",
+  "settings.settingsSideMenu.menu.security": "Securitate",
   "templates.buttons.fromScratchButton.label": "Începe de la zero",
   "templates.buttons.fromTemplateButton.label": "Începeți de la un șablon",
   "templates.buttons.heading": "Creați un nou typebot",

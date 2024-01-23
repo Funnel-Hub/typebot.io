@@ -373,6 +373,7 @@
   "settings.settingsSideMenu.menu.general": "General",
   "settings.settingsSideMenu.menu.typingEmulation": "Typing emulation",
   "settings.settingsSideMenu.menu.metadata": "Metadata",
+  "settings.settingsSideMenu.menu.security": "Security",
   "templates.buttons.fromScratchButton.label": "Start from scratch",
   "templates.buttons.fromTemplateButton.label": "Start from a template",
   "templates.buttons.heading": "Create a new typebot",

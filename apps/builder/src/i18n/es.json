@@ -219,6 +219,7 @@
   "settings.settingsSideMenu.menu.general": "General",
   "settings.settingsSideMenu.menu.typingEmulation": "Simulación de mecanografía",
   "settings.settingsSideMenu.menu.metadata": "Metadatos",
+  "settings.settingsSideMenu.menu.security": "Seguridad",
   "templates.buttons.fromScratchButton.label": "Empezar desde cero",
   "templates.buttons.fromTemplateButton.label": "Empezar desde una plantilla",
   "templates.buttons.heading": "Crear un nuevo Typebot",
