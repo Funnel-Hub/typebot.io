@@ -1,24 +1,25 @@
+import { ChatIcon, CodeIcon, MoreVerticalIcon } from '@/components/icons'
+import { headerHeight } from '@/features/editor/constants'
+import { useTypebot } from '@/features/editor/providers/TypebotProvider'
 import {
   Accordion,
   AccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Heading,
   HStack,
+  Heading,
   Stack,
 } from '@chakra-ui/react'
-import { ChatIcon, CodeIcon, MoreVerticalIcon } from '@/components/icons'
+import { useTranslate } from '@tolgee/react'
 import { Settings } from '@typebot.io/schemas'
-import React from 'react'
 import { GeneralSettingsForm } from './GeneralSettingsForm'
 import { MetadataForm } from './MetadataForm'
 import { TypingEmulationForm } from './TypingEmulationForm'
-import { useTypebot } from '@/features/editor/providers/TypebotProvider'
-import { headerHeight } from '@/features/editor/constants'
 
 export const SettingsSideMenu = () => {
   const { typebot, updateTypebot } = useTypebot()
+  const { t } = useTranslate()
 
   const updateTypingEmulation = (
     typingEmulation: Settings['typingEmulation']
@@ -48,14 +49,14 @@ export const SettingsSideMenu = () => {
       pb="20"
     >
       <Heading fontSize="xl" textAlign="center">
-        Settings
+        {t('settings.settingsSideMenu.heading')}
       </Heading>
       <Accordion allowMultiple defaultIndex={[0]}>
         <AccordionItem>
           <AccordionButton py={6}>
             <HStack flex="1" pl={2}>
               <MoreVerticalIcon transform={'rotate(90deg)'} />
-              <Heading fontSize="lg">General</Heading>
+              <Heading fontSize="lg">{t('settings.settingsSideMenu.menu.general')}</Heading>
             </HStack>
             <AccordionIcon />
           </AccordionButton>
@@ -72,7 +73,7 @@ export const SettingsSideMenu = () => {
           <AccordionButton py={6}>
             <HStack flex="1" pl={2}>
               <ChatIcon />
-              <Heading fontSize="lg">Typing emulation</Heading>
+              <Heading fontSize="lg">{t('settings.settingsSideMenu.menu.typingEmulation')}</Heading>
             </HStack>
             <AccordionIcon />
           </AccordionButton>
@@ -89,7 +90,7 @@ export const SettingsSideMenu = () => {
           <AccordionButton py={6}>
             <HStack flex="1" pl={2}>
               <CodeIcon />
-              <Heading fontSize="lg">Metadata</Heading>
+              <Heading fontSize="lg">{t('settings.settingsSideMenu.menu.metadata')}</Heading>
             </HStack>
             <AccordionIcon />
           </AccordionButton>
