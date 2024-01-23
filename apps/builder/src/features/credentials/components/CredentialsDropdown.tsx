@@ -160,7 +160,7 @@ export const CredentialsDropdown = ({
               icon={<PlusIcon />}
               onClick={onCreateNewClick}
             >
-              {t('blocks.inputs.payment.settings.credentials.connectNew.label')}
+              {t('editor.credentialsDropdown.ConnectNew.label')}
             </MenuItem>
           )}
         </Stack>
