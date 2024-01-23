@@ -169,8 +169,11 @@ export const getAuthOptions = ({
       }
       return token
     },
-    session: async ({ session, user }) => {
-      const userFromDb = user as User
+    session: async ({ session, token }) => {
+	  if (token?.user) session.user = token.user
+	
+      const userFromDb = session.user as User
+	
       await updateLastActivityDate(userFromDb)
       return {
         ...session,
@@ -237,7 +240,7 @@ const updateLastActivityDate = async (user: User) => {
     first.getMonth() === second.getMonth() &&
     first.getDate() === second.getDate()
 
-  if (!datesAreOnSameDay(user.lastActivityAt, new Date()))
+  if (!datesAreOnSameDay(new Date(user.lastActivityAt), new Date()))
     await prisma.user.updateMany({
       where: { id: user.id },
       data: { lastActivityAt: new Date() },
