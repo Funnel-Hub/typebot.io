@@ -79,8 +79,7 @@ export const WhatsappCredentialsModal = ({
     }
     const now = new Date().getTime()
     const socket = new WebSocket(
-      `${env.NEXT_PUBLIC_WHATSAPP_SERVER}?clientId=${workspace.id
-      }_${now}`
+      `${env.NEXT_PUBLIC_WHATSAPP_SERVER}?clientId=${workspace.id}_${now}`
     )
     socket.onmessage = function (event) {
       if (!event.data) return

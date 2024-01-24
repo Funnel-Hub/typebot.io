@@ -7,6 +7,7 @@ export const FunnelHubSidebar = ({ onClose }: { onClose?: () => void }) => (
       onClose?.()
     }}
     display={{ base: 'none', md: 'block' }}
+    initialCollapsedState={true}
     menuData={sidebarMenuData}
   />
 )

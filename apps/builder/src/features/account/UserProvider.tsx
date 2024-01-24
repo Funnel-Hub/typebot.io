@@ -80,7 +80,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (isSignInPath || isPathPublicFriendly) return
     if (!user && status === 'unauthenticated')
       router.replace({
-        pathname: '/signin',
+        pathname: env.NEXT_PUBLIC_FUNNELHUB_URL,
         query: {
           redirectPath: router.asPath,
         },
