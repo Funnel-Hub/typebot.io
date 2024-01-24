@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { createId } from '@paralleldrive/cuid2'
 import { useTranslate } from '@tolgee/react'
+import { env } from '@typebot.io/env'
 import { useQRCode } from 'next-qrcode'
 import { useCallback, useEffect, useRef, useState } from 'react'
 type Props = {
@@ -78,8 +79,7 @@ export const WhatsappCredentialsModal = ({
     }
     const now = new Date().getTime()
     const socket = new WebSocket(
-      `${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${
-        workspace.id
+      `${env.NEXT_PUBLIC_WHATSAPP_SERVER}?clientId=${workspace.id
       }_${now}`
     )
     socket.onmessage = function (event) {

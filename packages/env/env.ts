@@ -92,6 +92,7 @@ const baseEnv = {
       )
       .optional(),
     WORKSPACE_TOKEN: z.string(),
+    WHATSAPP_SERVER: z.string().url()
   },
   client: {
     NEXT_PUBLIC_E2E_TEST: boolean.optional(),
@@ -106,6 +107,7 @@ const baseEnv = {
     NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE: z.coerce.number().optional(),
     NEXT_PUBLIC_FUNNELHUB_URL: z.string().url(),
     NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_WHATSAPP_SERVER: z.string().url()
   },
   runtimeEnv: {
     NEXT_PUBLIC_E2E_TEST: getRuntimeVariable('NEXT_PUBLIC_E2E_TEST'),
@@ -118,6 +120,7 @@ const baseEnv = {
     ),
     NEXT_PUBLIC_FUNNELHUB_URL: getRuntimeVariable('NEXT_PUBLIC_FUNNELHUB_URL'),
     NEXT_PUBLIC_APP_URL: getRuntimeVariable('NEXT_PUBLIC_APP_URL'),
+    NEXT_PUBLIC_WHATSAPP_SERVER: getRuntimeVariable('NEXT_PUBLIC_WHATSAPP_SERVER'),
   },
 }
 const githubEnv = {

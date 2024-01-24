@@ -1,3 +1,4 @@
+import { env } from '@typebot.io/env'
 import WebSocket, { ErrorEvent } from "ws"
 import { WhatsappSocketSendingMessage } from "./convertMessageToWhatsappCompoent"
 
@@ -9,7 +10,7 @@ type SendMessagePayload = {
 
 export async function sendSocketWhatsappMessage(clientId: string, { message, phones, sessionId }: SendMessagePayload) {
   const socketClient = await new Promise<WebSocket>((resolve, reject) => {
-    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WHATSAPP_SERVER!}?clientId=${clientId}`)
+    const socket = new WebSocket(`${env.WHATSAPP_SERVER}?clientId=${clientId}`)
     socket.onopen = () => {
       console.log('Connected')
     }
