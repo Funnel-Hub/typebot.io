@@ -1,9 +1,9 @@
-import { Stack } from '@chakra-ui/react'
-import { Settings } from '@typebot.io/schemas'
-import React from 'react'
-import { isDefined } from '@typebot.io/lib'
 import { NumberInput } from '@/components/inputs'
 import { SwitchWithLabel } from '@/components/inputs/SwitchWithLabel'
+import { Stack } from '@chakra-ui/react'
+import { useTranslate } from '@tolgee/react'
+import { isDefined } from '@typebot.io/lib'
+import { Settings } from '@typebot.io/schemas'
 import { defaultSettings } from '@typebot.io/schemas/features/typebot/settings/constants'
 
 type Props = {
@@ -12,6 +12,8 @@ type Props = {
 }
 
 export const TypingEmulationForm = ({ typingEmulation, onUpdate }: Props) => {
+  const { t } = useTranslate()
+
   const updateIsEnabled = (enabled: boolean) =>
     onUpdate({
       ...typingEmulation,
@@ -30,14 +32,16 @@ export const TypingEmulationForm = ({ typingEmulation, onUpdate }: Props) => {
   return (
     <Stack spacing={6}>
       <SwitchWithLabel
-        label={'Typing emulation'}
+        label={t('settings.settingsSideMenu.menu.typingEmulation')}
         initialValue={isEnabled}
         onCheckChange={updateIsEnabled}
       />
       {isEnabled && (
         <Stack pl={10}>
           <NumberInput
-            label="Words per minutes:"
+            label={t(
+              'settings.settingsSideMenu.typingEmulationMenu.WordsPerMinute.label'
+            )}
             data-testid="speed"
             defaultValue={
               typingEmulation?.speed ?? defaultSettings.typingEmulation.speed
@@ -49,7 +53,9 @@ export const TypingEmulationForm = ({ typingEmulation, onUpdate }: Props) => {
             direction="row"
           />
           <NumberInput
-            label="Max delay (in seconds):"
+            label={t(
+              'settings.settingsSideMenu.typingEmulationMenu.maxDelay.label'
+            )}
             data-testid="max-delay"
             defaultValue={
               typingEmulation?.maxDelay ??
