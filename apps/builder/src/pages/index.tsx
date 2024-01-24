@@ -19,7 +19,7 @@ export const getServerSideProps = async (
     return {
       redirect: {
         permanent: false,
-        destination: env.NEXT_PUBLIC_FUNNELHUB_URL
+        destination: env.NEXT_PUBLIC_FUNNELHUB_URL,
       },
     }
   }
