@@ -1,5 +1,8 @@
 {
   "name": "@typebot.io/tsconfig",
   "private": true,
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "dependencies": {
+    "@prisma/debug": "^5.8.1"
+  }
 }

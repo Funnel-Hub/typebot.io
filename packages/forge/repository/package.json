@@ -5,5 +5,8 @@
   "main": "index.ts",
   "keywords": [],
   "author": "Baptiste Arnaud",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/debug": "^5.8.1"
+  }
 }

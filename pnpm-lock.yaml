@@ -632,6 +632,9 @@ importers:
       '@planetscale/database':
         specifier: 1.8.0
         version: 1.8.0
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       '@sentry/nextjs':
         specifier: 7.77.0
         version: 7.77.0(next@14.0.3)(react@18.2.0)
@@ -864,6 +867,10 @@ importers:
         version: 5.3.2
 
   packages/emails:
+    dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
     devDependencies:
       '@faire/mjml-react':
         specifier: 3.3.0
@@ -910,6 +917,9 @@ importers:
 
   packages/embeds/js:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       '@stripe/stripe-js':
         specifier: 1.54.1
         version: 1.54.1
@@ -1007,6 +1017,9 @@ importers:
 
   packages/embeds/nextjs:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       next:
         specifier: 12.x || 13.x || 14.x
         version: 14.0.3(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
@@ -1083,6 +1096,9 @@ importers:
       '@ladle/react':
         specifier: 2.5.1
         version: 2.5.1(@types/node@20.4.2)(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.2)
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
     devDependencies:
       '@babel/preset-react':
         specifier: 7.22.5
@@ -1152,6 +1168,9 @@ importers:
 
   packages/env:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       '@t3-oss/env-nextjs':
         specifier: ^0.7.0
         version: 0.7.3(zod@3.22.4)
@@ -1171,6 +1190,9 @@ importers:
 
   packages/eslint-config-custom:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       eslint:
         specifier: 8.44.0
         version: 8.44.0
@@ -1192,6 +1214,10 @@ importers:
         version: 6.0.0(eslint@8.44.0)(typescript@5.3.2)
 
   packages/forge/blocks/calCom:
+    dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
     devDependencies:
       '@typebot.io/forge':
         specifier: workspace:*
@@ -1210,6 +1236,10 @@ importers:
         version: 5.3.2
 
   packages/forge/blocks/chatNode:
+    dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
     devDependencies:
       '@typebot.io/forge':
         specifier: workspace:*
@@ -1232,6 +1262,9 @@ importers:
 
   packages/forge/blocks/openai:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       ai:
         specifier: 2.2.31
         version: 2.2.31(react@18.2.0)(solid-js@1.7.8)(svelte@4.2.9)(vue@3.4.15)
@@ -1257,6 +1290,9 @@ importers:
 
   packages/forge/blocks/qrcode:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       qrcode:
         specifier: ^1.5.3
         version: 1.5.3
@@ -1281,6 +1317,10 @@ importers:
         version: 5.3.2
 
   packages/forge/blocks/zemanticAi:
+    dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
     devDependencies:
       '@typebot.io/forge':
         specifier: workspace:*
@@ -1321,6 +1361,9 @@ importers:
 
   packages/forge/core:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       zod:
         specifier: 3.22.4
         version: 3.22.4
@@ -1332,9 +1375,17 @@ importers:
         specifier: 18.2.15
         version: 18.2.15
 
-  packages/forge/repository: {}
+  packages/forge/repository:
+    dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
 
   packages/forge/schemas:
+    dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
     devDependencies:
       '@typebot.io/cal-com-block':
         specifier: workspace:*
@@ -1360,6 +1411,9 @@ importers:
 
   packages/lib:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       '@sentry/nextjs':
         specifier: 7.77.0
         version: 7.77.0(next@14.0.3)(react@18.2.0)
@@ -1428,8 +1482,8 @@ importers:
   packages/prisma:
     dependencies:
       '@prisma/client':
-        specifier: 5.8.0
-        version: 5.8.0(prisma@5.8.0)
+        specifier: 5.0.0
+        version: 5.0.0(prisma@5.0.0)
     devDependencies:
       '@typebot.io/tsconfig':
         specifier: workspace:*
@@ -1441,8 +1495,8 @@ importers:
         specifier: 7.2.1
         version: 7.2.1
       prisma:
-        specifier: 5.8.0
-        version: 5.8.0
+        specifier: 5.0.0
+        version: 5.0.0
       tsx:
         specifier: 3.12.7
         version: 3.12.7
@@ -1452,6 +1506,9 @@ importers:
 
   packages/radar:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       '@udecode/plate-common':
         specifier: 21.1.5
         version: 21.1.5(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)(scheduler@0.23.0)(slate-history@0.93.0)(slate-react@0.94.2)(slate@0.94.1)
@@ -1474,6 +1531,9 @@ importers:
 
   packages/schemas:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       '@udecode/plate-common':
         specifier: 21.1.5
         version: 21.1.5(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)(scheduler@0.23.0)(slate-history@0.93.0)(slate-react@0.94.2)(slate@0.94.1)
@@ -1558,10 +1618,17 @@ importers:
         specifier: 3.22.4
         version: 3.22.4
 
-  packages/tsconfig: {}
+  packages/tsconfig:
+    dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
 
   packages/variables:
     dependencies:
+      '@prisma/debug':
+        specifier: ^5.8.1
+        version: 5.8.1
       '@typebot.io/lib':
         specifier: workspace:*
         version: link:../lib
@@ -8136,8 +8203,8 @@ packages:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
 
-  /@prisma/client@5.8.0(prisma@5.8.0):
-    resolution: {integrity: sha512-QxO6C4MaA/ysTIbC+EcAH1aX/YkpymhXtO6zPdk+FvA7+59tNibIYpd+7koPdViLg2iKES4ojsxWNUGNJaEcbA==}
+  /@prisma/client@5.0.0(prisma@5.0.0):
+    resolution: {integrity: sha512-XlO5ELNAQ7rV4cXIDJUNBEgdLwX3pjtt9Q/RHqDpGf43szpNJx2hJnggfFs7TKNx0cOFsl6KJCSfqr5duEU/bQ==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
@@ -8146,35 +8213,21 @@ packages:
       prisma:
         optional: true
     dependencies:
-      prisma: 5.8.0
+      '@prisma/engines-version': 4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584
+      prisma: 5.0.0
     dev: false
 
-  /@prisma/debug@5.8.0:
-    resolution: {integrity: sha512-ZqPpkvbovu/kQJ1bvy57NO4dw97fpQGcbQSCtsqlwSE1UNKJP75R3BKxdznk8ZPMY+GJdMRetWNv4oAvSbWn8Q==}
+  /@prisma/debug@5.8.1:
+    resolution: {integrity: sha512-tjuw7eA0Us3T42jx9AmAgL58rzwzpFGYc3R7Y4Ip75EBYrKMBA1YihuWMcBC92ILmjlQ/u3p8VxcIE0hr+fZfg==}
+    dev: false
 
-  /@prisma/engines-version@5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848:
-    resolution: {integrity: sha512-cXcoVweYbnv8xRfkWq9oj8BECOdzHUazrSpYCa0ehp5TNz4l5Spa8jbq/VROCTzj3ZncH5D9Q2TmySYTOUeKlw==}
+  /@prisma/engines-version@4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584:
+    resolution: {integrity: sha512-HHiUF6NixsldsP3JROq07TYBLEjXFKr6PdH8H4gK/XAoTmIplOJBCgrIUMrsRAnEuGyRoRLXKXWUb943+PFoKQ==}
+    dev: false
 
-  /@prisma/engines@5.8.0:
-    resolution: {integrity: sha512-Qhqm9WWLujNEC13AuZlUO14SQ15tNLe5puaz+tOk7UqINqJ3PtqMmuSuzomiw2diGVqZ+HYiSQzlR3+pPucVHA==}
+  /@prisma/engines@5.0.0:
+    resolution: {integrity: sha512-kyT/8fd0OpWmhAU5YnY7eP31brW1q1YrTGoblWrhQJDiN/1K+Z8S1kylcmtjqx5wsUGcP1HBWutayA/jtyt+sg==}
     requiresBuild: true
-    dependencies:
-      '@prisma/debug': 5.8.0
-      '@prisma/engines-version': 5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848
-      '@prisma/fetch-engine': 5.8.0
-      '@prisma/get-platform': 5.8.0
-
-  /@prisma/fetch-engine@5.8.0:
-    resolution: {integrity: sha512-1CAuE+JoYsPNggMEn6qk0zos06Uc9bYZBJ0VBPHD6R7REL05614koAbOCmn52IaYz3nobb7f25hqW6AY7rLkIw==}
-    dependencies:
-      '@prisma/debug': 5.8.0
-      '@prisma/engines-version': 5.8.0-37.0a83d8541752d7582de2ebc1ece46519ce72a848
-      '@prisma/get-platform': 5.8.0
-
-  /@prisma/get-platform@5.8.0:
-    resolution: {integrity: sha512-Nk3rhTFZ1LYkFZJnpSvQcLPCaBWgJQfteHII6UEENOOkYlmP0k3FuswND54tzzEr4qs39wOdV9pbXKX9U2lv7A==}
-    dependencies:
-      '@prisma/debug': 5.8.0
 
   /@radix-ui/primitive@1.0.1:
     resolution: {integrity: sha512-yQ8oGX2GVsEYMWGxcovu1uGWPCxV5BFfeeYxqPmuAzUyLT9qmaMXSAhXpb0WrspIeqYzdJpkh2vHModJPgRIaw==}
@@ -20110,13 +20163,13 @@ packages:
       react: 18.2.0
     dev: false
 
-  /prisma@5.8.0:
-    resolution: {integrity: sha512-hDKoEqPt2qEUTH5yGO3l27CBnPtwvte0CGMKrpCr9+/A919JghfqJ3qgCGgMbOwdkXUOzdho0RH9tyUF3UhpMw==}
+  /prisma@5.0.0:
+    resolution: {integrity: sha512-KYWk83Fhi1FH59jSpavAYTt2eoMVW9YKgu8ci0kuUnt6Dup5Qy47pcB4/TLmiPAbhGrxxSz7gsSnJcCmkyPANA==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.8.0
+      '@prisma/engines': 5.0.0
 
   /prismjs@1.29.0:
     resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}

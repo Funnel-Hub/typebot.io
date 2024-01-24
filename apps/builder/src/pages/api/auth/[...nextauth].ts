@@ -146,6 +146,7 @@ export const getAuthOptions = ({
         sameSite: 'none',
         path: '/',
         secure: true,
+        domain: env.DOMAIN_URL,
       },
     },
   },

@@ -17,7 +17,8 @@
   "author": "Baptiste Arnaud",
   "license": "ISC",
   "dependencies": {
-    "@ladle/react": "2.5.1"
+    "@ladle/react": "2.5.1",
+    "@prisma/debug": "^5.8.1"
   },
   "devDependencies": {
     "@babel/preset-react": "7.22.5",

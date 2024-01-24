@@ -16,22 +16,25 @@
   "license": "ISC",
   "devDependencies": {
     "@faire/mjml-react": "3.3.0",
+    "@typebot.io/env": "workspace:*",
+    "@typebot.io/lib": "workspace:*",
+    "@typebot.io/tsconfig": "workspace:*",
     "@types/node": "20.4.2",
     "@types/nodemailer": "6.4.8",
     "@types/react": "18.2.15",
     "concurrently": "8.2.0",
+    "eslint": "8.44.0",
+    "eslint-config-custom": "workspace:*",
     "http-server": "14.1.1",
     "nodemailer": "6.9.3",
     "react": "18.2.0",
-    "tsx": "3.12.7",
-    "@typebot.io/lib": "workspace:*",
-    "eslint": "8.44.0",
-    "eslint-config-custom": "workspace:*",
-    "@typebot.io/tsconfig": "workspace:*",
-    "@typebot.io/env": "workspace:*"
+    "tsx": "3.12.7"
   },
   "peerDependencies": {
     "@faire/mjml-react": "2.1.4",
     "nodemailer": "6.7.8"
+  },
+  "dependencies": {
+    "@prisma/debug": "^5.8.1"
   }
 }

@@ -41,5 +41,8 @@
   "peerDependencies": {
     "next": "12.x || 13.x || 14.x",
     "react": "^16.0.0 || ^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@prisma/debug": "^5.8.1"
   }
 }

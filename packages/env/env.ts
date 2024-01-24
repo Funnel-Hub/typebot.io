@@ -56,14 +56,22 @@ const baseEnv = {
       guessNextAuthUrlForVercelPreview,
       z.string().url()
     ),
+    DOMAIN_URL: z.string().url(),
     DISABLE_SIGNUP: boolean.optional().default('false'),
     ADMIN_EMAIL: z.string().email().optional(),
     DEFAULT_WORKSPACE_PLAN: z
-	.enum(['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'])
-	.refine((str) =>
-	['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'].includes(str)
-	)
-	.default('UNDEFINED'),
+      .enum(['FREE', 'STARTER', 'PRO', 'LIFETIME', 'UNLIMITED', 'UNDEFINED'])
+      .refine((str) =>
+        [
+          'FREE',
+          'STARTER',
+          'PRO',
+          'LIFETIME',
+          'UNLIMITED',
+          'UNDEFINED',
+        ].includes(str)
+      )
+      .default('UNDEFINED'),
     DEBUG: boolean.optional().default('false'),
     CHAT_API_TIMEOUT: z.coerce.number().optional(),
     RADAR_HIGH_RISK_KEYWORDS: z
@@ -83,7 +91,7 @@ const baseEnv = {
         val.split('/').map((s) => s.split(',').map((s) => s.split('|')))
       )
       .optional(),
-	WORKSPACE_TOKEN: z.string()
+    WORKSPACE_TOKEN: z.string(),
   },
   client: {
     NEXT_PUBLIC_E2E_TEST: boolean.optional(),
@@ -96,8 +104,8 @@ const baseEnv = {
     ),
     NEXT_PUBLIC_ONBOARDING_TYPEBOT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE: z.coerce.number().optional(),
-	NEXT_PUBLIC_FUNNELHUB_URL: z.string().url(),
-	NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_FUNNELHUB_URL: z.string().url(),
+    NEXT_PUBLIC_APP_URL: z.string().url(),
   },
   runtimeEnv: {
     NEXT_PUBLIC_E2E_TEST: getRuntimeVariable('NEXT_PUBLIC_E2E_TEST'),
@@ -108,12 +116,8 @@ const baseEnv = {
     NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE: getRuntimeVariable(
       'NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE'
     ),
-	NEXT_PUBLIC_FUNNELHUB_URL: getRuntimeVariable(
-      'NEXT_PUBLIC_FUNNELHUB_URL'
-    ),
-	NEXT_PUBLIC_APP_URL: getRuntimeVariable(
-      'NEXT_PUBLIC_APP_URL'
-    ),
+    NEXT_PUBLIC_FUNNELHUB_URL: getRuntimeVariable('NEXT_PUBLIC_FUNNELHUB_URL'),
+    NEXT_PUBLIC_APP_URL: getRuntimeVariable('NEXT_PUBLIC_APP_URL'),
   },
 }
 const githubEnv = {
@@ -210,7 +214,7 @@ const stripeEnv = {
     STRIPE_PRO_PRICE_ID: z.string().min(1).optional(),
     STRIPE_PRO_CHATS_PRICE_ID: z.string().min(1).optional(),
     STRIPE_LTD_PRICE_ID: z.string().min(1).optional(),
-    STRIPE_LTD_CHATS_PRICE_ID: z.string().min(1).optional()
+    STRIPE_LTD_CHATS_PRICE_ID: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string().min(1).optional(),

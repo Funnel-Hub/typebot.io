@@ -10,7 +10,10 @@
     "@typebot.io/lib": "workspace:*",
     "@typebot.io/tsconfig": "workspace:*",
     "@types/react": "18.2.15",
-    "typescript": "5.3.2",
-    "got": "12.6.0"
+    "got": "12.6.0",
+    "typescript": "5.3.2"
+  },
+  "dependencies": {
+    "@prisma/debug": "^5.8.1"
   }
 }
