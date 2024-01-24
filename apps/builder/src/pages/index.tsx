@@ -1,6 +1,7 @@
 import { GetServerSidePropsContext } from 'next'
 import { getServerSession } from 'next-auth'
 import { getAuthOptions } from './api/auth/[...nextauth]'
+import { env } from '@typebot.io/env'
 
 export default function Page() {
   return null
@@ -18,10 +19,7 @@ export const getServerSideProps = async (
     return {
       redirect: {
         permanent: false,
-        destination:
-          context.locale !== context.defaultLocale
-            ? `/${context.locale}/signin`
-            : '/signin',
+        destination: env.NEXT_PUBLIC_FUNNELHUB_URL
       },
     }
   }
