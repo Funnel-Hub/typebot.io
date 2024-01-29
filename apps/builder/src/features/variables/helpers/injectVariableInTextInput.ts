@@ -4,12 +4,14 @@ type Props = {
   variable: Variable
   text: string
   at: number
+  onlySelectVariable?: boolean
 }
 
 export const injectVariableInText = ({
   variable,
   text,
   at,
+  onlySelectVariable = false,
 }: Props): { text: string; carretPosition: number } => {
   const textBeforeCursorPosition = text.substring(0, at)
   const textAfterCursorPosition = text.substring(at, text.length)
@@ -17,7 +19,7 @@ export const injectVariableInText = ({
     textBeforeCursorPosition + `{{${variable.name}}}` + textAfterCursorPosition
   const newCarretPosition = at + `{{${variable.name}}}`.length
   return {
-    text: newText,
+    text: !onlySelectVariable ? newText : `{{${variable.name}}}`,
     carretPosition: newCarretPosition,
   }
 }

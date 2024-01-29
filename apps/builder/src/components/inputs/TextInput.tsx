@@ -2,25 +2,25 @@ import { VariablesButton } from '@/features/variables/components/VariablesButton
 import { injectVariableInText } from '@/features/variables/helpers/injectVariableInTextInput'
 import { focusInput } from '@/helpers/focusInput'
 import {
+  Input as ChakraInput,
   FormControl,
   FormHelperText,
   FormLabel,
   HStack,
-  Input as ChakraInput,
   InputProps,
   Stack,
 } from '@chakra-ui/react'
+import { env } from '@typebot.io/env'
 import { Variable } from '@typebot.io/schemas'
 import React, {
-  forwardRef,
   ReactNode,
+  forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
-import { env } from '@typebot.io/env'
 import { MoreInfoTooltip } from '../MoreInfoTooltip'
 
 export type TextInputProps = {
@@ -36,6 +36,7 @@ export type TextInputProps = {
   isDisabled?: boolean
   direction?: 'row' | 'column'
   width?: 'full'
+  onlySelectVariable?: boolean
 } & Pick<
   InputProps,
   | 'autoComplete'
@@ -68,6 +69,7 @@ export const TextInput = forwardRef(function TextInput(
     maxWidth,
     direction = 'column',
     width,
+    onlySelectVariable = false,
   }: TextInputProps,
   ref
 ) {
@@ -97,7 +99,8 @@ export const TextInput = forwardRef(function TextInput(
     [onChange]
   )
 
-  const changeValue = (value: string) => {
+  const changeValue = (value: string, isVariableChange = false) => {
+    if (!isVariableChange && onlySelectVariable) return
     if (!isTouched) setIsTouched(true)
     setLocalValue(value)
     onChange(value)
@@ -109,8 +112,9 @@ export const TextInput = forwardRef(function TextInput(
       variable,
       text: localValue,
       at: carretPosition,
+      onlySelectVariable,
     })
-    changeValue(text)
+    changeValue(text, true)
     focusInput({ at: newCarretPosition, input: inputRef.current })
   }
 
