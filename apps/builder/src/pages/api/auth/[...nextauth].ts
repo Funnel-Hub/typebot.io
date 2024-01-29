@@ -8,7 +8,6 @@ import AzureADProvider from 'next-auth/providers/azure-ad'
 import prisma from '@typebot.io/lib/prisma'
 import { Provider } from 'next-auth/providers'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { funnelhubAdapter } from '@/features/auth/api/funnelhubAdapter'
 import { User } from '@typebot.io/prisma'
 import { getAtPath, isDefined } from '@typebot.io/lib'
 import { mockedUser } from '@typebot.io/lib/mockedUser'
@@ -20,6 +19,7 @@ import got from 'got'
 import { env } from '@typebot.io/env'
 import * as Sentry from '@sentry/nextjs'
 import { getIp } from '@typebot.io/lib/getIp'
+import { customAdapter } from '@/features/auth/api/customAdapter'
 
 const providers: Provider[] = []
 
@@ -130,7 +130,7 @@ export const getAuthOptions = ({
 }: {
   restricted?: 'rate-limited'
 }): AuthOptions => ({
-  adapter: funnelhubAdapter(),
+  adapter: customAdapter(prisma),
   secret: env.ENCRYPTION_SECRET,
   providers,
   session: {
