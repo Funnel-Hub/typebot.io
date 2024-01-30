@@ -70,6 +70,12 @@ export const WhatsappCredentialsModal = ({
     },
   })
 
+  const handleBackToOriginalState = () => {
+    setStepLoadingMessage(stepMessages.loadingQrCode)
+    setProcessAuthWppLoading(true)
+    setWhatsappQrCode(null)
+  }
+
   const handleStartWebsocket = useCallback(async () => {
     if (!workspace || !typebot) return
 
@@ -110,9 +116,7 @@ export const WhatsappCredentialsModal = ({
                 },
               },
             })
-            setStepLoadingMessage(stepMessages.loadingQrCode)
-            setProcessAuthWppLoading(true)
-            setWhatsappQrCode(null)
+            handleBackToOriginalState()
         }
       }
     }
@@ -122,6 +126,7 @@ export const WhatsappCredentialsModal = ({
 
   const handleEndWebSocket = useCallback(() => {
     socketRef.current?.close()
+    handleBackToOriginalState()
     onClose()
   }, [onClose])
 
