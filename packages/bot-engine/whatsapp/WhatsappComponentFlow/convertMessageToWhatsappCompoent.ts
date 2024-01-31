@@ -32,7 +32,7 @@ export const convertMessageToWhatsappComponent = (
         type: TypeWhatsappMessage.TEXT,
         body:  message.content.richText
         .map((chunk) =>
-          serialize(chunk)?.replaceAll('&amp;amp;#39;', "'").replaceAll('**', '*')
+          serialize(chunk)?.replaceAll('&amp;amp;#39;', "'").replaceAll('**', '*').replaceAll('&amp;quot;', '"')
         )
         .join('\n')
       }
