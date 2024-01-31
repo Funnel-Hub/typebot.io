@@ -330,6 +330,7 @@
   "editor.blocks.integrations.whatsapp.WhatsappCredentialsModal.ModalHeader": "Adicionar conta WhatsApp",
   "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.loadingQrCode": "Gerando código QR...",
   "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.processingAuthentication": "Processando autenticação...",
+  "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.authFailure": "Falha na autenticação, leia novamente o QR code.",
   "editor.credentialsDropdown.add.label": "Adicionar",
   "editor.credentialsDropdown.ConnectNew.label": "Conectar novo",
   "emojiList.categories.activities.label": "ATIVIDADES",

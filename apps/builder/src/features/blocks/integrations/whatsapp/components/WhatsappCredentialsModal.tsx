@@ -37,6 +37,9 @@ export const WhatsappCredentialsModal = ({
     loadingAuthentication: t(
       'editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.processingAuthentication'
     ),
+    authFailure: t(
+      'editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.authFailure'
+    ),
   }
 
   const { workspace } = useWorkspace()
@@ -46,9 +49,11 @@ export const WhatsappCredentialsModal = ({
   const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
   const [processAuthWppLoading, setProcessAuthWppLoading] = useState(true)
   const socketRef = useRef<WebSocket | null>(null)
+  const isFinishedLoadingScreenWhatsapp = useRef(false)
   const [stepLoadingMessage, setStepLoadingMessage] = useState<string | null>(
     stepMessages.loadingQrCode
   )
+  const [authFailure, setAuthFailure] = useState(false)
 
   const {
     credentials: {
@@ -74,6 +79,7 @@ export const WhatsappCredentialsModal = ({
     setStepLoadingMessage(stepMessages.loadingQrCode)
     setProcessAuthWppLoading(true)
     setWhatsappQrCode(null)
+    setAuthFailure(false)
   }
 
   const handleStartWebsocket = useCallback(async () => {
@@ -94,14 +100,24 @@ export const WhatsappCredentialsModal = ({
 
         switch (payloadParsed.status) {
           case 'qr':
-            if (stepLoadingMessage === stepMessages.loadingAuthentication)
-              return
-            setWhatsappQrCode(payloadParsed.qr)
-            setProcessAuthWppLoading(false)
+            if (
+              (stepLoadingMessage === stepMessages.loadingQrCode &&
+                !isFinishedLoadingScreenWhatsapp.current) ||
+              isFinishedLoadingScreenWhatsapp.current
+            ) {
+              if (isFinishedLoadingScreenWhatsapp.current) setAuthFailure(true)
+              setWhatsappQrCode(payloadParsed.qr)
+              setProcessAuthWppLoading(false)
+              setStepLoadingMessage(stepMessages.loadingQrCode)
+              isFinishedLoadingScreenWhatsapp.current = false
+            }
             break
           case 'loading':
             setProcessAuthWppLoading(true)
             setStepLoadingMessage(stepMessages.loadingAuthentication)
+            setAuthFailure(false)
+            if (payloadParsed.percent === 100)
+              isFinishedLoadingScreenWhatsapp.current = true
             break
           case 'ready':
             mutate({
@@ -149,17 +165,25 @@ export const WhatsappCredentialsModal = ({
           {!!whatsappQrCode &&
             !processAuthWppLoading &&
             !(stepLoadingMessage === stepMessages.loadingAuthentication) && (
-              <SVG
-                text={whatsappQrCode}
-                options={{
-                  type: 'image/jpeg',
-                  quality: 0.3,
-                  errorCorrectionLevel: 'M',
-                  margin: 3,
-                  scale: 5,
-                  width: 200,
-                }}
-              />
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                direction="column"
+                gap={4}
+              >
+                <SVG
+                  text={whatsappQrCode}
+                  options={{
+                    type: 'image/jpeg',
+                    quality: 0.3,
+                    errorCorrectionLevel: 'M',
+                    margin: 3,
+                    scale: 5,
+                    width: 200,
+                  }}
+                />
+                {!!authFailure && <Text>{stepMessages.authFailure}</Text>}
+              </Flex>
             )}
           {processAuthWppLoading && (
             <Flex alignItems={'center'} direction="column" gap={8}>
