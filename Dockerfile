@@ -14,7 +14,9 @@ FROM base AS pruner
 RUN npm --global install turbo
 WORKDIR /app
 COPY . .
+RUN pnpm install
 RUN turbo prune --scope=${SCOPE} --docker
+RUN find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
 
 FROM base AS builder
 RUN apt-get -qy update && apt-get -qy --no-install-recommends install openssl git
