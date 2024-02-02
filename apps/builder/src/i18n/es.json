@@ -212,6 +212,7 @@
   "editor.blocks.integrations.whatsapp.WhatsappCredentialsModal.ModalHeader": "Agregar cuenta de WhatsApp",
   "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.loadingQrCode": "Generando código QR...",
   "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.processingAuthentication": "Procesando autenticación...",
+  "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.authFailure": "Fallo de autenticación, vuelva a leer el código QR.",
   "editor.credentialsDropdown.add.label": "Agregar",
   "editor.credentialsDropdown.ConnectNew.label": "Conectar nuevo",
   "errorMessage": "Se produjo un error",

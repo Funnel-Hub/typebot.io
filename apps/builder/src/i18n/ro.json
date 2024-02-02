@@ -212,6 +212,7 @@
   "editor.blocks.integrations.whatsapp.WhatsappCredentialsModal.ModalHeader": "Adăugare cont WhatsApp",
   "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.loadingQrCode": "Generare cod QR...",
   "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.processingAuthentication": "Procesare autentificare...",
+  "editor.blocks.integrations.whatsapp.WhatsappCredetialsModal.authFailure": "Autentificare eșuată, vă rugăm să recitiți codul QR.",
   "editor.credentialsDropdown.add.label": "Adăugare",
   "editor.credentialsDropdown.ConnectNew.label": "Conectare nou",
   "errorMessage": "A aparut o eroare",
