@@ -99,7 +99,7 @@ export const continueChat = publicProcedure
       return {
         messages: [],
         input: undefined,
-        clientSideActions: undefined,
+        clientSideActions: [],
         dynamicTheme: undefined,
         logs: [],
         lastMessageNewFormat: undefined,
@@ -112,7 +112,9 @@ export const continueChat = publicProcedure
     return {
       messages,
       input: newSessionState?.whatsappComponent?.canExecute ? undefined : input,
-      clientSideActions,
+      clientSideActions: newSessionState?.whatsappComponent?.canExecute
+        ? []
+        : clientSideActions,
       dynamicTheme: parseDynamicTheme(newSessionState),
       logs: isPreview ? logs : logs?.filter(filterPotentiallySensitiveLogs),
       lastMessageNewFormat,

@@ -119,7 +119,9 @@ export const startChat = publicProcedure
         resultId,
         dynamicTheme,
         logs: logs?.filter(filterPotentiallySensitiveLogs),
-        clientSideActions,
+        clientSideActions: newSessionState?.whatsappComponent?.canExecute
+          ? []
+          : clientSideActions,
       }
     }
   )

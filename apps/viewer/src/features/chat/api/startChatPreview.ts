@@ -105,7 +105,9 @@ export const startChatPreview = publicProcedure
           : input,
         dynamicTheme,
         logs,
-        clientSideActions,
+        clientSideActions: newSessionState?.whatsappComponent?.canExecute
+          ? []
+          : clientSideActions,
       }
     }
   )
