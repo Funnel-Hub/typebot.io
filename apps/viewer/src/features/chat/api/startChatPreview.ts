@@ -69,7 +69,7 @@ export const startChatPreview = publicProcedure
             visitedEdges,
           })
 
-      if (newSessionState.whatsappComponent) {
+      if (newSessionState.whatsappComponent?.canExecute) {
         await executeWhatsappFlow({
           state: { ...newSessionState, sessionId: session.id },
           messages,

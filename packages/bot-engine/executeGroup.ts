@@ -1,10 +1,6 @@
-import {
-  ContinueChatResponse,
-  Group,
-  InputBlock,
-  RuntimeOptions,
-  SessionState,
-} from '@typebot.io/schemas'
+import { createId } from '@paralleldrive/cuid2'
+import { TRPCError } from '@trpc/server'
+import { env } from '@typebot.io/env'
 import {
   isBubbleBlock,
   isInputBlock,
@@ -12,25 +8,29 @@ import {
   isLogicBlock,
   isNotEmpty,
 } from '@typebot.io/lib'
-import { getNextGroup } from './getNextGroup'
-import { executeLogic } from './executeLogic'
-import { executeIntegration } from './executeIntegration'
-import { computePaymentInputRuntimeOptions } from './blocks/inputs/payment/computePaymentInputRuntimeOptions'
-import { injectVariableValuesInButtonsInputBlock } from './blocks/inputs/buttons/injectVariableValuesInButtonsInputBlock'
-import { injectVariableValuesInPictureChoiceBlock } from './blocks/inputs/pictureChoice/injectVariableValuesInPictureChoiceBlock'
-import { getPrefilledInputValue } from './getPrefilledValue'
-import { parseDateInput } from './blocks/inputs/date/parseDateInput'
+import { VisitedEdge } from '@typebot.io/prisma'
+import {
+  ContinueChatResponse,
+  Group,
+  InputBlock,
+  RuntimeOptions,
+  SessionState,
+} from '@typebot.io/schemas'
+import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
+import { injectVariableValuesInButtonsInputBlock } from './blocks/inputs/buttons/injectVariableValuesInButtonsInputBlock'
+import { parseDateInput } from './blocks/inputs/date/parseDateInput'
+import { computePaymentInputRuntimeOptions } from './blocks/inputs/payment/computePaymentInputRuntimeOptions'
+import { injectVariableValuesInPictureChoiceBlock } from './blocks/inputs/pictureChoice/injectVariableValuesInPictureChoiceBlock'
+import { executeIntegration } from './executeIntegration'
+import { executeLogic } from './executeLogic'
+import { getNextGroup } from './getNextGroup'
+import { getPrefilledInputValue } from './getPrefilledValue'
 import {
   BubbleBlockWithDefinedContent,
   parseBubbleBlock,
 } from './parseBubbleBlock'
-import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
-import { VisitedEdge } from '@typebot.io/prisma'
-import { env } from '@typebot.io/env'
-import { TRPCError } from '@trpc/server'
 import { ExecuteIntegrationResponse, ExecuteLogicResponse } from './types'
-import { createId } from '@paralleldrive/cuid2'
 
 type ContextProps = {
   version: 1 | 2

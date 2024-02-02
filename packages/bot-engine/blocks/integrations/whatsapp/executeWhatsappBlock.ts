@@ -1,14 +1,15 @@
 import { decrypt } from "@typebot.io/lib/api/encryption/decrypt";
 import prisma from "@typebot.io/lib/prisma";
 import { ChatLog, SessionState, Variable, WhatsappBlock, WhatsappCredentials } from "@typebot.io/schemas";
+import { parseVariables } from '@typebot.io/variables/parseVariables';
 import { ExecuteIntegrationResponse } from "../../../types";
-import { parseVariables } from '@typebot.io/variables/parseVariables'
 
 export const executeWhatsappBlock = async (
   state: SessionState,
   {
     outgoingEdgeId,
     options,
+    id: blockId
   }: WhatsappBlock
 ): Promise<ExecuteIntegrationResponse> => {
   const noCredentialsError = {
@@ -60,5 +61,48 @@ export const executeWhatsappBlock = async (
     credentials.iv
   )) as WhatsappCredentials['data']
 
-  return { outgoingEdgeId, logs, newSessionState: { ...state, whatsappComponent: { phone: phoneWithVariable, clientId }} }
+  const firstEdgeId = getFirstEdgeId({
+    state
+  })
+
+  const firstEdge = state.typebotsQueue[0].typebot.edges.find(edge => firstEdgeId === edge.id)
+  return firstEdge?.to?.blockId === blockId ? { 
+    outgoingEdgeId, 
+    logs, 
+    newSessionState: { 
+      ...state, whatsappComponent: { 
+        phone: phoneWithVariable, 
+        clientId, 
+        canExecute: true 
+      }
+    } 
+  }  : { 
+    outgoingEdgeId, 
+    logs, 
+    newSessionState: { 
+      ...state, 
+      whatsappComponent: { 
+        phone: phoneWithVariable, 
+        clientId, 
+        canExecute: false 
+      }
+    }, 
+    clientSideActions: [
+      { 
+        type: 'whatsappComponent', 
+        whatsappComponent: { clientId }, 
+        expectsDedicatedReply: true 
+      }
+    ] 
+  } 
+}
+
+const getFirstEdgeId = ({
+  state,
+}: {
+  state: SessionState
+}) => {
+  const { typebot } = state.typebotsQueue[0]
+  if (typebot.version === '6') return typebot.events[0].outgoingEdgeId
+  return typebot.groups[0].blocks[0].outgoingEdgeId
 }

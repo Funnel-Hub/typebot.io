@@ -1,4 +1,6 @@
 import { TRPCError } from '@trpc/server'
+import { enabledBlocks } from '@typebot.io/forge-repository'
+import { ForgedBlock, forgedBlocks } from '@typebot.io/forge-schemas'
 import { byId, isInputBlock } from '@typebot.io/lib'
 import { getBlockById } from '@typebot.io/lib/getBlockById'
 import { VisitedEdge } from '@typebot.io/prisma'
@@ -8,7 +10,7 @@ import {
   ContinueChatResponse,
   Group,
   InputBlock,
-  SessionState,
+  SessionState
 } from '@typebot.io/schemas'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
 import { defaultChoiceInputOptions } from '@typebot.io/schemas/features/blocks/inputs/choice/constants'
@@ -19,6 +21,8 @@ import { defaultPaymentInputOptions } from '@typebot.io/schemas/features/blocks/
 import { defaultPictureChoiceOptions } from '@typebot.io/schemas/features/blocks/inputs/pictureChoice/constants'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
+import { parseVariables } from '@typebot.io/variables/parseVariables'
+import { updateVariablesInSession } from '@typebot.io/variables/updateVariablesInSession'
 import { parseButtonsReply } from './blocks/inputs/buttons/parseButtonsReply'
 import { parseDateReply } from './blocks/inputs/date/parseDateReply'
 import { validateEmail } from './blocks/inputs/email/validateEmail'
@@ -28,17 +32,13 @@ import { formatPhoneNumber } from './blocks/inputs/phone/formatPhoneNumber'
 import { parsePictureChoicesReply } from './blocks/inputs/pictureChoice/parsePictureChoicesReply'
 import { validateRatingReply } from './blocks/inputs/rating/validateRatingReply'
 import { validateUrl } from './blocks/inputs/url/validateUrl'
+import { resumeChatCompletion } from './blocks/integrations/legacy/openai/resumeChatCompletion'
 import { resumeWebhookExecution } from './blocks/integrations/webhook/resumeWebhookExecution'
 import { executeGroup, parseInput } from './executeGroup'
 import { getNextGroup } from './getNextGroup'
 import { upsertAnswer } from './queries/upsertAnswer'
 import { startBotFlow } from './startBotFlow'
 import { ParsedReply } from './types'
-import { parseVariables } from '@typebot.io/variables/parseVariables'
-import { updateVariablesInSession } from '@typebot.io/variables/updateVariablesInSession'
-import { ForgedBlock, forgedBlocks } from '@typebot.io/forge-schemas'
-import { enabledBlocks } from '@typebot.io/forge-repository'
-import { resumeChatCompletion } from './blocks/integrations/legacy/openai/resumeChatCompletion'
 
 type Params = {
   version: 1 | 2
@@ -223,6 +223,22 @@ export const continueBotFlow = async (
     visitedEdges,
     startTime,
   })
+
+  if(reply === 'whatsappComponent' && block.type === IntegrationBlockType.WHATSAPP) {
+    if(chatReply?.newSessionState?.whatsappComponent) {
+      return {
+        ...chatReply,
+        lastMessageNewFormat: formattedReply !== reply ? formattedReply : undefined,
+        newSessionState: {
+          ...chatReply?.newSessionState,
+          whatsappComponent: {
+            ...chatReply?.newSessionState?.whatsappComponent,
+            canExecute: true
+          }
+        }
+      }
+    }
+  }
 
   return {
     ...chatReply,

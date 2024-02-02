@@ -76,7 +76,8 @@ const sessionStateSchemaV2 = z.object({
     .optional(),
   whatsappComponent: z.object({
     phone: z.string(),
-    clientId: z.string()
+    clientId: z.string(),
+    canExecute: z.boolean()
   }).optional(),
   expiryTimeout: z
     .number()
