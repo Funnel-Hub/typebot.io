@@ -20,7 +20,7 @@ export async function resumeWhatsappComponentFlow({ message, sessionId }: Props)
 
   const { input, messages, newSessionState, clientSideActions, logs, visitedEdges} = await continueBotFlow(message, {
     version: 2,
-    state: session.state
+    state: {...session.state, sessionId }
   })
 
   await executeWhatsappFlow({
