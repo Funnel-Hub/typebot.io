@@ -85,7 +85,7 @@ export const startChatPreview = publicProcedure
             settings: typebot.settings,
           },
           messages: [],
-          input,
+          input: undefined,
           dynamicTheme: undefined,
           logs: [],
           clientSideActions: [],
@@ -100,7 +100,9 @@ export const startChatPreview = publicProcedure
           settings: typebot.settings,
         },
         messages,
-        input,
+        input: newSessionState?.whatsappComponent?.canExecute
+          ? undefined
+          : input,
         dynamicTheme,
         logs,
         clientSideActions,

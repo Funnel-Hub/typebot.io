@@ -97,7 +97,7 @@ export const startChat = publicProcedure
             settings: typebot.settings,
           },
           messages: [],
-          input,
+          input: undefined,
           resultId,
           dynamicTheme: undefined,
           logs: [],
@@ -113,7 +113,9 @@ export const startChat = publicProcedure
           settings: typebot.settings,
         },
         messages,
-        input,
+        input: newSessionState?.whatsappComponent?.canExecute
+          ? undefined
+          : input,
         resultId,
         dynamicTheme,
         logs: logs?.filter(filterPotentiallySensitiveLogs),

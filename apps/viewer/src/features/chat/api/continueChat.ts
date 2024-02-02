@@ -111,7 +111,7 @@ export const continueChat = publicProcedure
 
     return {
       messages,
-      input,
+      input: newSessionState?.whatsappComponent?.canExecute ? undefined : input,
       clientSideActions,
       dynamicTheme: parseDynamicTheme(newSessionState),
       logs: isPreview ? logs : logs?.filter(filterPotentiallySensitiveLogs),
