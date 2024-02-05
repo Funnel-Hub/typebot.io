@@ -1,6 +1,7 @@
 import { decrypt } from "@typebot.io/lib/api/encryption/decrypt";
 import prisma from "@typebot.io/lib/prisma";
 import { ChatLog, SessionState, Variable, WhatsappBlock, WhatsappCredentials } from "@typebot.io/schemas";
+import { IntegrationBlockType } from "@typebot.io/schemas/features/blocks/integrations/constants";
 import { parseVariables } from '@typebot.io/variables/parseVariables';
 import { ExecuteIntegrationResponse } from "../../../types";
 
@@ -66,7 +67,10 @@ export const executeWhatsappBlock = async (
   })
 
   const firstEdge = state.typebotsQueue[0].typebot.edges.find(edge => firstEdgeId === edge.id)
-  return firstEdge?.to?.blockId === blockId ? { 
+  const firstGroupId = firstEdge?.to?.groupId
+  const firstGroup = state.typebotsQueue[0].typebot.groups.find(group => group.id === firstGroupId)
+
+  return firstGroup?.blocks[0].type === IntegrationBlockType.WHATSAPP ? { 
     outgoingEdgeId, 
     logs, 
     newSessionState: { 
