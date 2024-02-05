@@ -1,17 +1,18 @@
 import { executeChatwoot } from '@/features/blocks/integrations/chatwoot'
 import { executeGoogleAnalyticsBlock } from '@/features/blocks/integrations/googleAnalytics/utils/executeGoogleAnalytics'
 import { streamChat } from '@/features/blocks/integrations/openai/streamChat'
+import { executePixel } from '@/features/blocks/integrations/pixel/executePixel'
+import { executeWebhook } from '@/features/blocks/integrations/webhook/executeWebhook'
+import { executeLoadWhatsappClient } from '@/features/blocks/integrations/whatsapp/loadWhatsappClient'
 import { executeRedirect } from '@/features/blocks/logic/redirect'
 import {
-  executeScript,
   executeCode,
+  executeScript,
 } from '@/features/blocks/logic/script/executeScript'
 import { executeSetVariable } from '@/features/blocks/logic/setVariable/executeSetVariable'
 import { executeWait } from '@/features/blocks/logic/wait/utils/executeWait'
-import { executeWebhook } from '@/features/blocks/integrations/webhook/executeWebhook'
-import { executePixel } from '@/features/blocks/integrations/pixel/executePixel'
 import { ClientSideActionContext } from '@/types'
-import type { ContinueChatResponse, ChatLog } from '@typebot.io/schemas'
+import type { ChatLog, ContinueChatResponse } from '@typebot.io/schemas'
 import { injectStartProps } from './injectStartProps'
 
 type Props = {
@@ -86,5 +87,10 @@ export const executeClientSideAction = async ({
   }
   if ('codeToExecute' in clientSideAction) {
     return executeCode(clientSideAction.codeToExecute)
+  }
+  if ('whatsappComponent' in clientSideAction) {
+    return executeLoadWhatsappClient(
+      clientSideAction.whatsappComponent.clientId
+    )
   }
 }

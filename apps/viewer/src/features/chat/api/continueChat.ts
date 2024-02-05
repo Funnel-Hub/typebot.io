@@ -1,6 +1,7 @@
 import { publicProcedure } from '@/helpers/server/trpc'
 import { TRPCError } from '@trpc/server'
 import { continueBotFlow } from '@typebot.io/bot-engine/continueBotFlow'
+import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filterPotentiallySensitiveLogs'
 import { parseDynamicTheme } from '@typebot.io/bot-engine/parseDynamicTheme'
 import { getSession } from '@typebot.io/bot-engine/queries/getSession'
 import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
@@ -8,7 +9,6 @@ import { executeWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappCom
 import { isDefined, isNotDefined } from '@typebot.io/lib/utils'
 import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
 import { z } from 'zod'
-import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filterPotentiallySensitiveLogs'
 
 export const continueChat = publicProcedure
   .meta({
@@ -89,7 +89,7 @@ export const continueChat = publicProcedure
         visitedEdges,
       })
 
-    if (newSessionState.whatsappComponent) {
+    if (newSessionState.whatsappComponent?.canExecute) {
       await executeWhatsappFlow({
         state: newSessionState,
         messages,
@@ -99,7 +99,7 @@ export const continueChat = publicProcedure
       return {
         messages: [],
         input: undefined,
-        clientSideActions: undefined,
+        clientSideActions: [],
         dynamicTheme: undefined,
         logs: [],
         lastMessageNewFormat: undefined,
@@ -111,8 +111,10 @@ export const continueChat = publicProcedure
 
     return {
       messages,
-      input,
-      clientSideActions,
+      input: newSessionState?.whatsappComponent?.canExecute ? undefined : input,
+      clientSideActions: newSessionState?.whatsappComponent?.canExecute
+        ? []
+        : clientSideActions,
       dynamicTheme: parseDynamicTheme(newSessionState),
       logs: isPreview ? logs : logs?.filter(filterPotentiallySensitiveLogs),
       lastMessageNewFormat,

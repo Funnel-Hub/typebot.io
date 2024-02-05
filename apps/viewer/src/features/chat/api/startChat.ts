@@ -1,4 +1,5 @@
 import { publicProcedure } from '@/helpers/server/trpc'
+import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filterPotentiallySensitiveLogs'
 import { restartSession } from '@typebot.io/bot-engine/queries/restartSession'
 import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
 import { startSession } from '@typebot.io/bot-engine/startSession'
@@ -7,7 +8,6 @@ import {
   startChatInputSchema,
   startChatResponseSchema,
 } from '@typebot.io/schemas/features/chat/schema'
-import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filterPotentiallySensitiveLogs'
 
 export const startChat = publicProcedure
   .meta({
@@ -81,7 +81,7 @@ export const startChat = publicProcedure
             visitedEdges,
           })
 
-      if (newSessionState.whatsappComponent) {
+      if (newSessionState.whatsappComponent?.canExecute) {
         await executeWhatsappFlow({
           state: { ...newSessionState, sessionId: session.id },
           messages,
@@ -97,7 +97,7 @@ export const startChat = publicProcedure
             settings: typebot.settings,
           },
           messages: [],
-          input,
+          input: undefined,
           resultId,
           dynamicTheme: undefined,
           logs: [],
@@ -113,11 +113,15 @@ export const startChat = publicProcedure
           settings: typebot.settings,
         },
         messages,
-        input,
+        input: newSessionState?.whatsappComponent?.canExecute
+          ? undefined
+          : input,
         resultId,
         dynamicTheme,
         logs: logs?.filter(filterPotentiallySensitiveLogs),
-        clientSideActions,
+        clientSideActions: newSessionState?.whatsappComponent?.canExecute
+          ? []
+          : clientSideActions,
       }
     }
   )

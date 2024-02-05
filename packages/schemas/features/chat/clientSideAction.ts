@@ -1,13 +1,13 @@
-import { z } from '../../zod'
 import { extendZodWithOpenApi } from 'zod-openapi'
-import { listVariableValue } from '../typebot/variable'
+import { z } from '../../zod'
 import {
-  googleAnalyticsOptionsSchema,
   executableWebhookSchema,
+  googleAnalyticsOptionsSchema,
   pixelOptionsSchema,
   redirectOptionsSchema,
 } from '../blocks'
 import { nativeMessageSchema } from '../blocks/integrations/openai'
+import { listVariableValue } from '../typebot/variable'
 
 extendZodWithOpenApi(z)
 
@@ -169,5 +169,17 @@ export const clientSideActionSchema = z.discriminatedUnion('type', [
     .openapi({
       ref: 'csaCodeToExecute',
       title: 'Execute code',
+    }),
+  z.
+    object({
+      type: z.literal('whatsappComponent'),
+      whatsappComponent: z.object({
+        clientId: z.string()
+      })
+    })
+    .merge(clientSideActionBaseSchema)
+    .openapi({
+      ref: 'whatsappComponent',
+      title: 'Load client'
     }),
 ])

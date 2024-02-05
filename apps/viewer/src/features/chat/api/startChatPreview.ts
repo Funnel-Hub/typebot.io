@@ -69,7 +69,7 @@ export const startChatPreview = publicProcedure
             visitedEdges,
           })
 
-      if (newSessionState.whatsappComponent) {
+      if (newSessionState.whatsappComponent?.canExecute) {
         await executeWhatsappFlow({
           state: { ...newSessionState, sessionId: session.id },
           messages,
@@ -85,7 +85,7 @@ export const startChatPreview = publicProcedure
             settings: typebot.settings,
           },
           messages: [],
-          input,
+          input: undefined,
           dynamicTheme: undefined,
           logs: [],
           clientSideActions: [],
@@ -100,10 +100,14 @@ export const startChatPreview = publicProcedure
           settings: typebot.settings,
         },
         messages,
-        input,
+        input: newSessionState?.whatsappComponent?.canExecute
+          ? undefined
+          : input,
         dynamicTheme,
         logs,
-        clientSideActions,
+        clientSideActions: newSessionState?.whatsappComponent?.canExecute
+          ? []
+          : clientSideActions,
       }
     }
   )
