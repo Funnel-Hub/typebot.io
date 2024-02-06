@@ -1,5 +1,5 @@
 import { env } from '@typebot.io/env'
-import WebSocket, { ErrorEvent } from "ws"
+import { Socket, io } from 'socket.io-client'
 import { WhatsappSocketSendingMessage } from "./convertMessageToWhatsappCompoent"
 
 type SendMessagePayload = {
@@ -9,38 +9,35 @@ type SendMessagePayload = {
 }
 
 export async function sendSocketWhatsappMessage(clientId: string, { message, phones, sessionId }: SendMessagePayload) {
-  const socketClient = await new Promise<WebSocket>((resolve, reject) => {
-    const socket = new WebSocket(`${env.WHATSAPP_SERVER}?clientId=${clientId}`)
-    socket.onopen = () => {
-      console.log('Connected')
-    }
-    socket.onerror = (event: ErrorEvent) => {
+  const socketClient = await new Promise<Socket>((resolve, reject) => {
+    const socket = io(env.WHATSAPP_SERVER, {
+      autoConnect: true,
+      rejectUnauthorized: false,
+      query: {
+        clientId
+      }
+    })
+
+    socket.on('qr', () => {
       socket.close()
-      reject(new Error(event.message))
-    }
+      reject(new Error('Session expired, please configure again the whatsapp credentials'))
+    })
 
-    socket.onmessage = (event) => {
-      if (!event.data) return
+    socket.on('ready', () => {
+      resolve(socket)
+    })
 
-      const payload = JSON.parse(event.data as string)
-      if (payload.status === 'ready') {
-        resolve(socket)
-      }
-
-      if(payload.status === 'qr') {
-        socket.close()
-        reject(new Error('Session expired, please configure again the whatsapp credentials'))
-      }
-    }
+    socket.on('error', (err) => {
+      reject(new Error(JSON.stringify(err)))
+    })
   })
 
   phones.forEach((phone) => {
-    socketClient.send(JSON.stringify({
-      method: 'sendMessage',
+    socketClient.emit('sendMessage', {
       phoneNumber: phone,
       message,
       sessionId
-    }))
+    })
   })
 
   socketClient.close()
