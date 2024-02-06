@@ -17,6 +17,8 @@ import { useTranslate } from '@tolgee/react'
 import { env } from '@typebot.io/env'
 import { useQRCode } from 'next-qrcode'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Socket, io } from 'socket.io-client'
+
 type Props = {
   isOpen: boolean
   onClose: () => void
@@ -48,7 +50,7 @@ export const WhatsappCredentialsModal = ({
   const { showToast } = useToast()
   const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
   const [processAuthWppLoading, setProcessAuthWppLoading] = useState(true)
-  const socketRef = useRef<WebSocket | null>(null)
+  const socketRef = useRef<Socket | null>(null)
   const isFinishedLoadingScreenWhatsapp = useRef(false)
   const [stepLoadingMessage, setStepLoadingMessage] = useState<string | null>(
     stepMessages.loadingQrCode
@@ -90,54 +92,53 @@ export const WhatsappCredentialsModal = ({
       socketRef.current = null
     }
     const now = new Date().getTime()
-    const socket = new WebSocket(
-      `${env.NEXT_PUBLIC_WHATSAPP_SERVER}?clientId=${workspace.id}_${now}`
-    )
-    socket.onmessage = function (event) {
-      if (!event.data) return
-      if (event.data) {
-        const payloadParsed = JSON.parse(event.data ?? '{}')
+    const socketClient = io(env.NEXT_PUBLIC_WHATSAPP_SERVER, {
+      autoConnect: true,
+      rejectUnauthorized: false,
+      query: {
+        clientId: `${workspace.id}_${now}`,
+      },
+    })
 
-        switch (payloadParsed.status) {
-          case 'qr':
-            if (
-              (stepLoadingMessage === stepMessages.loadingQrCode &&
-                !isFinishedLoadingScreenWhatsapp.current) ||
-              isFinishedLoadingScreenWhatsapp.current
-            ) {
-              if (isFinishedLoadingScreenWhatsapp.current) setAuthFailure(true)
-              setWhatsappQrCode(payloadParsed.qr)
-              setProcessAuthWppLoading(false)
-              setStepLoadingMessage(stepMessages.loadingQrCode)
-              isFinishedLoadingScreenWhatsapp.current = false
-            }
-            break
-          case 'loading':
-            setProcessAuthWppLoading(true)
-            setStepLoadingMessage(stepMessages.loadingAuthentication)
-            setAuthFailure(false)
-            if (payloadParsed.percent === 100)
-              isFinishedLoadingScreenWhatsapp.current = true
-            break
-          case 'ready':
-            mutate({
-              credentials: {
-                id: createId(),
-                type: 'whatsAppSocket',
-                workspaceId: workspace.id,
-                name: `whatsApp-${payloadParsed.phoneNumber}`,
-                data: {
-                  clientId: `${workspace.id}_${now}`,
-                  phoneNumber: payloadParsed.phoneNumber as string,
-                },
-              },
-            })
-            handleBackToOriginalState()
-        }
+    socketClient.on('qr', (payload) => {
+      if (
+        (stepLoadingMessage === stepMessages.loadingQrCode &&
+          !isFinishedLoadingScreenWhatsapp.current) ||
+        isFinishedLoadingScreenWhatsapp.current
+      ) {
+        if (isFinishedLoadingScreenWhatsapp.current) setAuthFailure(true)
+        setWhatsappQrCode(payload.qr)
+        setProcessAuthWppLoading(false)
+        setStepLoadingMessage(stepMessages.loadingQrCode)
+        isFinishedLoadingScreenWhatsapp.current = false
       }
-    }
+    })
 
-    socketRef.current = socket
+    socketClient.on('loading', (payload) => {
+      setProcessAuthWppLoading(true)
+      setStepLoadingMessage(stepMessages.loadingAuthentication)
+      setAuthFailure(false)
+      if (payload.percent === 100)
+        isFinishedLoadingScreenWhatsapp.current = true
+    })
+
+    socketClient.on('ready', (payload) => {
+      mutate({
+        credentials: {
+          id: createId(),
+          type: 'whatsAppSocket',
+          workspaceId: workspace.id,
+          name: `whatsApp-${payload.phoneNumber}`,
+          data: {
+            clientId: `${workspace.id}_${now}`,
+            phoneNumber: payload.phoneNumber as string,
+          },
+        },
+      })
+      handleBackToOriginalState()
+    })
+
+    socketRef.current = socketClient
   }, [mutate, typebot, workspace])
 
   const handleEndWebSocket = useCallback(() => {
