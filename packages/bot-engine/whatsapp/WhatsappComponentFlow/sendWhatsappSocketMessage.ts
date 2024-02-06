@@ -12,7 +12,6 @@ export async function sendSocketWhatsappMessage(clientId: string, { message, pho
   const socketClient = await new Promise<Socket>((resolve, reject) => {
     const socket = io(env.WHATSAPP_SERVER, {
       autoConnect: true,
-      rejectUnauthorized: false,
       query: {
         clientId
       }
