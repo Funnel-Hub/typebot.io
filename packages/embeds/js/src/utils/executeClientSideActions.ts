@@ -3,7 +3,6 @@ import { executeGoogleAnalyticsBlock } from '@/features/blocks/integrations/goog
 import { streamChat } from '@/features/blocks/integrations/openai/streamChat'
 import { executePixel } from '@/features/blocks/integrations/pixel/executePixel'
 import { executeWebhook } from '@/features/blocks/integrations/webhook/executeWebhook'
-import { executeLoadWhatsappClient } from '@/features/blocks/integrations/whatsapp/loadWhatsappClient'
 import { executeRedirect } from '@/features/blocks/logic/redirect'
 import {
   executeCode,
@@ -89,8 +88,6 @@ export const executeClientSideAction = async ({
     return executeCode(clientSideAction.codeToExecute)
   }
   if ('whatsappComponent' in clientSideAction) {
-    return executeLoadWhatsappClient(
-      clientSideAction.whatsappComponent.clientId
-    )
+    return { replyToSend: 'whatsappComponent' }
   }
 }
