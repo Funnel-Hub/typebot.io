@@ -7,34 +7,18 @@ import {
   MenuItem,
   MenuList,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react'
 import assert from 'assert'
-import {
-  BookIcon,
-  DownloadIcon,
-  MoreVerticalIcon,
-  SettingsIcon,
-} from '@/components/icons'
+import { BookIcon, DownloadIcon, MoreVerticalIcon } from '@/components/icons'
 import { useTypebot } from '../providers/TypebotProvider'
-import { useUser } from '@/features/account/hooks/useUser'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { EditorSettingsModal } from './EditorSettingsModal'
+import React, { useState } from 'react'
 import { parseDefaultPublicId } from '@/features/publish/helpers/parseDefaultPublicId'
 import { useTranslate } from '@tolgee/react'
 
 export const BoardMenuButton = (props: FlexProps) => {
-  const { query } = useRouter()
   const { typebot } = useTypebot()
-  const { user } = useUser()
   const [isDownloading, setIsDownloading] = useState(false)
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const { t } = useTranslate()
-
-  useEffect(() => {
-    if (user && !user.graphNavigation && !query.isFirstBot) onOpen()
-  }, [onOpen, query.isFirstBot, user, user?.graphNavigation])
 
   const downloadFlow = () => {
     assert(typebot)
@@ -75,14 +59,10 @@ export const BoardMenuButton = (props: FlexProps) => {
           <MenuItem icon={<BookIcon />} onClick={redirectToDocumentation}>
             {t('editor.graph.menu.documentationItem.label')}
           </MenuItem>
-          <MenuItem icon={<SettingsIcon />} onClick={onOpen}>
-            {t('editor.graph.menu.editorSettingsItem.label')}
-          </MenuItem>
           <MenuItem icon={<DownloadIcon />} onClick={downloadFlow}>
             {t('editor.graph.menu.exportFlowItem.label')}
           </MenuItem>
         </MenuList>
-        <EditorSettingsModal isOpen={isOpen} onClose={onClose} />
       </Menu>
     </Flex>
   )
