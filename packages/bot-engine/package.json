@@ -33,6 +33,7 @@
     "openai": "4.24.1",
     "qs": "6.11.2",
     "remark-slate": "1.8.6",
+    "socket.io-client": "^4.7.4",
     "stripe": "12.13.0",
     "utf-8-validate": "^6.0.3",
     "ws": "^8.16.0"
