@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { createId } from '@paralleldrive/cuid2'
 import { useTranslate } from '@tolgee/react'
+import { WhatsappOperationTypes } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/WhatsappOperationType'
 import { env } from '@typebot.io/env'
 import { useQRCode } from 'next-qrcode'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -96,6 +97,7 @@ export const WhatsappCredentialsModal = ({
       autoConnect: true,
       query: {
         clientId: `${workspace.id}_${now}`,
+        operationType: WhatsappOperationTypes.QR_CODE,
       },
     })
 

@@ -1,5 +1,6 @@
 import { env } from '@typebot.io/env'
 import { Socket, io } from 'socket.io-client'
+import { WhatsappOperationTypes } from './WhatsappOperationType'
 import { WhatsappSocketSendingMessage } from "./convertMessageToWhatsappCompoent"
 
 type SendMessagePayload = {
@@ -13,7 +14,8 @@ export async function sendSocketWhatsappMessage(clientId: string, { message, pho
     const socket = io(env.WHATSAPP_SERVER, {
       autoConnect: true,
       query: {
-        clientId
+        clientId,
+        operationType: WhatsappOperationTypes.SEND_MESSAGE
       }
     })
 
