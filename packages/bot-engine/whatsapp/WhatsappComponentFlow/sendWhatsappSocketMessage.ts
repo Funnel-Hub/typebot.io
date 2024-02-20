@@ -1,5 +1,7 @@
+import { TRPCError } from '@trpc/server'
 import { env } from '@typebot.io/env'
 import { Socket, io } from 'socket.io-client'
+import { WhatsappOperationTypes } from './WhatsappOperationType'
 import { WhatsappSocketSendingMessage } from "./convertMessageToWhatsappCompoent"
 
 type SendMessagePayload = {
@@ -13,13 +15,14 @@ export async function sendSocketWhatsappMessage(clientId: string, { message, pho
     const socket = io(env.WHATSAPP_SERVER, {
       autoConnect: true,
       query: {
-        clientId
+        clientId,
+        operationType: WhatsappOperationTypes.SEND_MESSAGE
       }
     })
 
     socket.on('qr', () => {
       socket.close()
-      reject(new Error('Session expired, please configure again the whatsapp credentials'))
+      reject(new TRPCError({ code: 'BAD_REQUEST', message: 'Sessão expirada, por favor configure novamente o qr code do seu whatsapp'}))
     })
 
     socket.on('ready', () => {
@@ -39,5 +42,6 @@ export async function sendSocketWhatsappMessage(clientId: string, { message, pho
     })
   })
 
+  await new Promise((resolve) => setTimeout(resolve, 100))
   socketClient.close()
 }

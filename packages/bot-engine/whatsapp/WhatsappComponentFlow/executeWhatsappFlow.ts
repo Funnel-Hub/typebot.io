@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
+import { TRPCError } from '@trpc/server'
 import { isNotDefined } from '@typebot.io/lib/utils'
 import { ContinueChatResponse, SessionState, Settings } from "@typebot.io/schemas"
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
@@ -82,6 +83,7 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
       console.log('Failed to send message:', JSON.stringify(message, null, 2))
       if (err instanceof HTTPError)
         console.log('HTTPError', err.response.statusCode, err.response.body)
+      if(err instanceof TRPCError) throw err
     }
   }
 
