@@ -42,5 +42,6 @@ export async function sendSocketWhatsappMessage(clientId: string, { message, pho
     })
   })
 
+  await new Promise((resolve) => setTimeout(resolve, 100))
   socketClient.close()
 }
