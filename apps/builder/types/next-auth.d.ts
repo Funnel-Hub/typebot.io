@@ -14,8 +14,8 @@ declare module "next-auth" {
       currentWorkspace: {
         id: string
         name: string
-        role: WorkspaceRole
-        accessType: AccessType[]
+        role: string
+        accessType: string[]
       }
     } 
   }
