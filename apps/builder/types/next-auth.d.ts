@@ -10,7 +10,13 @@ declare module "next-auth" {
       name: string
       apiToken: string
       email: string
-      image?: string
+      image?: string,
+      currentWorkspace: {
+        id: string
+        name: string
+        role: WorkspaceRole
+        accessType: AccessType[]
+      }
     } 
   }
 }
