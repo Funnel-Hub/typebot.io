@@ -8,12 +8,7 @@ import {
   Avatar,
   Flex,
 } from '@chakra-ui/react'
-import {
-  CreditCardIcon,
-  HardDriveIcon,
-  SettingsIcon,
-  UsersIcon,
-} from '@/components/icons'
+import { HardDriveIcon } from '@/components/icons'
 import { EmojiOrImageIcon } from '@/components/EmojiOrImageIcon'
 import { User, WorkspaceRole } from '@typebot.io/prisma'
 import { useState } from 'react'
@@ -84,16 +79,6 @@ export const WorkspaceSettingsModal = ({
               >
                 {t('workspace.settings.modal.menu.myAccount.label')}
               </Button>
-              <Button
-                variant={selectedTab === 'user-settings' ? 'solid' : 'ghost'}
-                onClick={() => setSelectedTab('user-settings')}
-                leftIcon={<SettingsIcon />}
-                size="sm"
-                justifyContent="flex-start"
-                pl="4"
-              >
-                {t('workspace.settings.modal.menu.preferences.label')}
-              </Button>
             </Stack>
             <Stack>
               <Text pl="4" color="gray.500">
@@ -117,32 +102,6 @@ export const WorkspaceSettingsModal = ({
                   pl="4"
                 >
                   {t('workspace.settings.modal.menu.settings.label')}
-                </Button>
-              )}
-              {currentRole !== WorkspaceRole.GUEST && (
-                <Button
-                  variant={selectedTab === 'members' ? 'solid' : 'ghost'}
-                  onClick={() => setSelectedTab('members')}
-                  leftIcon={<UsersIcon />}
-                  size="sm"
-                  justifyContent="flex-start"
-                  pl="4"
-                >
-                  {t('workspace.settings.modal.menu.members.label')}
-                </Button>
-              )}
-              {canEditWorkspace && (
-                <Button
-                  variant={selectedTab === 'billing' ? 'solid' : 'ghost'}
-                  onClick={() => setSelectedTab('billing')}
-                  leftIcon={<CreditCardIcon />}
-                  size="sm"
-                  justifyContent="flex-start"
-                  pl="4"
-                  overflow="scroll"
-                  className="hide-scrollbar"
-                >
-                  {t('workspace.settings.modal.menu.billingAndUsage.label')}
                 </Button>
               )}
             </Stack>
