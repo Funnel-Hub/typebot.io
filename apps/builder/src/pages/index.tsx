@@ -7,7 +7,7 @@ export default function Page() {
   return null
 }
 
-const TYPEBOT_ACCESS_NAME = 'flows'
+const TYPEBOT_ACCESS_NAME = 'FLOWS'
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
@@ -25,9 +25,7 @@ export const getServerSideProps = async (
       },
     }
   }
-  const accessTypes = session.user.currentWorkspace.accessType.map(
-    (accessType) => accessType.toLocaleLowerCase()
-  )
+  const accessTypes = session.user.currentWorkspace.accessType
   if (!accessTypes.includes(TYPEBOT_ACCESS_NAME))
     return {
       redirect: {
