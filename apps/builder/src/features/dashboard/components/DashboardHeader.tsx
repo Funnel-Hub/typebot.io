@@ -50,7 +50,7 @@ export const DashboardHeader = () => {
             onClick={onOpen}
             isLoading={isNotDefined(workspace)}
           >
-            {t('dashboard.header.settingsButton.label')}
+            {t('workspace.settings.modal.menu.settings.label')}
           </Button>
           <WorkspaceDropdown
             currentWorkspace={workspace}

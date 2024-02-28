@@ -61,10 +61,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const parsedUser = session.user as User & {
       apiToken?: string | null
       locale?: string | null
+      currentWorkspace?: object
     }
 
     if (parsedUser.apiToken) delete parsedUser.apiToken
     if (parsedUser.locale) delete parsedUser.locale
+    if (parsedUser.currentWorkspace) delete parsedUser.currentWorkspace
 
     setUser(parsedUser)
 
