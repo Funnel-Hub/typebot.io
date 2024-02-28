@@ -1,11 +1,13 @@
+import { env } from '@typebot.io/env'
 import { GetServerSidePropsContext } from 'next'
 import { getServerSession } from 'next-auth'
 import { getAuthOptions } from './api/auth/[...nextauth]'
-import { env } from '@typebot.io/env'
 
 export default function Page() {
   return null
 }
+
+const TYPEBOT_ACCESS_NAME = 'FLOWS'
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
@@ -23,6 +25,15 @@ export const getServerSideProps = async (
       },
     }
   }
+  const accessTypes = session.user.currentWorkspace.accessType
+  if (!accessTypes.includes(TYPEBOT_ACCESS_NAME))
+    return {
+      redirect: {
+        permanent: false,
+        destination: env.NEXT_PUBLIC_FUNNELHUB_URL,
+      },
+    }
+
   return {
     redirect: {
       permanent: false,
