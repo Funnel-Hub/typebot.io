@@ -19,6 +19,7 @@ export const createUser = authenticatedProcedure
       id: z.string(),
       name: z.string(),
       email: z.string().email(),
+      workspaceId: z.string(),
     })
   )
   .output(

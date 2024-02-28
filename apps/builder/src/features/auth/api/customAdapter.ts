@@ -23,7 +23,9 @@ export function customAdapter(p: PrismaClient): Adapter {
         throw Error('Provider did not forward email but it is required')
       }
 
-      const userData = { ...data } as AdapterUser
+      const { workspaceId, ...userData } = { ...data } as AdapterUser & {
+        workspaceId: string
+      }
 
       const { invitations, workspaceInvitations } = await getNewUserInvitations(
         p,
@@ -40,13 +42,14 @@ export function customAdapter(p: PrismaClient): Adapter {
       }
 
       const newWorkspaceData = {
-        name: 'Meu espaço de trabalho',
+        id: workspaceId,
+        name: 'Meu Workspace',
         plan: Plan.PRO,
       }
 
       const createdUser = await p.user.create({
         data: {
-          ...data,
+          ...userData,
           id: userData.id ?? createId(),
           apiTokens: {
             create: { name: 'Default', token: generateId(24) },
