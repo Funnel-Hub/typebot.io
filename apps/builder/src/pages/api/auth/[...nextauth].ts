@@ -1,25 +1,26 @@
-import NextAuth, { Account, AuthOptions } from 'next-auth'
-import EmailProvider from 'next-auth/providers/email'
-import GitHubProvider from 'next-auth/providers/github'
-import GitlabProvider from 'next-auth/providers/gitlab'
-import GoogleProvider from 'next-auth/providers/google'
-import FacebookProvider from 'next-auth/providers/facebook'
-import AzureADProvider from 'next-auth/providers/azure-ad'
-import prisma from '@typebot.io/lib/prisma'
-import { Provider } from 'next-auth/providers'
-import { NextApiRequest, NextApiResponse } from 'next'
-import { User } from '@typebot.io/prisma'
-import { getAtPath, isDefined } from '@typebot.io/lib'
-import { mockedUser } from '@typebot.io/lib/mockedUser'
+import { customAdapter } from '@/features/auth/api/customAdapter'
 import { getNewUserInvitations } from '@/features/auth/helpers/getNewUserInvitations'
 import { sendVerificationRequest } from '@/features/auth/helpers/sendVerificationRequest'
+import * as Sentry from '@sentry/nextjs'
+import { env } from '@typebot.io/env'
+import { getAtPath, isDefined } from '@typebot.io/lib'
+import { getIp } from '@typebot.io/lib/getIp'
+import { mockedUser } from '@typebot.io/lib/mockedUser'
+import prisma from '@typebot.io/lib/prisma'
+import { User } from '@typebot.io/prisma'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis/nodejs'
 import got from 'got'
-import { env } from '@typebot.io/env'
-import * as Sentry from '@sentry/nextjs'
-import { getIp } from '@typebot.io/lib/getIp'
-import { customAdapter } from '@/features/auth/api/customAdapter'
+import { NextApiRequest, NextApiResponse } from 'next'
+import NextAuth, { Account, AuthOptions } from 'next-auth'
+import { Provider } from 'next-auth/providers'
+import AzureADProvider from 'next-auth/providers/azure-ad'
+import EmailProvider from 'next-auth/providers/email'
+import FacebookProvider from 'next-auth/providers/facebook'
+import GitHubProvider from 'next-auth/providers/github'
+import GitlabProvider from 'next-auth/providers/gitlab'
+import GoogleProvider from 'next-auth/providers/google'
+import { UserSession } from 'types/next-auth'
 
 const providers: Provider[] = []
 
@@ -171,9 +172,8 @@ export const getAuthOptions = ({
       return token
     },
     session: async ({ session, token }) => {
-      if (token?.user) session.user = token.user
-
-      const userFromDb = session.user as User
+      if (token?.user) session.user = token.user as UserSession
+      const userFromDb = session.user as unknown as User
 
       await updateLastActivityDate(userFromDb)
       return {
