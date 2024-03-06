@@ -1,1 +1,1 @@
-export const defaultBaseUrl = 'https://app.cal.com'
+export const defaultBaseUrl = 'https://calendar.funnelhub.io'

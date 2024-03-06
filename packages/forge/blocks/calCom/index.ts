@@ -5,7 +5,7 @@ import { baseOptions } from './baseOptions'
 
 export const calCom = createBlock({
   id: 'cal-com',
-  name: 'Cal.com',
+  name: 'Calendário',
   tags: ['calendar', 'scheduling', 'meetings'],
   LightLogo: CalComLogo,
   options: baseOptions,

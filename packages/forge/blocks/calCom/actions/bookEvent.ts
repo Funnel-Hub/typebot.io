@@ -8,7 +8,7 @@ export const bookEvent = createAction({
   options: option.object({
     link: option.string.layout({
       label: 'Event link',
-      placeholder: 'https://cal.com/...',
+      placeholder: 'https://calendar.funnelhub.io/...',
     }),
     layout: option
       .enum(['Month', 'Weekly', 'Columns'])
