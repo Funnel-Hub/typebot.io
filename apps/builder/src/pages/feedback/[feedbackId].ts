@@ -1,10 +1,10 @@
-import { getServerSession } from 'next-auth'
-import { User } from '@typebot.io/prisma'
-import { isNotDefined } from '@typebot.io/lib'
-import { sign } from 'jsonwebtoken'
-import { getAuthOptions } from '../api/auth/[...nextauth]'
-import { GetServerSidePropsContext } from 'next'
 import { env } from '@typebot.io/env'
+import { isNotDefined } from '@typebot.io/lib'
+import { User } from '@typebot.io/prisma'
+import { sign } from 'jsonwebtoken'
+import { GetServerSidePropsContext } from 'next'
+import { getServerSession } from 'next-auth'
+import { getAuthOptions } from '../api/auth/[...nextauth]'
 
 export default function Page() {
   return null
@@ -24,7 +24,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         destination: `/signin?redirectPath=%2Ffeedback%2F${feedbackId}`,
       },
     }
-  const sleekplanToken = createSSOToken(session?.user as User)
+  const sleekplanToken = createSSOToken(session?.user as unknown as User)
   return {
     redirect: {
       permanent: false,
