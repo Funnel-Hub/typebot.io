@@ -1,13 +1,20 @@
 import * as Sentry from '@sentry/nextjs'
 import { TRPCError } from '@trpc/server'
 import { isNotDefined } from '@typebot.io/lib/utils'
-import { ContinueChatResponse, SessionState, Settings } from "@typebot.io/schemas"
-import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
+import {
+  ContinueChatResponse,
+  SessionState,
+  Settings,
+} from '@typebot.io/schemas'
 import { HTTPError } from 'got'
 import { computeTypingDuration } from '../../computeTypingDuration'
 import { continueBotFlow } from '../../continueBotFlow'
 import { convertInputToWhatsAppComponent } from './convertInputToWhatsappComponent'
-import { TypeWhatsappMessage, WhatsappSocketSendingMessage, convertMessageToWhatsappComponent } from './convertMessageToWhatsappCompoent'
+import {
+  TypeWhatsappMessage,
+  WhatsappSocketSendingMessage,
+  convertMessageToWhatsappComponent,
+} from './convertMessageToWhatsappCompoent'
 import { sendSocketWhatsappMessage } from './sendWhatsappSocketMessage'
 
 type Props = {
@@ -16,16 +23,19 @@ type Props = {
 
 const messageAfterMediaTimeout = 5000
 
-export async function executeWhatsappFlow({ state, messages, input, clientSideActions }: Props) {
-  if(!state?.whatsappComponent?.clientId)
-    throw new Error("Whatsapp component not configured")
+export async function executeWhatsappFlow({
+  state,
+  messages,
+  input,
+  clientSideActions,
+}: Props) {
+  if (!state?.whatsappComponent?.clientId)
+    throw new Error('Whatsapp component not configured')
 
-  if(!state?.whatsappComponent?.phone)
-    throw new Error("Whatsapp component phone not configured")
+  if (!state?.whatsappComponent?.phone)
+    throw new Error('Whatsapp component phone not configured')
 
-  const messagesBeforeInput = isLastMessageIncludedInInput(input)
-    ? messages.slice(0, -1)
-    : messages
+  const messagesBeforeInput = messages
 
   const sentMessages: WhatsappSocketSendingMessage[] = []
 
@@ -63,9 +73,7 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
           (action) => action.lastBubbleBlockId === message.id
         ) ?? []
       for (const action of clientSideActionsAfterMessage) {
-        const result = await executeClientSideAction(
-          action
-        )
+        const result = await executeClientSideAction(action)
         if (!result) continue
         const { input, newSessionState, messages, clientSideActions } =
           await continueBotFlow(result.replyToSend, { version: 2, state })
@@ -83,26 +91,24 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
       console.log('Failed to send message:', JSON.stringify(message, null, 2))
       if (err instanceof HTTPError)
         console.log('HTTPError', err.response.statusCode, err.response.body)
-      if(err instanceof TRPCError) throw err
+      if (err instanceof TRPCError) throw err
     }
   }
 
   if (input) {
-    const inputWhatsAppMessages = convertInputToWhatsAppComponent(
-      input
-    )
-    for(const message of inputWhatsAppMessages) {
+    const inputWhatsAppMessages = convertInputToWhatsAppComponent(input)
+    for (const message of inputWhatsAppMessages) {
       try {
         if (isNotDefined(message)) continue
         const lastSentMessageIsMedia = ['audio', 'video', 'image'].includes(
           sentMessages.at(-1)?.type ?? ''
         )
         const typingDuration = lastSentMessageIsMedia
-        ? messageAfterMediaTimeout
-        : getTypingDuration({
-            message,
-            typingEmulation: state.typingEmulation,
-          })
+          ? messageAfterMediaTimeout
+          : getTypingDuration({
+              message,
+              typingEmulation: state.typingEmulation,
+            })
         if (typingDuration)
           await new Promise((resolve) => setTimeout(resolve, typingDuration))
         await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
@@ -121,53 +127,44 @@ export async function executeWhatsappFlow({ state, messages, input, clientSideAc
   }
 }
 
-const isLastMessageIncludedInInput = (
-  input: ContinueChatResponse['input']
-): boolean => {
-  if (isNotDefined(input)) return false
-  return input.type === InputBlockType.CHOICE
+const executeClientSideAction = async (
+  clientSideAction: NonNullable<
+    ContinueChatResponse['clientSideActions']
+  >[number]
+): Promise<{ replyToSend: string | undefined } | void> => {
+  if ('wait' in clientSideAction) {
+    await new Promise((resolve) =>
+      setTimeout(resolve, clientSideAction.wait.secondsToWaitFor * 1000)
+    )
+    if (!clientSideAction.expectsDedicatedReply) return
+    return {
+      replyToSend: undefined,
+    }
+  }
 }
 
-const executeClientSideAction =
-  async (
-    clientSideAction: NonNullable<
-      ContinueChatResponse['clientSideActions']
-    >[number]
-  ): Promise<{ replyToSend: string | undefined } | void> => {
-    if ('wait' in clientSideAction) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, clientSideAction.wait.secondsToWaitFor * 1000)
-      )
-      if (!clientSideAction.expectsDedicatedReply) return
-      return {
-        replyToSend: undefined,
-      }
-    }
-
+const getTypingDuration = ({
+  message,
+  typingEmulation,
+}: {
+  message: WhatsappSocketSendingMessage
+  typingEmulation?: Settings['typingEmulation']
+}): number | undefined => {
+  switch (message.type) {
+    case TypeWhatsappMessage.TEXT:
+      return computeTypingDuration({
+        bubbleContent: message.body,
+        typingSettings: typingEmulation,
+      })
+    case TypeWhatsappMessage.INTERACTIVE:
+      if (!message.interactive?.text) return
+      return computeTypingDuration({
+        bubbleContent: message.interactive.body?.text ?? '',
+        typingSettings: typingEmulation,
+      })
+    case 'audio':
+    case 'video':
+    case 'image':
+      return
   }
-
-  const getTypingDuration = ({
-    message,
-    typingEmulation,
-  }: {
-    message: WhatsappSocketSendingMessage
-    typingEmulation?: Settings['typingEmulation']
-  }): number | undefined => {
-    switch (message.type) {
-      case TypeWhatsappMessage.TEXT:
-        return computeTypingDuration({
-          bubbleContent: message.body,
-          typingSettings: typingEmulation,
-        })
-      case TypeWhatsappMessage.INTERACTIVE:
-        if (!message.interactive?.text) return
-        return computeTypingDuration({
-          bubbleContent: message.interactive.body?.text ?? '',
-          typingSettings: typingEmulation,
-        })
-      case 'audio':
-      case 'video':
-      case 'image':
-        return
-    }
-  }
+}
