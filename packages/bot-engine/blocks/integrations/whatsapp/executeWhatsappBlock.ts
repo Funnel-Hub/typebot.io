@@ -63,7 +63,7 @@ export const executeWhatsappBlock = async (
     credentials.iv
   )) as WhatsappCredentials['data']
 
-  return state.isWhatsappIntegration
+  return !!state?.isWhatsappIntegration
     ? {
         outgoingEdgeId,
         logs,
