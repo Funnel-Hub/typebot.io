@@ -13,21 +13,21 @@ import {
   textInputSchema,
   urlInputSchema,
 } from '../blocks'
-import { logSchema } from '../result'
-import { settingsSchema, themeSchema } from '../typebot'
 import {
-  textBubbleContentSchema,
-  imageBubbleContentSchema,
-  videoBubbleContentSchema,
   audioBubbleContentSchema,
   embedBubbleContentSchema,
+  imageBubbleContentSchema,
+  textBubbleContentSchema,
+  videoBubbleContentSchema,
 } from '../blocks/bubbles'
-import { sessionStateSchema } from './sessionState'
-import { dynamicThemeSchema } from './shared'
+import { BubbleBlockType } from '../blocks/bubbles/constants'
+import { logSchema } from '../result'
+import { settingsSchema, themeSchema } from '../typebot'
 import { preprocessTypebot } from '../typebot/helpers/preprocessTypebot'
 import { typebotV5Schema, typebotV6Schema } from '../typebot/typebot'
-import { BubbleBlockType } from '../blocks/bubbles/constants'
 import { clientSideActionSchema } from './clientSideAction'
+import { sessionStateSchema } from './sessionState'
+import { dynamicThemeSchema } from './shared'
 
 const chatSessionSchema = z.object({
   id: z.string(),
@@ -203,6 +203,7 @@ export const startChatInputSchema = z.object({
         Email: 'john@gmail.com',
       },
     }),
+  isWhatsappIntegration: z.boolean().optional().default(false),
 })
 export type StartChatInput = z.infer<typeof startChatInputSchema>
 
@@ -238,6 +239,7 @@ export const startPreviewChatInputSchema = z.object({
       'If set, it will override the typebot that is used to start the chat.'
     ),
   startFrom: startFromSchema.optional(),
+  isWhatsappIntegration: z.boolean().optional().default(false),
 })
 export type StartPreviewChatInput = z.infer<typeof startPreviewChatInputSchema>
 

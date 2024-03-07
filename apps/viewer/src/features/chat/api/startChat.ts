@@ -28,6 +28,7 @@ export const startChat = publicProcedure
         isStreamEnabled,
         prefilledVariables,
         resultId: startResultId,
+        isWhatsappIntegration,
       },
       ctx: { origin, res },
     }) => {
@@ -50,6 +51,7 @@ export const startChat = publicProcedure
           publicId,
           prefilledVariables,
           resultId: startResultId,
+          isWhatsappIntegration,
         },
         message,
       })

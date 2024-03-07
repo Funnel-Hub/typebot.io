@@ -46,6 +46,7 @@ const sessionStateSchemaV1 = z.object({
     })
     .optional(),
   isStreamEnabled: z.boolean().optional(),
+  isWhatsappIntegration: z.boolean().optional().default(false),
 })
 
 const sessionStateSchemaV2 = z.object({
@@ -74,11 +75,14 @@ const sessionStateSchemaV2 = z.object({
       }),
     })
     .optional(),
-  whatsappComponent: z.object({
-    phone: z.string(),
-    clientId: z.string(),
-    canExecute: z.boolean()
-  }).optional(),
+  whatsappComponent: z
+    .object({
+      phone: z.string(),
+      clientId: z.string(),
+      canExecute: z.boolean(),
+    })
+    .optional(),
+  isWhatsappIntegration: z.boolean().optional().default(false),
   expiryTimeout: z
     .number()
     .min(1)
@@ -161,6 +165,7 @@ const migrateFromV1ToV2 = (
   dynamicTheme: state.dynamicTheme,
   currentBlock: state.currentBlock,
   isStreamEnabled: state.isStreamEnabled,
+  isWhatsappIntegration: false,
 })
 
 const migrateFromV2ToV3 = (

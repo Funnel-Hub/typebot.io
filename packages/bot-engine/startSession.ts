@@ -23,6 +23,10 @@ import {
 } from '@typebot.io/schemas/features/chat/schema'
 import { defaultSettings } from '@typebot.io/schemas/features/typebot/settings/constants'
 import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
+import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
+import { injectVariablesFromExistingResult } from '@typebot.io/variables/injectVariablesFromExistingResult'
+import { parseVariables } from '@typebot.io/variables/parseVariables'
+import { prefillVariables } from '@typebot.io/variables/prefillVariables'
 import parse, { NodeType } from 'node-html-parser'
 import { continueBotFlow } from './continueBotFlow'
 import { getNextGroup } from './getNextGroup'
@@ -32,10 +36,6 @@ import { findResult } from './queries/findResult'
 import { findTypebot } from './queries/findTypebot'
 import { upsertResult } from './queries/upsertResult'
 import { startBotFlow } from './startBotFlow'
-import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
-import { injectVariablesFromExistingResult } from '@typebot.io/variables/injectVariablesFromExistingResult'
-import { parseVariables } from '@typebot.io/variables/parseVariables'
-import { prefillVariables } from '@typebot.io/variables/prefillVariables'
 
 type StartParams =
   | ({
@@ -50,7 +50,10 @@ type Props = {
   version: 1 | 2
   message: string | undefined
   startParams: StartParams
-  initialSessionState?: Pick<SessionState, 'whatsApp' | 'expiryTimeout' | 'whatsappComponent' | 'sessionId'>
+  initialSessionState?: Pick<
+    SessionState,
+    'whatsApp' | 'expiryTimeout' | 'whatsappComponent' | 'sessionId'
+  >
 }
 
 export const startSession = async ({
@@ -136,6 +139,7 @@ export const startSession = async ({
         ? undefined
         : typebot.settings.security?.allowedOrigins,
     ...initialSessionState,
+    isWhatsappIntegration: startParams.isWhatsappIntegration,
   }
 
   if (startParams.isOnlyRegistering) {
