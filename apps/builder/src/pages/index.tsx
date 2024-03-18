@@ -41,6 +41,6 @@ export const getServerSideProps = async (
         context.locale !== context.defaultLocale
           ? `/${context.locale}/typebots`
           : '/typebots',
-    },
+    }
   }
 }
