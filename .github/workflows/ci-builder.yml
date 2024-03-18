@@ -62,21 +62,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Cache env build
-        id: cache-env-build
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-build
-        with:
-          path: |
-            ${{ github.workspace }}/packages/env/.turbo
-          key: ${{ runner.os }}-env-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-env-${{ env.cache-name }}-
-
       - name: Build env package
         working-directory: packages/env
-        run: pnpm build --cache-dir=.turbo
+        run: pnpm build
 
       - name: Lint
         run: SKIP_ENV_CHECK=true pnpm lint --scope=builder
