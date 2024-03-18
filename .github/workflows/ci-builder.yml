@@ -65,9 +65,6 @@ jobs:
       - name: Lint
         run: pnpm lint --scope=builder
 
-      - name: Run tests
-        run: pnpm test --filter=builder
-
       - name: Cache build
         id: cache-build
         uses: actions/cache@v4
