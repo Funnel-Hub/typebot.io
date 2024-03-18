@@ -62,6 +62,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build env package
+        working-directory: packages/env
+        run: pnpm build
+
       - name: Lint
         run: pnpm lint --scope=builder
 
