@@ -1,0 +1,102 @@
+name: "Deploy - Builder"
+
+on:
+  push:
+    branches:
+      - "funnelhub"
+    paths:
+      - "apps/builder/**"
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_SECRET_MANAGER_BUILDER_KEY: ${{ secrets.AWS_SECRET_MANAGER_BUILDER_KEY }}
+  REGISTRY_URL_ECR: ${{ secrets.BUILDER_IMAGE_REGISTRY_URL_ECR }}
+  K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
+  ENVFILE: .env
+
+jobs:
+  generate_env:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.modified, 'apps/builder/')}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Generate env file
+        run: |
+          sudo apt-get install -y jq
+          aws secretsmanager get-secret-value --secret-id $AWS_SECRET_MANAGER_BUILDER_KEY --region $AWS_REGION | jq -r '.SecretString' | jq -r "to_entries|map(\"\(.key)=\\\"\(.value|tostring)\\\"\")|.[]" > .env
+
+      - name: Archive .env
+        uses: actions/upload-artifact@v2
+        with:
+          name: env-file
+          path: .env
+
+  build_and_push_to_ecr:
+    needs: generate_env
+    runs-on: ubuntu-latest
+    outputs:
+      imageName: ${{ steps.push_docker_image.outputs.dockerImage }}
+    steps:
+      - name: Download .env
+        uses: actions/download-artifact@v2
+        with:
+          name: env-file
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - id: tagName
+        uses: olegtarasov/get-tag@v2.1.3
+      - name: "Push docker image to registry"
+        id: push_docker_image
+        run: |
+          REGISTRY_URL=$REGISTRY_URL_ECR
+          TAG_IMAGE=$GIT_TAG_NAME
+          IMAGE="$REGISTRY_URL/typebot-builder:$TAG_IMAGE"
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URL
+          docker buildx build --platform=linux/amd64 -t docker-image-local --load . -f ./Dockerfile
+          docker tag docker-image-local:latest $IMAGE
+          docker push $IMAGE
+          echo "dockerImage=$IMAGE" >> "$GITHUB_OUTPUT"
+
+  deploy_to_kubernetes:
+    needs: build_and_push_to_ecr
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Download .env
+        uses: actions/download-artifact@v2
+        with:
+          name: env-file
+      - name: Update Kubernetes files
+        run: |
+          sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/0-deployment.yml
+          sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/1-service.yml
+          sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/2-hpa.yml
+          sed -i -e "s#BUILDER_IMAGE#${{needs.build_and_push_to_ecr.outputs.imageName}}#" ./apps/builder/k8s/0-deployment.yml
+      - name: Deploy to k8s
+        run: |
+          K8S_PATH=./apps/builder/k8s
+          sudo snap install kubectl --classic
+          aws eks --region $AWS_REGION update-kubeconfig --name $K8S_CLUSTER_NAME
+          kubectl apply -f $K8S_PATH/0_deployment.yml
+          kubectl apply -f $K8S_PATH/1_service.yml
+          kubectl apply -f $K8S_PATH/2_hpa.yml
