@@ -58,7 +58,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       localStorage.getItem('currentWorkspaceId') ?? undefined
     )
 
-    const parsedUser = session.user as User & {
+    const parsedUser = { ...session.user } as User & {
       apiToken?: string | null
       locale?: string | null
       currentWorkspace?: object
