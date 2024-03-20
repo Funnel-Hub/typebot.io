@@ -10,6 +10,5 @@ type Props = {
 
 export default function MyApp({ Component, pageProps }: Props): JSX.Element {
   const { ...componentProps } = pageProps
-
   return <Component {...componentProps} />
 }
