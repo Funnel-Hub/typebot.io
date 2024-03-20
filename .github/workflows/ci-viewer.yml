@@ -23,18 +23,7 @@ jobs:
         with:
           sparse-checkout: |
             apps/viewer
-            packages/bot-engine
-            packages/emails
-            packages/env
-            packages/embeds
-            packages/eslint-config-custom
-            packages/forge
-            packages/lib
-            packages/prisma
-            packages/radar
-            packages/schemas
-            packages/tsconfig
-            packages/variables
+            packages/
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
