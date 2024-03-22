@@ -34,6 +34,8 @@ RUN SKIP_ENV_CHECK=true pnpm turbo run build --filter=${SCOPE}...
 FROM base AS runner
 WORKDIR /app
 
+COPY .env .
+
 COPY --from=builder --chown=node:node /app/apps/${SCOPE}/.next/standalone ./
 COPY --from=builder --chown=node:node /app/apps/${SCOPE}/.next/static ./apps/${SCOPE}/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/${SCOPE}/public ./apps/${SCOPE}/public
