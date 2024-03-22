@@ -69,7 +69,7 @@ jobs:
           TAG_IMAGE=$(cat apps/builder/package.json | grep '"version"' | awk -F '"' '{print $4}')
           IMAGE="$REGISTRY_URL_ECR/typebot-builder:$TAG_IMAGE"
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URL_ECR
-          mv artifact/.env apps/builder
+          mv artifact/.env .
           docker buildx build --platform=linux/amd64 -t docker-image-local --build-arg="SCOPE=builder" --load . -f ./Dockerfile
           docker tag docker-image-local:latest $IMAGE
           docker push $IMAGE
