@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 'Create ${{ matrix.app }} tag'
-        uses: butlerlogic/action-autotag@1.1.4
+        uses: butlerlogic/action-autotag@1.1.2
         with:
           strategy: package
           root: /apps/${{ matrix.app }}
