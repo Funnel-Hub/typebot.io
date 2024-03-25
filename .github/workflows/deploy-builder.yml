@@ -2,8 +2,10 @@ name: "Deploy - Builder"
 
 on:
   push:
-    tags:
-      - 'builder-v*'
+    branches:
+      - funnelhub
+    paths:
+      - apps/builder/**
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

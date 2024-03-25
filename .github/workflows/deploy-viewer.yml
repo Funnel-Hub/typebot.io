@@ -2,8 +2,10 @@ name: "Deploy - Viewer"
 
 on:
   push:
-    tags:
-      - 'viewer-v*'
+    branches:
+      - funnelhub
+    paths:
+      - apps/viewer/**
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
