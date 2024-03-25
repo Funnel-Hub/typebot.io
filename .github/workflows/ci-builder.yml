@@ -1,0 +1,98 @@
+name: "Continuos Integration - Builder"
+
+on:
+  pull_request:
+    branches:
+      - "funnelhub"
+    paths:
+      - "apps/builder/**"
+
+jobs:
+  continuous-integration:
+    name: Checkout, lint, test and build
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.16.1]
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            apps/builder
+            packages/bot-engine
+            packages/emails
+            packages/env
+            packages/embeds
+            packages/eslint-config-custom
+            packages/forge
+            packages/lib
+            packages/prisma
+            packages/radar
+            packages/schemas
+            packages/tsconfig
+            packages/variables
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-builder-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-builder-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build env package
+        working-directory: packages/env
+        run: pnpm build
+
+      - name: Cache lint
+        id: cache-lint
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-lint
+        with:
+          path: |
+            ${{ github.workspace }}/.turbo
+          key: ${{ runner.os }}-builder-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-builder-${{ env.cache-name }}-
+
+      - name: Lint
+        run: SKIP_ENV_CHECK=true pnpm lint --cache-dir=.turbo --scope=builder
+
+      - name: Cache build
+        id: cache-build
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-build
+        with:
+          path: |
+            ${{ github.workspace }}/.turbo
+          key: ${{ runner.os }}-builder-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-builder-${{ env.cache-name }}-
+
+      - name: Build project
+        run: SKIP_ENV_CHECK=true pnpm turbo run build --cache-dir=.turbo --filter=builder
