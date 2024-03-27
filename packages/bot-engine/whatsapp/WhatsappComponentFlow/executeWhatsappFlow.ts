@@ -65,7 +65,7 @@ export async function executeWhatsappFlow({
       await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
         message: whatsAppMessage,
         phones: [state.whatsappComponent.phone],
-        sessionId: state.sessionId,
+        sessionId: state.sessionId as unknown as string,
       })
       sentMessages.push(whatsAppMessage)
       const clientSideActionsAfterMessage =
@@ -114,7 +114,7 @@ export async function executeWhatsappFlow({
         await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
           message,
           phones: [state.whatsappComponent.phone],
-          sessionId: state.sessionId,
+          sessionId: state.sessionId as unknown as string,
         })
       } catch (err) {
         console.log(err)
