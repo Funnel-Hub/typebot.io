@@ -14,7 +14,7 @@ import {
   TypeWhatsappMessage,
   WhatsappSocketSendingMessage,
   convertMessageToWhatsappComponent,
-} from './convertMessageToWhatsappCompoent'
+} from './convertMessageToWhatsappComponent'
 import { sendSocketWhatsappMessage } from './sendWhatsappSocketMessage'
 
 type Props = {
