@@ -1,11 +1,12 @@
-name: "Deploy - Viewer"
+name: 'Deploy - Viewer'
 
 on:
-  push:  
-    branches: 
+  push:
+    branches:
       - funnelhub
-    paths: 
-      - "apps/viewer/**"
+    paths:
+      - 'apps/viewer/**'
+      - 'packages/**'
   workflow_dispatch:
 
 env:
@@ -59,7 +60,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - name: "Push docker image to registry"
+      - name: 'Push docker image to registry'
         id: push_docker_image
         run: |
           TAG_IMAGE=$(cat apps/viewer/package.json | grep '"version"' | awk -F '"' '{print $4}')

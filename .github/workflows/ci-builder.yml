@@ -1,11 +1,12 @@
-name: "Continuos Integration - Builder"
+name: 'Continuos Integration - Builder'
 
 on:
   pull_request:
     branches:
-      - "funnelhub"
+      - 'funnelhub'
     paths:
-      - "apps/builder/**"
+      - 'apps/builder/**'
+      - 'packages/**'
 
 jobs:
   continuous-integration:

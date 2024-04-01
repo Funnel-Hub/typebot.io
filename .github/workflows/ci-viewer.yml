@@ -1,11 +1,12 @@
-name: "Continuos Integration - Viewer"
+name: 'Continuos Integration - Viewer'
 
 on:
   pull_request:
     branches:
-      - "funnelhub"
+      - 'funnelhub'
     paths:
-      - "apps/viewer/**"
+      - 'apps/viewer/**'
+      - 'packages/**'
 
 jobs:
   continuous-integration:
