@@ -32,6 +32,7 @@ export const startWhatsAppPreview = authenticatedProcedure
         ),
       typebotId: z.string(),
       startFrom: startFromSchema.optional(),
+      isWhatsappIntegration: z.boolean().optional().default(false),
     })
   )
   .output(
@@ -39,143 +40,149 @@ export const startWhatsAppPreview = authenticatedProcedure
       message: z.string(),
     })
   )
-  .mutation(async ({ input: { to, typebotId, startFrom }, ctx: { user } }) => {
-    if (
-      !env.WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID ||
-      !env.META_SYSTEM_USER_TOKEN ||
-      !env.WHATSAPP_PREVIEW_TEMPLATE_NAME
-    )
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message:
-          'Missing WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID or META_SYSTEM_USER_TOKEN or WHATSAPP_PREVIEW_TEMPLATE_NAME env variables',
-      })
+  .mutation(
+    async ({
+      input: { to, typebotId, startFrom, isWhatsappIntegration },
+      ctx: { user },
+    }) => {
+      if (
+        !env.WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID ||
+        !env.META_SYSTEM_USER_TOKEN ||
+        !env.WHATSAPP_PREVIEW_TEMPLATE_NAME
+      )
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message:
+            'Missing WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID or META_SYSTEM_USER_TOKEN or WHATSAPP_PREVIEW_TEMPLATE_NAME env variables',
+        })
 
-    const existingTypebot = await prisma.typebot.findFirst({
-      where: {
-        id: typebotId,
-      },
-      select: {
-        id: true,
-        workspace: {
-          select: {
-            isSuspended: true,
-            isPastDue: true,
-            members: {
-              select: {
-                userId: true,
+      const existingTypebot = await prisma.typebot.findFirst({
+        where: {
+          id: typebotId,
+        },
+        select: {
+          id: true,
+          workspace: {
+            select: {
+              isSuspended: true,
+              isPastDue: true,
+              members: {
+                select: {
+                  userId: true,
+                },
               },
             },
           },
-        },
-        collaborators: {
-          select: {
-            userId: true,
+          collaborators: {
+            select: {
+              userId: true,
+            },
           },
         },
-      },
-    })
-    if (
-      !existingTypebot?.id ||
-      (await isReadTypebotForbidden(existingTypebot, user))
-    )
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'Typebot not found' })
+      })
+      if (
+        !existingTypebot?.id ||
+        (await isReadTypebotForbidden(existingTypebot, user))
+      )
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Typebot not found' })
 
-    const sessionId = `wa-preview-${to}`
+      const sessionId = `wa-preview-${to}`
 
-    const existingSession = await prisma.chatSession.findFirst({
-      where: {
-        id: sessionId,
-      },
-      select: {
-        updatedAt: true,
-        state: true,
-      },
-    })
+      const existingSession = await prisma.chatSession.findFirst({
+        where: {
+          id: sessionId,
+        },
+        select: {
+          updatedAt: true,
+          state: true,
+        },
+      })
 
-    // For users that did not interact with the bot in the last 24 hours, we need to send a template message.
-    const canSendDirectMessagesToUser =
-      (existingSession?.updatedAt.getTime() ?? 0) >
-      Date.now() - 24 * 60 * 60 * 1000
+      // For users that did not interact with the bot in the last 24 hours, we need to send a template message.
+      const canSendDirectMessagesToUser =
+        (existingSession?.updatedAt.getTime() ?? 0) >
+        Date.now() - 24 * 60 * 60 * 1000
 
-    const {
-      newSessionState,
-      messages,
-      input,
-      clientSideActions,
-      logs,
-      visitedEdges,
-    } = await startSession({
-      version: 2,
-      message: undefined,
-      startParams: {
-        isOnlyRegistering: !canSendDirectMessagesToUser,
-        type: 'preview',
-        typebotId,
-        startFrom,
-        userId: user.id,
-      },
-      initialSessionState: {
-        whatsApp: (existingSession?.state as SessionState | undefined)
-          ?.whatsApp,
-      },
-    })
-
-    if (canSendDirectMessagesToUser) {
-      await sendChatReplyToWhatsApp({
-        to,
-        typingEmulation: newSessionState.typingEmulation,
+      const {
+        newSessionState,
         messages,
         input,
         clientSideActions,
-        credentials: {
-          phoneNumberId: env.WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID,
-          systemUserAccessToken: env.META_SYSTEM_USER_TOKEN,
-        },
-        state: newSessionState,
-      })
-      await saveStateToDatabase({
-        clientSideActions: [],
-        input,
         logs,
-        session: {
-          id: sessionId,
-          state: newSessionState,
-        },
         visitedEdges,
+      } = await startSession({
+        version: 2,
+        message: undefined,
+        startParams: {
+          isOnlyRegistering: !canSendDirectMessagesToUser,
+          type: 'preview',
+          typebotId,
+          startFrom,
+          userId: user.id,
+          isWhatsappIntegration,
+        },
+        initialSessionState: {
+          whatsApp: (existingSession?.state as SessionState | undefined)
+            ?.whatsApp,
+        },
       })
-    } else {
-      await restartSession({
-        state: newSessionState,
-        id: sessionId,
-      })
-      try {
-        await sendWhatsAppMessage({
+
+      if (canSendDirectMessagesToUser) {
+        await sendChatReplyToWhatsApp({
           to,
-          message: {
-            type: 'template',
-            template: {
-              language: {
-                code: env.WHATSAPP_PREVIEW_TEMPLATE_LANG,
-              },
-              name: env.WHATSAPP_PREVIEW_TEMPLATE_NAME,
-            },
-          },
+          typingEmulation: newSessionState.typingEmulation,
+          messages,
+          input,
+          clientSideActions,
           credentials: {
             phoneNumberId: env.WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID,
             systemUserAccessToken: env.META_SYSTEM_USER_TOKEN,
           },
+          state: newSessionState,
         })
-      } catch (err) {
-        if (err instanceof HTTPError) console.log(err.response.body)
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Request to Meta to send preview message failed',
-          cause: err,
+        await saveStateToDatabase({
+          clientSideActions: [],
+          input,
+          logs,
+          session: {
+            id: sessionId,
+            state: newSessionState,
+          },
+          visitedEdges,
         })
+      } else {
+        await restartSession({
+          state: newSessionState,
+          id: sessionId,
+        })
+        try {
+          await sendWhatsAppMessage({
+            to,
+            message: {
+              type: 'template',
+              template: {
+                language: {
+                  code: env.WHATSAPP_PREVIEW_TEMPLATE_LANG,
+                },
+                name: env.WHATSAPP_PREVIEW_TEMPLATE_NAME,
+              },
+            },
+            credentials: {
+              phoneNumberId: env.WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID,
+              systemUserAccessToken: env.META_SYSTEM_USER_TOKEN,
+            },
+          })
+        } catch (err) {
+          if (err instanceof HTTPError) console.log(err.response.body)
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Request to Meta to send preview message failed',
+            cause: err,
+          })
+        }
+      }
+      return {
+        message: 'success',
       }
     }
-    return {
-      message: 'success',
-    }
-  })
+  )
