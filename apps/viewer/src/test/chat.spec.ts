@@ -1,15 +1,15 @@
 import { getTestAsset } from '@/test/utils/playwright'
-import test, { expect } from '@playwright/test'
 import { createId } from '@paralleldrive/cuid2'
-import prisma from '@typebot.io/lib/prisma'
+import test, { expect } from '@playwright/test'
 import {
   createWebhook,
   deleteTypebots,
   deleteWebhooks,
   importTypebotInDatabase,
 } from '@typebot.io/lib/playwright/databaseActions'
-import { HttpMethod } from '@typebot.io/schemas/features/blocks/integrations/webhook/constants'
+import prisma from '@typebot.io/lib/prisma'
 import { StartChatInput, StartPreviewChatInput } from '@typebot.io/schemas'
+import { HttpMethod } from '@typebot.io/schemas/features/blocks/integrations/webhook/constants'
 
 test.afterEach(async () => {
   await deleteWebhooks(['chat-webhook-id'])
@@ -48,6 +48,7 @@ test('API chat execution should work on preview bot', async ({ request }) => {
         data: {
           isOnlyRegistering: false,
           isStreamEnabled: false,
+          isWhatsappIntegration: false,
         } satisfies Omit<StartPreviewChatInput, 'typebotId'>,
       })
     ).json()
@@ -120,6 +121,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
         data: {
           isOnlyRegistering: false,
           isStreamEnabled: false,
+          isWhatsappIntegration: false,
         } satisfies Omit<StartChatInput, 'publicId'>,
       })
     ).json()
@@ -302,6 +304,7 @@ test('API chat execution should work on published bot', async ({ request }) => {
             message: 'Hey',
             isStreamEnabled: false,
             isOnlyRegistering: false,
+            isWhatsappIntegration: false,
           } satisfies Omit<StartChatInput, 'publicId'>,
         }
       )

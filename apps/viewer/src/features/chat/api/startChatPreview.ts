@@ -29,6 +29,7 @@ export const startChatPreview = publicProcedure
         startFrom,
         typebotId,
         typebot: startTypebot,
+        isWhatsappIntegration,
       },
       ctx: { user },
     }) => {
@@ -51,6 +52,7 @@ export const startChatPreview = publicProcedure
           typebotId,
           typebot: startTypebot,
           userId: user?.id,
+          isWhatsappIntegration,
         },
         message,
       })

@@ -63,23 +63,36 @@ export const executeWhatsappBlock = async (
     credentials.iv
   )) as WhatsappCredentials['data']
 
-  return {
-    outgoingEdgeId,
-    logs,
-    newSessionState: {
-      ...state,
-      whatsappComponent: {
-        phone: phoneWithVariable,
-        clientId,
-        canExecute: false,
-      },
-    },
-    clientSideActions: [
-      {
-        type: 'whatsappComponent',
-        whatsappComponent: { clientId },
-        expectsDedicatedReply: true,
-      },
-    ],
-  }
+  return !!state?.isWhatsappIntegration
+    ? {
+        outgoingEdgeId,
+        logs,
+        newSessionState: {
+          ...state,
+          whatsappComponent: {
+            phone: phoneWithVariable,
+            clientId,
+            canExecute: true,
+          },
+        },
+      }
+    : {
+        outgoingEdgeId,
+        logs,
+        newSessionState: {
+          ...state,
+          whatsappComponent: {
+            phone: phoneWithVariable,
+            clientId,
+            canExecute: false,
+          },
+        },
+        clientSideActions: [
+          {
+            type: 'whatsappComponent',
+            whatsappComponent: { clientId },
+            expectsDedicatedReply: true,
+          },
+        ],
+      }
 }
