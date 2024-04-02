@@ -11,6 +11,7 @@ import {
   Group,
   InputBlock,
   SessionState,
+  Variable,
   WhatsappCredentials,
 } from '@typebot.io/schemas'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
@@ -241,6 +242,18 @@ export const continueBotFlow = async (
         id: block.options.credentialsId,
       },
     })
+    const allVariables = chatReply.newSessionState.typebotsQueue.reduce<
+      Variable[]
+    >(
+      (allVariables, typebot) => [
+        ...allVariables,
+        ...typebot.typebot.variables,
+      ],
+      []
+    )
+
+    const phoneWithVariable = parseVariables(allVariables)(block.options.phone)
+
     if (credentials) {
       const { clientId } = (await decrypt(
         credentials.data,
@@ -248,7 +261,7 @@ export const continueBotFlow = async (
       )) as WhatsappCredentials['data']
       chatReply.newSessionState.whatsappComponent = {
         ...chatReply.newSessionState.whatsappComponent,
-        phone: block.options.phone,
+        phone: phoneWithVariable,
         clientId,
       }
     }
