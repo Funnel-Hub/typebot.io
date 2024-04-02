@@ -31,6 +31,7 @@ import {
   parseBubbleBlock,
 } from './parseBubbleBlock'
 import { ExecuteIntegrationResponse, ExecuteLogicResponse } from './types'
+import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 
 type ContextProps = {
   version: 1 | 2
@@ -111,6 +112,25 @@ export const executeGroup = async (
         logs,
         visitedEdges,
       }
+
+    // multiple whatsapp integration - funnelhub
+    const isNewWhatsappIntegrationBlock = !!(
+      newSessionState.whatsappComponent &&
+      block.type === IntegrationBlockType.WHATSAPP
+    )
+
+    if (isNewWhatsappIntegrationBlock)
+      return {
+        messages,
+        newSessionState: {
+          ...newSessionState,
+          currentBlockId: block.id,
+        },
+        clientSideActions,
+        logs,
+        visitedEdges,
+      }
+
     const executionResponse = (
       isLogicBlock(block)
         ? await executeLogic(newSessionState)(block)
