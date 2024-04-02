@@ -10,7 +10,8 @@ import {
   ContinueChatResponse,
   Group,
   InputBlock,
-  SessionState
+  SessionState,
+  WhatsappCredentials,
 } from '@typebot.io/schemas'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
 import { defaultChoiceInputOptions } from '@typebot.io/schemas/features/blocks/inputs/choice/constants'
@@ -39,15 +40,18 @@ import { getNextGroup } from './getNextGroup'
 import { upsertAnswer } from './queries/upsertAnswer'
 import { startBotFlow } from './startBotFlow'
 import { ParsedReply } from './types'
+import prisma from '@typebot.io/lib/prisma'
+import { decrypt } from '@typebot.io/lib/api/encryption/decrypt'
 
 type Params = {
   version: 1 | 2
   state: SessionState
   startTime?: number
+  multipleWhatsappIntegration?: boolean
 }
 export const continueBotFlow = async (
   reply: string | undefined,
-  { state, version, startTime }: Params
+  { state, version, startTime, multipleWhatsappIntegration }: Params
 ): Promise<
   ContinueChatResponse & {
     newSessionState: SessionState
@@ -224,18 +228,48 @@ export const continueBotFlow = async (
     startTime,
   })
 
-  if(reply === 'whatsappComponent' && block.type === IntegrationBlockType.WHATSAPP) {
-    if(chatReply?.newSessionState?.whatsappComponent) {
+  // Change context of whatsapp number and credentials
+  if (
+    block.type === IntegrationBlockType.WHATSAPP &&
+    multipleWhatsappIntegration &&
+    chatReply.newSessionState.whatsappComponent &&
+    block?.options?.phone &&
+    block.options.credentialsId
+  ) {
+    const credentials = await prisma.credentials.findUnique({
+      where: {
+        id: block.options.credentialsId,
+      },
+    })
+    if (credentials) {
+      const { clientId } = (await decrypt(
+        credentials.data,
+        credentials.iv
+      )) as WhatsappCredentials['data']
+      chatReply.newSessionState.whatsappComponent = {
+        ...chatReply.newSessionState.whatsappComponent,
+        phone: block.options.phone,
+        clientId,
+      }
+    }
+  }
+
+  if (
+    reply === 'whatsappComponent' &&
+    block.type === IntegrationBlockType.WHATSAPP
+  ) {
+    if (chatReply?.newSessionState?.whatsappComponent) {
       return {
         ...chatReply,
-        lastMessageNewFormat: formattedReply !== reply ? formattedReply : undefined,
+        lastMessageNewFormat:
+          formattedReply !== reply ? formattedReply : undefined,
         newSessionState: {
           ...chatReply?.newSessionState,
           whatsappComponent: {
             ...chatReply?.newSessionState?.whatsappComponent,
-            canExecute: true
-          }
-        }
+            canExecute: true,
+          },
+        },
       }
     }
   }

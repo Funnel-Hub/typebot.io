@@ -1,22 +1,25 @@
-import { decrypt } from "@typebot.io/lib/api/encryption/decrypt";
-import prisma from "@typebot.io/lib/prisma";
-import { ChatLog, SessionState, Variable, WhatsappBlock, WhatsappCredentials } from "@typebot.io/schemas";
-import { parseVariables } from '@typebot.io/variables/parseVariables';
-import { ExecuteIntegrationResponse } from "../../../types";
+import { decrypt } from '@typebot.io/lib/api/encryption/decrypt'
+import prisma from '@typebot.io/lib/prisma'
+import {
+  ChatLog,
+  SessionState,
+  Variable,
+  WhatsappBlock,
+  WhatsappCredentials,
+} from '@typebot.io/schemas'
+import { parseVariables } from '@typebot.io/variables/parseVariables'
+import { ExecuteIntegrationResponse } from '../../../types'
 
 export const executeWhatsappBlock = async (
   state: SessionState,
-  {
-    outgoingEdgeId,
-    options,
-  }: WhatsappBlock
+  { outgoingEdgeId, options }: WhatsappBlock
 ): Promise<ExecuteIntegrationResponse> => {
   const noCredentialsError = {
     status: 'error',
     description: 'Missing whatsapp credentials',
   }
 
-  if(!options?.phone) {
+  if (!options?.phone) {
     return {
       outgoingEdgeId,
       logs: [
@@ -60,23 +63,23 @@ export const executeWhatsappBlock = async (
     credentials.iv
   )) as WhatsappCredentials['data']
 
-  return { 
-    outgoingEdgeId, 
-    logs, 
-    newSessionState: { 
-      ...state, 
-      whatsappComponent: { 
-        phone: phoneWithVariable, 
-        clientId, 
-        canExecute: false 
-      }
-    }, 
+  return {
+    outgoingEdgeId,
+    logs,
+    newSessionState: {
+      ...state,
+      whatsappComponent: {
+        phone: phoneWithVariable,
+        clientId,
+        canExecute: false,
+      },
+    },
     clientSideActions: [
-      { 
-        type: 'whatsappComponent', 
-        whatsappComponent: { clientId }, 
-        expectsDedicatedReply: true 
-      }
-    ] 
-  } 
+      {
+        type: 'whatsappComponent',
+        whatsappComponent: { clientId },
+        expectsDedicatedReply: true,
+      },
+    ],
+  }
 }

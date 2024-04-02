@@ -5,7 +5,7 @@ import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filt
 import { parseDynamicTheme } from '@typebot.io/bot-engine/parseDynamicTheme'
 import { getSession } from '@typebot.io/bot-engine/queries/getSession'
 import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
-import { executeWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/executeWhatsappFlow'
+import { multipleWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/multipleWhatsappFlow'
 import { isDefined, isNotDefined } from '@typebot.io/lib/utils'
 import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
 import { z } from 'zod'
@@ -89,12 +89,14 @@ export const continueChat = publicProcedure
         visitedEdges,
       })
 
+    // multiple whatsapp integration - funnelhub
     if (newSessionState.whatsappComponent?.canExecute) {
-      await executeWhatsappFlow({
-        state: newSessionState,
+      await multipleWhatsappFlow({
         messages,
-        input,
+        sessionId: session.id,
+        state: newSessionState,
         clientSideActions,
+        input,
       })
       return {
         messages: [],
