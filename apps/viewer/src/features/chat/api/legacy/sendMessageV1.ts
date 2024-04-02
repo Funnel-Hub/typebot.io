@@ -91,6 +91,7 @@ export const sendMessageV1 = publicProcedure
                       : startParams.typebot,
                   message,
                   userId: user?.id,
+                  isWhatsappIntegration: false,
                 }
               : {
                   type: 'live',
@@ -100,6 +101,7 @@ export const sendMessageV1 = publicProcedure
                   prefilledVariables: startParams.prefilledVariables,
                   resultId: startParams.resultId,
                   message,
+                  isWhatsappIntegration: false,
                 },
           message,
         })
