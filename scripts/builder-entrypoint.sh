@@ -2,7 +2,7 @@
 
 npm install -g dotenv-cli
 cp .env ./apps/builder
-cp configureRuntimeEnv.js ./apps/viewer
+cp configureRuntimeEnv.js ./apps/builder
 mkdir -r prisma
 cp -r ./packages/prisma/postgresql/migrations ./prisma
 cp -r ./packages/prisma/postgresql/schema.prisma ./prisma
