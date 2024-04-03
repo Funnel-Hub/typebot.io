@@ -88,6 +88,6 @@ export const executeClientSideAction = async ({
     return executeCode(clientSideAction.codeToExecute)
   }
   if ('whatsappComponent' in clientSideAction) {
-    return { replyToSend: 'whatsappComponent' }
+    return { replyToSend: 'isWhatsappIntegration' }
   }
 }
