@@ -268,7 +268,7 @@ export const continueBotFlow = async (
   }
 
   if (
-    reply === 'isWhatsappIntegration' &&
+    reply === 'whatsappComponent' &&
     block.type === IntegrationBlockType.WHATSAPP
   ) {
     if (chatReply?.newSessionState?.whatsappComponent) {
