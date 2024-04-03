@@ -78,12 +78,12 @@ export const createWorkspaceInvitation = authenticatedProcedure
           status: 'CONFLICT',
           message: 'User is already a member of that Workspace',
         }
-    }
-
-    if (!alreadyInvited) {
-      await prisma.workspaceInvitation.create({
-        data: { email, type, workspaceId },
-      })
+    } else {
+      if (!alreadyInvited) {
+        await prisma.workspaceInvitation.create({
+          data: { email, type, workspaceId },
+        })
+      }
     }
 
     return {

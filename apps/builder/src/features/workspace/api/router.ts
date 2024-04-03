@@ -7,6 +7,7 @@ import { listWorkspaces } from './listWorkspaces'
 import { updateWorkspace } from './updateWorkspace'
 import { createWorkspaceInvitation } from './createWorkspaceInvitation'
 import { addWorkspaceMember } from './addWorkspaceMember'
+import { removeWorkspaceMember } from './removeWorkspaceMember'
 
 export const workspaceRouter = router({
   listWorkspaces,
@@ -17,4 +18,5 @@ export const workspaceRouter = router({
   deleteWorkspace,
   createWorkspaceInvitation,
   addWorkspaceMember,
+  removeWorkspaceMember,
 })
