@@ -56,6 +56,7 @@ COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 RUN ./node_modules/.bin/prisma generate --schema=packages/prisma/postgresql/schema.prisma;
 
 COPY scripts/${SCOPE}-entrypoint.sh ./
+COPY ./configureRuntimeEnv.js ./
 RUN chmod +x ./${SCOPE}-entrypoint.sh
 ENTRYPOINT ./${SCOPE}-entrypoint.sh
 

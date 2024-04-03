@@ -1,6 +1,6 @@
 import { ContinueChatResponse } from '@typebot.io/schemas'
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
-import { TypeWhatsappMessage, WhatsappSocketSendingMessage } from './convertMessageToWhatsappCompoent'
+import { TypeWhatsappMessage, WhatsappSocketSendingMessage } from './convertMessageToWhatsappComponent'
 
 export const convertInputToWhatsAppComponent = (
   input: NonNullable<ContinueChatResponse['input']>,
