@@ -10,6 +10,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import { env } from '@typebot.io/env'
 import { identifyUser } from '../telemetry/posthog'
 import { useColorMode } from '@chakra-ui/react'
+import { TYPEBOT_ACCESS_NAME } from '@/pages'
 
 export const userContext = createContext<{
   user?: User
@@ -84,14 +85,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       router.pathname
     )
     if (isSignInPath || isPathPublicFriendly) return
-    if (!user && status === 'unauthenticated')
+    if (
+      (!user && status === 'unauthenticated') ||
+      (session &&
+        !session.user.currentWorkspace.accessType.includes(TYPEBOT_ACCESS_NAME))
+    )
       router.replace({
         pathname: env.NEXT_PUBLIC_FUNNELHUB_URL,
         query: {
           redirectPath: router.asPath,
         },
       })
-  }, [router, status, user])
+  }, [router, status, user, session])
 
   const updateUser = (updates: Partial<User>) => {
     if (isNotDefined(user)) return
