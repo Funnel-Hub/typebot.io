@@ -3,7 +3,7 @@ import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filt
 import { restartSession } from '@typebot.io/bot-engine/queries/restartSession'
 import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
 import { startSession } from '@typebot.io/bot-engine/startSession'
-import { executeWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/executeWhatsappFlow'
+import { multipleWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/multipleWhatsappFlow'
 import {
   startChatInputSchema,
   startChatResponseSchema,
@@ -28,6 +28,7 @@ export const startChat = publicProcedure
         isStreamEnabled,
         prefilledVariables,
         resultId: startResultId,
+        isWhatsappIntegration,
       },
       ctx: { origin, res },
     }) => {
@@ -50,6 +51,7 @@ export const startChat = publicProcedure
           publicId,
           prefilledVariables,
           resultId: startResultId,
+          isWhatsappIntegration,
         },
         message,
       })
@@ -82,11 +84,12 @@ export const startChat = publicProcedure
           })
 
       if (newSessionState.whatsappComponent?.canExecute) {
-        await executeWhatsappFlow({
-          state: { ...newSessionState, sessionId: session.id },
+        await multipleWhatsappFlow({
           messages,
-          input,
+          sessionId: session.id,
+          state: { ...newSessionState, sessionId: session.id },
           clientSideActions,
+          input,
         })
 
         return {

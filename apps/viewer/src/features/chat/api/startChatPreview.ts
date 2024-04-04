@@ -2,7 +2,7 @@ import { publicProcedure } from '@/helpers/server/trpc'
 import { restartSession } from '@typebot.io/bot-engine/queries/restartSession'
 import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
 import { startSession } from '@typebot.io/bot-engine/startSession'
-import { executeWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/executeWhatsappFlow'
+import { multipleWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/multipleWhatsappFlow'
 import {
   startPreviewChatInputSchema,
   startPreviewChatResponseSchema,
@@ -29,6 +29,7 @@ export const startChatPreview = publicProcedure
         startFrom,
         typebotId,
         typebot: startTypebot,
+        isWhatsappIntegration,
       },
       ctx: { user },
     }) => {
@@ -51,6 +52,7 @@ export const startChatPreview = publicProcedure
           typebotId,
           typebot: startTypebot,
           userId: user?.id,
+          isWhatsappIntegration,
         },
         message,
       })
@@ -70,11 +72,12 @@ export const startChatPreview = publicProcedure
           })
 
       if (newSessionState.whatsappComponent?.canExecute) {
-        await executeWhatsappFlow({
+        await multipleWhatsappFlow({
           state: { ...newSessionState, sessionId: session.id },
           messages,
           input,
           clientSideActions,
+          sessionId: session.id,
         })
 
         return {

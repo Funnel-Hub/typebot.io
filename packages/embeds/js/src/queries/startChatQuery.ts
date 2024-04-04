@@ -1,10 +1,10 @@
-import { BotContext, InitialChatReply } from '@/types'
-import { guessApiHost } from '@/utils/guessApiHost'
-import { isNotDefined, isNotEmpty } from '@typebot.io/lib'
 import {
   getPaymentInProgressInStorage,
   removePaymentInProgressFromStorage,
 } from '@/features/blocks/inputs/payment/helpers/paymentInProgressStorage'
+import { BotContext, InitialChatReply } from '@/types'
+import { guessApiHost } from '@/utils/guessApiHost'
+import { isNotDefined, isNotEmpty } from '@typebot.io/lib'
 import {
   StartChatInput,
   StartFrom,
@@ -82,6 +82,7 @@ export async function startChatQuery({
               isStreamEnabled: true,
               startFrom,
               typebot,
+              isWhatsappIntegration: false,
             } satisfies Omit<StartPreviewChatInput, 'typebotId'>,
             timeout: false,
           }
@@ -106,6 +107,7 @@ export async function startChatQuery({
             prefilledVariables,
             resultId,
             isOnlyRegistering: false,
+            isWhatsappIntegration: false,
           } satisfies Omit<StartChatInput, 'publicId'>,
           timeout: false,
         }
