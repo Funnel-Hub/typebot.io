@@ -7,7 +7,7 @@ export default function Page() {
   return null
 }
 
-const TYPEBOT_ACCESS_NAME = 'FLOWS'
+export const TYPEBOT_ACCESS_NAME = 'FLOWS'
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
