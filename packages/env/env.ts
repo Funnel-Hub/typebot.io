@@ -92,7 +92,8 @@ const baseEnv = {
       )
       .optional(),
     WORKSPACE_TOKEN: z.string(),
-    WHATSAPP_SERVER: z.string().url()
+    WHATSAPP_SERVER: z.string().url(),
+	CALCOM_API_URL: z.string().url(),
   },
   client: {
     NEXT_PUBLIC_E2E_TEST: boolean.optional(),

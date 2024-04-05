@@ -1,7 +1,6 @@
 import { DropdownList } from '@/components/DropdownList'
 import { ChevronDownIcon } from '@/components/icons'
 import { TextInput } from '@/components/inputs'
-import { Select } from '@/components/inputs/Select'
 import { VariableSearchInput } from '@/components/inputs/VariableSearchInput'
 import {
   Accordion,
@@ -25,6 +24,7 @@ import {
   defaultCalComOptions,
 } from '@typebot.io/schemas/features/blocks/integrations/calCom/constants'
 import React from 'react'
+import { EventsDropdown } from './EventsDropdown'
 
 type Props = {
   options: CalComBlock['options']
@@ -56,18 +56,30 @@ export const CalComSettings = ({ options, onOptionsChange }: Props) => {
               onOptionsChange({ ...options, baseOrigin })
             }}
           />
-          <Flex as="fieldset" gap="2" direction="column">
-            <Text as="label" fontWeight="medium">
-              Event link
-            </Text>
-            <Select
-              items={[]}
-              placeholder="Choose an event"
-              onSelect={(eventLink) =>
+          {!options?.baseOrigin ||
+          options?.baseOrigin === defaultCalComOptions.baseOrigin ? (
+            <Flex as="fieldset" gap="2" direction="column">
+              <Text as="label" fontWeight="medium">
+                Event link
+              </Text>
+              <EventsDropdown
+                baseOrigin={
+                  options?.baseOrigin ?? defaultCalComOptions.baseOrigin
+                }
+                onChange={(eventLink) => {
+                  onOptionsChange({ ...options, eventLink })
+                }}
+              />
+            </Flex>
+          ) : (
+            <TextInput
+              label="Event link"
+              placeholder="https://app.cal.com/username/eventname"
+              onChange={(eventLink) => {
                 onOptionsChange({ ...options, eventLink })
-              }
+              }}
             />
-          </Flex>
+          )}
           <Menu placement="bottom" matchWidth>
             <Flex as="fieldset" gap="2" alignItems="center" width="100%">
               <Text as="label" width="3.5rem" fontWeight="medium">

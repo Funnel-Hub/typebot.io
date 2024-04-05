@@ -5,7 +5,7 @@ import { calComActions, calComLayout } from './constants'
 
 export const calComOptionsSchema = z.object({
   action: z.enum(calComActions).optional(),
-  baseOrigin: z.string().optional(),
+  baseOrigin: z.string().url().optional(),
   eventLink: z.string().optional(),
   layout: z.enum(calComLayout).optional(),
   user: z
