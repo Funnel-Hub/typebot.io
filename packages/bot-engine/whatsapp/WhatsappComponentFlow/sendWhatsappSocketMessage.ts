@@ -16,8 +16,8 @@ type SendMessagePayload = {
 const getMembersByTypebotSession = async (sessionId: string) => {
   const session = await getSession(sessionId)
   const typebotId = session?.state.typebotsQueue[0].typebot.id as string
-  const typebot = await prisma.typebot.findUnique({
-    where: { id: typebotId },
+  const typebots = await prisma.typebot.findMany({
+    where: { OR: [{ id: typebotId }, { publicId: typebotId }] },
     select: {
       name: true,
       workspace: {
@@ -38,8 +38,8 @@ const getMembersByTypebotSession = async (sessionId: string) => {
       },
     },
   })
-  if (!typebot) throw new Error('Typebot not found')
-  return typebot
+  if (!typebots[0]) throw new Error('Typebot not found')
+  return typebots[0]
 }
 
 const sendNotificationToMember = async (
