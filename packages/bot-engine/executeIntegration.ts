@@ -13,6 +13,7 @@ import { executeWebhookBlock } from './blocks/integrations/webhook/executeWebhoo
 import { executeWhatsappBlock } from './blocks/integrations/whatsapp/executeWhatsappBlock'
 import { isNotDefined } from '@typebot.io/lib'
 import { env } from '@typebot.io/env'
+import { executeCalComBlock } from './blocks/integrations/calCom/executeCalComBlock'
 
 export const executeIntegration =
   (state: SessionState) =>
@@ -59,6 +60,12 @@ export const executeIntegration =
           ...(await executeZemanticAiBlock(state, block)),
           startTimeShouldBeUpdated: true,
         }
+	  case IntegrationBlockType.CALCOM: {
+     	return {
+		  ...executeCalComBlock(block),
+		  startTimeShouldBeUpdated: true
+		}
+	  }
       default:
         return {
           ...(await executeForgedBlock(state, block)),

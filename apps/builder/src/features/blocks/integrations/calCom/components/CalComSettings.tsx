@@ -75,6 +75,7 @@ export const CalComSettings = ({ options, onOptionsChange }: Props) => {
             <TextInput
               label="Event link"
               placeholder="https://app.cal.com/username/eventname"
+              defaultValue={options.eventLink}
               onChange={(eventLink) => {
                 onOptionsChange({ ...options, eventLink })
               }}
