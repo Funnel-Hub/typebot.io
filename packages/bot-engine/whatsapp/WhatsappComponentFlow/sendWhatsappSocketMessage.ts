@@ -59,7 +59,7 @@ export async function sendSocketWhatsappMessage(
   clientId: string,
   { message, phones, sessionId }: SendMessagePayload
 ) {
-  const typebot = await getMembersByTypebotSession(sessionId)
+  //const typebot = await getMembersByTypebotSession(sessionId)
 
   const socketClient = await new Promise<Socket>((resolve, reject) => {
     const socket = io(env.WHATSAPP_SERVER, {
@@ -72,17 +72,19 @@ export async function sendSocketWhatsappMessage(
 
     socket.on('qr', async () => {
       socket.close()
-      await Promise.all(
-        typebot.workspace.members.map(async (member) => {
-          await sendNotificationToMember(
-            {
-              id: member.user.id as unknown as string,
-              name: member.user.name as unknown as string,
-            },
-            typebot.name
-          )
-        })
-      )
+      const session = await getSession(sessionId)
+      console.log(session?.state.typebotsQueue[0].typebot)
+      // await Promise.all(
+      //   typebot.workspace.members.map(async (member) => {
+      //     await sendNotificationToMember(
+      //       {
+      //         id: member.user.id as unknown as string,
+      //         name: member.user.name as unknown as string,
+      //       },
+      //       typebot.name
+      //     )
+      //   })
+      // )
       reject(
         new TRPCError({
           code: 'BAD_REQUEST',
