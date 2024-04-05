@@ -46,6 +46,7 @@ import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integr
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
 import { ForgedBlockSettings } from '../../../../forge/components/ForgedBlockSettings'
 import { SettingsHoverBar } from './SettingsHoverBar'
+import { CalComSettings } from '@/features/blocks/integrations/calCom/components/CalComSettings'
 
 type Props = {
   block: BlockWithOptions
@@ -326,6 +327,13 @@ export const BlockSettings = ({
         <ZemanticAiSettings block={block} onOptionsChange={updateOptions} />
       )
     }
+    case IntegrationBlockType.CALCOM:
+      return (
+        <CalComSettings
+          options={block.options}
+          onOptionsChange={updateOptions}
+        />
+      )
     case LogicBlockType.CONDITION:
       return null
     default: {

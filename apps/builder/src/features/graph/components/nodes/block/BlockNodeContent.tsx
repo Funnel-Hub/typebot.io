@@ -40,6 +40,7 @@ import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integr
 import { ForgedBlockNodeContent } from '@/features/forge/components/ForgedBlockNodeContent'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
 import { ItemNodesList } from '../item/ItemNodesList'
+import { CalComContent } from '@/features/blocks/integrations/calCom/components/CalComContent'
 
 type Props = {
   block: BlockV6
@@ -162,6 +163,9 @@ export const BlockNodeContent = ({
     }
     case IntegrationBlockType.ZEMANTIC_AI: {
       return <ZemanticAiNodeBody options={block.options} />
+    }
+    case IntegrationBlockType.CALCOM: {
+      return <CalComContent block={block} />
     }
     default: {
       return <ForgedBlockNodeContent block={block} />

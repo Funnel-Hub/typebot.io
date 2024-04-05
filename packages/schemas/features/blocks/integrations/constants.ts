@@ -11,4 +11,5 @@ export enum IntegrationBlockType {
   CHATWOOT = 'Chatwoot',
   PIXEL = 'Pixel',
   ZEMANTIC_AI = 'Zemantic AI',
+  CALCOM = 'Calendar'
 }

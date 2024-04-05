@@ -1,4 +1,5 @@
 export * from './chatwoot'
+export * from './calCom'
 export * from './googleAnalytics'
 export * from './googleSheets'
 export * from './makeCom'

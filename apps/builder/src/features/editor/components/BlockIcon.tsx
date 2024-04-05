@@ -45,6 +45,7 @@ import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/consta
 import { Block } from '@typebot.io/schemas'
 import { OpenAILogo } from '@/features/blocks/integrations/openai/components/OpenAILogo'
 import { ForgedBlockIcon } from '@/features/forge/ForgedBlockIcon'
+import { CalComLogo } from '@/features/blocks/integrations/calCom/components/CalComLog'
 
 type BlockIconProps = { type: Block['type']; mt?: string }
 
@@ -129,6 +130,8 @@ export const BlockIcon = ({ type, mt }: BlockIconProps): JSX.Element => {
       return <OpenAILogo mt={mt} fill={openAIColor} />
     case IntegrationBlockType.WHATSAPP:
       return <WhatsappIcon mt={mt} />
+    case IntegrationBlockType.CALCOM:
+      return <CalComLogo mt={mt} />
     default:
       return <ForgedBlockIcon type={type} mt={mt} />
   }

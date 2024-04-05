@@ -1,4 +1,5 @@
 import { z } from '../../../zod'
+import { calComBlockSchema } from './calCom'
 import { chatwootBlockSchema } from './chatwoot'
 import { googleAnalyticsBlockSchema } from './googleAnalytics'
 import { googleSheetsBlockSchemas } from './googleSheets'
@@ -40,6 +41,7 @@ export const integrationBlockSchemas = {
     zapierBlockSchemas.v6,
     pixelBlockSchema,
     zemanticAiBlockSchema,
+	calComBlockSchema
   ],
 } as const
 
