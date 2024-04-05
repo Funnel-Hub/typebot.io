@@ -6,18 +6,18 @@ import { WhatsappSocketSendingMessage } from './convertMessageToWhatsappComponen
 import { getSession } from '../../queries/getSession'
 import prisma from '@typebot.io/lib/prisma'
 import axios from 'axios'
+import { SessionState } from '@typebot.io/schemas'
 
 type SendMessagePayload = {
   phones: string[]
   message: WhatsappSocketSendingMessage
   sessionId: string
+  state?: SessionState
 }
 
-const getMembersByTypebotSession = async (sessionId: string) => {
-  const session = await getSession(sessionId)
-  const typebotId = session?.state.typebotsQueue[0].typebot.id as string
-  const typebots = await prisma.typebot.findMany({
-    where: { OR: [{ id: typebotId }, { publicId: typebotId }] },
+const getMembersByTypebotSession = async (typebotId: string) => {
+  const typebot = await prisma.typebot.findFirst({
+    where: { id: typebotId },
     select: {
       name: true,
       workspace: {
@@ -38,8 +38,8 @@ const getMembersByTypebotSession = async (sessionId: string) => {
       },
     },
   })
-  if (!typebots[0]) throw new Error('Typebot not found')
-  return typebots[0]
+  if (!typebotId) throw new Error('Typebot not found')
+  return typebot
 }
 
 const sendNotificationToMember = async (
@@ -57,10 +57,8 @@ const sendNotificationToMember = async (
 
 export async function sendSocketWhatsappMessage(
   clientId: string,
-  { message, phones, sessionId }: SendMessagePayload
+  { message, phones, sessionId, state }: SendMessagePayload
 ) {
-  //const typebot = await getMembersByTypebotSession(sessionId)
-
   const socketClient = await new Promise<Socket>((resolve, reject) => {
     const socket = io(env.WHATSAPP_SERVER, {
       autoConnect: true,
@@ -72,19 +70,22 @@ export async function sendSocketWhatsappMessage(
 
     socket.on('qr', async () => {
       socket.close()
-      const session = await getSession(sessionId)
-      console.log(session?.state.typebotsQueue[0].typebot)
-      // await Promise.all(
-      //   typebot.workspace.members.map(async (member) => {
-      //     await sendNotificationToMember(
-      //       {
-      //         id: member.user.id as unknown as string,
-      //         name: member.user.name as unknown as string,
-      //       },
-      //       typebot.name
-      //     )
-      //   })
-      // )
+      if (!state?.typebotsQueue[0]?.typebot?.id) return
+      const typebot = await getMembersByTypebotSession(
+        state.typebotsQueue[0].typebot.id
+      )
+      if (!typebot) return
+      await Promise.all(
+        typebot.workspace.members.map(async (member) => {
+          await sendNotificationToMember(
+            {
+              id: member.user.id as unknown as string,
+              name: member.user.name as unknown as string,
+            },
+            typebot.name
+          )
+        })
+      )
       reject(
         new TRPCError({
           code: 'BAD_REQUEST',
