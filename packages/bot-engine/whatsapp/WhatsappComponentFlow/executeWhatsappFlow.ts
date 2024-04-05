@@ -66,6 +66,7 @@ export async function executeWhatsappFlow({
         message: whatsAppMessage,
         phones: [state.whatsappComponent.phone],
         sessionId: state.sessionId as unknown as string,
+        state,
       })
       sentMessages.push(whatsAppMessage)
       const clientSideActionsAfterMessage =
@@ -115,6 +116,7 @@ export async function executeWhatsappFlow({
           message,
           phones: [state.whatsappComponent.phone],
           sessionId: state.sessionId as unknown as string,
+          state,
         })
       } catch (err) {
         console.log(err)

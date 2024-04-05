@@ -1,7 +1,7 @@
 {
   "name": "viewer",
   "license": "AGPL-3.0-or-later",
-  "version": "1.0.12",
+  "version": "1.0.12-rca",
   "scripts": {
     "dev": "dotenv -e ./.env -e ../../.env  -- next dev -p 3001 --experimental-https",
     "build": "dotenv -e ./.env -e ../../.env -- next build",
