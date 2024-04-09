@@ -3,7 +3,6 @@ import { env } from '@typebot.io/env'
 import { Socket, io } from 'socket.io-client'
 import { WhatsappOperationTypes } from './WhatsappOperationType'
 import { WhatsappSocketSendingMessage } from './convertMessageToWhatsappComponent'
-import { getSession } from '../../queries/getSession'
 import prisma from '@typebot.io/lib/prisma'
 import axios from 'axios'
 import { SessionState } from '@typebot.io/schemas'
@@ -72,10 +71,15 @@ export async function sendSocketWhatsappMessage(
 
     socket.on('qr', async () => {
       socket.close()
+      console.log(
+        '!state?.typebotsQueue[0]?.typebot?.id >>>',
+        state?.typebotsQueue[0]?.typebot?.id
+      )
       if (!state?.typebotsQueue[0]?.typebot?.id) return
       const typebot = await getMembersByTypebotSession(
         state.typebotsQueue[0].typebot.id
       )
+      console.log('typebot whatsapp', typebot)
       if (!typebot) return
       await Promise.all(
         typebot.workspace.members.map(async (member) => {
