@@ -34,6 +34,16 @@ export async function multipleWhatsappFlow({
     state.typebotsQueue[0].typebot.groups
   ).block as any
 
+  let whatsappComponents = 0
+  for (const group of state.typebotsQueue[0].typebot.groups) {
+    const block = group.blocks.find(
+      (block) => block.type === IntegrationBlockType.WHATSAPP
+    )
+    if (block) whatsappComponents += 1
+  }
+
+  if (whatsappComponents === 1) return
+
   let currentState = state
   const blocksNotRepeat = [block.id]
   while (block?.type === IntegrationBlockType.WHATSAPP && block?.options) {
