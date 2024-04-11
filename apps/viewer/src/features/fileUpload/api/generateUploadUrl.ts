@@ -7,7 +7,7 @@ import prisma from '@typebot.io/lib/prisma'
 import { getSession } from '@typebot.io/bot-engine/queries/getSession'
 import { parseGroups } from '@typebot.io/schemas'
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
-import { getBlockById } from '@typebot.io/lib/getBlockById'
+import { getBlockById } from '@typebot.io/schemas/helpers'
 
 export const generateUploadUrl = publicProcedure
   .meta({
@@ -140,10 +140,6 @@ export const generateUploadUrl = publicProcedure
         message: "Can't find workspaceId",
       })
 
-    const resultId = session.state.typebotsQueue[0].resultId
-
-    const filePath = `public/workspaces/${workspaceId}/typebots/${typebotId}/results/${resultId}/${filePathProps.fileName}`
-
     if (session.state.currentBlockId === undefined)
       throw new TRPCError({
         code: 'BAD_REQUEST',
@@ -163,20 +159,31 @@ export const generateUploadUrl = publicProcedure
         message: "Can't find file upload block",
       })
 
+    const resultId = session.state.typebotsQueue[0].resultId
+
+    const filePath = `${
+      fileUploadBlock.options?.visibility === 'Private' ? 'private' : 'public'
+    }/workspaces/${workspaceId}/typebots/${typebotId}/results/${resultId}/${
+      filePathProps.fileName
+    }`
+
     const presignedPostPolicy = await generatePresignedPostPolicy({
       fileType,
       filePath,
       maxFileSize:
         fileUploadBlock.options && 'sizeLimit' in fileUploadBlock.options
-          ? fileUploadBlock.options.sizeLimit
+          ? (fileUploadBlock.options.sizeLimit as number)
           : env.NEXT_PUBLIC_BOT_FILE_UPLOAD_MAX_SIZE,
     })
 
     return {
       presignedUrl: presignedPostPolicy.postURL,
       formData: presignedPostPolicy.formData,
-      fileUrl: env.S3_PUBLIC_CUSTOM_DOMAIN
-        ? `${env.S3_PUBLIC_CUSTOM_DOMAIN}/${filePath}`
-        : `${presignedPostPolicy.postURL}/${presignedPostPolicy.formData.key}`,
+      fileUrl:
+        fileUploadBlock.options?.visibility === 'Private'
+          ? `${env.NEXTAUTH_URL}/api/typebots/${typebotId}/results/${resultId}/${filePathProps.fileName}`
+          : env.S3_PUBLIC_CUSTOM_DOMAIN
+          ? `${env.S3_PUBLIC_CUSTOM_DOMAIN}/${filePath}`
+          : `${presignedPostPolicy.postURL}/${presignedPostPolicy.formData.key}`,
     }
   })

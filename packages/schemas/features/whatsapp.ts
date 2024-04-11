@@ -142,7 +142,7 @@ export const incomingMessageSchema = z.discriminatedUnion('type', [
     type: z.literal('location'),
     location: z.object({
       latitude: z.number(),
-      longitude: z.number()
+      longitude: z.number(),
     }),
     timestamp: z.string(),
   }),
@@ -173,6 +173,10 @@ export const whatsAppWebhookRequestBodySchema = z.object({
     })
   ),
 })
+
+export type WhatsAppWebhookRequestBody = z.infer<
+  typeof whatsAppWebhookRequestBodySchema
+>
 
 export const whatsAppCredentialsSchema = z
   .object({

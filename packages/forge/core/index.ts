@@ -10,12 +10,21 @@ export const createAuth = <A extends AuthDefinition>(authDefinition: A) =>
   authDefinition
 
 export const createBlock = <
-  I extends string,
+  Id extends string,
   A extends AuthDefinition,
   O extends z.ZodObject<any>
 >(
-  blockDefinition: BlockDefinition<I, A, O>
-): BlockDefinition<I, A, O> => blockDefinition
+  blockDefinition: BlockDefinition<Id, A, O>
+): BlockDefinition<Id, A, O> => blockDefinition
+
+export const createVersionedBlock = <
+  Blocks extends Record<
+    string,
+    BlockDefinition<string, AuthDefinition, z.ZodObject<any>>
+  >
+>(
+  blocks: Blocks
+): Blocks => blocks
 
 export const createAction = <
   A extends AuthDefinition,
@@ -80,7 +89,7 @@ export const parseBlockCredentials = <
 >(
   blockDefinition: BlockDefinition<I, A, O>
 ) => {
-  if (!blockDefinition.auth) throw new Error('Block has no auth definition')
+  if (!blockDefinition.auth) return null
   return z.object({
     id: z.string(),
     type: z.literal(blockDefinition.id),
@@ -101,6 +110,18 @@ export const option = {
     z.enum(values).optional(),
   number: z.number().or(variableStringSchema).optional(),
   array: <T extends z.ZodTypeAny>(schema: T) => z.array(schema).optional(),
+  keyValueList: z
+    .array(
+      z.object({
+        key: z.string().optional().layout({
+          label: 'Key',
+        }),
+        value: z.string().optional().layout({
+          label: 'Value',
+        }),
+      })
+    )
+    .optional(),
   discriminatedUnion: <
     T extends string,
     J extends [

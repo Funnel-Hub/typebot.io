@@ -1,14 +1,3 @@
-import { createId } from '@paralleldrive/cuid2'
-import { TRPCError } from '@trpc/server'
-import { env } from '@typebot.io/env'
-import {
-  isBubbleBlock,
-  isInputBlock,
-  isIntegrationBlock,
-  isLogicBlock,
-  isNotEmpty,
-} from '@typebot.io/lib'
-import { VisitedEdge } from '@typebot.io/prisma'
 import {
   ContinueChatResponse,
   Group,
@@ -16,8 +5,13 @@ import {
   RuntimeOptions,
   SessionState,
 } from '@typebot.io/schemas'
-import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
-import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
+import { isNotEmpty } from '@typebot.io/lib'
+import {
+  isBubbleBlock,
+  isInputBlock,
+  isIntegrationBlock,
+  isLogicBlock,
+} from '@typebot.io/schemas/helpers'
 import { injectVariableValuesInButtonsInputBlock } from './blocks/inputs/buttons/injectVariableValuesInButtonsInputBlock'
 import { parseDateInput } from './blocks/inputs/date/parseDateInput'
 import { computePaymentInputRuntimeOptions } from './blocks/inputs/payment/computePaymentInputRuntimeOptions'
@@ -32,6 +26,12 @@ import {
 } from './parseBubbleBlock'
 import { ExecuteIntegrationResponse, ExecuteLogicResponse } from './types'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
+import { VisitedEdge } from '@typebot.io/prisma'
+import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
+import { env } from '@typebot.io/env'
+import { TRPCError } from '@trpc/server'
+import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
+import { createId } from '@paralleldrive/cuid2'
 
 type ContextProps = {
   version: 1 | 2
@@ -271,6 +271,25 @@ export const parseInput =
       }
       case InputBlockType.DATE: {
         return parseDateInput(state)(block)
+      }
+      case InputBlockType.RATING: {
+        const parsedBlock = deepParseVariables(
+          state.typebotsQueue[0].typebot.variables
+        )({
+          ...block,
+          prefilledValue: getPrefilledInputValue(
+            state.typebotsQueue[0].typebot.variables
+          )(block),
+        })
+        return {
+          ...parsedBlock,
+          options: {
+            ...parsedBlock.options,
+            startsAt: isNotEmpty(parsedBlock.options?.startsAt as string)
+              ? Number(parsedBlock.options?.startsAt)
+              : undefined,
+          },
+        }
       }
       default: {
         return deepParseVariables(state.typebotsQueue[0].typebot.variables)({

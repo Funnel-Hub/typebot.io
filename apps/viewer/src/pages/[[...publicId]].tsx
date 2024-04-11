@@ -7,8 +7,11 @@ import { TypebotPageProps, TypebotPageV2 } from '@/components/TypebotPageV2'
 import { TypebotPageV3, TypebotV3PageProps } from '@/components/TypebotPageV3'
 import { env } from '@typebot.io/env'
 import prisma from '@typebot.io/lib/prisma'
-import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
 import { defaultSettings } from '@typebot.io/schemas/features/typebot/settings/constants'
+import {
+  defaultBackgroundColor,
+  defaultBackgroundType,
+} from '@typebot.io/schemas/features/typebot/theme/constants'
 
 // Browsers that doesn't support ES modules and/or web components
 const incompatibleBrowsers = [
@@ -109,13 +112,15 @@ const getTypebotFromPublicId = async (publicId?: string) => {
     ? ({
         name: publishedTypebot.typebot.name,
         publicId: publishedTypebot.typebot.publicId ?? null,
-        background:
-          publishedTypebot.theme.general?.background ??
-          defaultTheme.general.background,
+        background: publishedTypebot.theme.general?.background ?? {
+          type: defaultBackgroundType,
+          content: defaultBackgroundColor,
+        },
         isHideQueryParamsEnabled:
           publishedTypebot.settings.general?.isHideQueryParamsEnabled ??
           defaultSettings.general.isHideQueryParamsEnabled,
         metadata: publishedTypebot.settings.metadata ?? {},
+        font: publishedTypebot.theme.general?.font ?? null,
       } satisfies Pick<
         TypebotV3PageProps,
         | 'name'
@@ -123,6 +128,7 @@ const getTypebotFromPublicId = async (publicId?: string) => {
         | 'background'
         | 'isHideQueryParamsEnabled'
         | 'metadata'
+        | 'font'
       >)
     : publishedTypebot
 }
@@ -154,13 +160,15 @@ const getTypebotFromCustomDomain = async (customDomain: string) => {
     ? ({
         name: publishedTypebot.typebot.name,
         publicId: publishedTypebot.typebot.publicId ?? null,
-        background:
-          publishedTypebot.theme.general?.background ??
-          defaultTheme.general.background,
+        background: publishedTypebot.theme.general?.background ?? {
+          type: defaultBackgroundType,
+          content: defaultBackgroundColor,
+        },
         isHideQueryParamsEnabled:
           publishedTypebot.settings.general?.isHideQueryParamsEnabled ??
           defaultSettings.general.isHideQueryParamsEnabled,
         metadata: publishedTypebot.settings.metadata ?? {},
+        font: publishedTypebot.theme.general?.font ?? null,
       } satisfies Pick<
         TypebotV3PageProps,
         | 'name'
@@ -168,6 +176,7 @@ const getTypebotFromCustomDomain = async (customDomain: string) => {
         | 'background'
         | 'isHideQueryParamsEnabled'
         | 'metadata'
+        | 'font'
       >)
     : publishedTypebot
 }
@@ -196,6 +205,7 @@ const App = ({
         | 'background'
         | 'isHideQueryParamsEnabled'
         | 'metadata'
+        | 'font'
       >
   incompatibleBrowser: string | null
 }) => {
@@ -228,9 +238,13 @@ const App = ({
         defaultSettings.general.isHideQueryParamsEnabled
       }
       background={
-        publishedTypebot.background ?? defaultTheme.general.background
+        publishedTypebot.background ?? {
+          type: defaultBackgroundType,
+          content: defaultBackgroundColor,
+        }
       }
       metadata={publishedTypebot.metadata ?? {}}
+      font={publishedTypebot.font}
     />
   )
 }

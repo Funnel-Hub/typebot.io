@@ -6,8 +6,8 @@ import {
 import React, { memo } from 'react'
 import { EndpointsProvider } from '../providers/EndpointsProvider'
 import { Edges } from './edges/Edges'
-import { GroupNode } from './nodes/group'
-import { isInputBlock } from '@typebot.io/lib'
+import { GroupNode } from './nodes/group/GroupNode'
+import { isInputBlock } from '@typebot.io/schemas/helpers'
 import { EventNode } from './nodes/event'
 
 type Props = {

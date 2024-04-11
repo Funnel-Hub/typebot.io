@@ -1,9 +1,9 @@
 import {
   Background,
   ChatTheme,
-  ContainerColors,
+  ContainerTheme,
   GeneralTheme,
-  InputColors,
+  InputTheme,
   Theme,
 } from '@typebot.io/schemas'
 import { BackgroundType } from '@typebot.io/schemas/features/typebot/theme/constants'
@@ -50,7 +50,8 @@ const setGeneralTheme = (
 ) => {
   const { background, font } = generalTheme
   if (background) setTypebotBackground
-  if (font) documentStyle.setProperty(cssVariableNames.general.fontFamily, font)
+  if (font && typeof font === 'string')
+    documentStyle.setProperty(cssVariableNames.general.fontFamily, font)
 }
 
 const setChatTheme = (
@@ -65,7 +66,7 @@ const setChatTheme = (
 }
 
 const setHostBubbles = (
-  hostBubbles: ContainerColors,
+  hostBubbles: ContainerTheme,
   documentStyle: CSSStyleDeclaration
 ) => {
   if (hostBubbles.backgroundColor)
@@ -81,7 +82,7 @@ const setHostBubbles = (
 }
 
 const setGuestBubbles = (
-  guestBubbles: ContainerColors,
+  guestBubbles: any,
   documentStyle: CSSStyleDeclaration
 ) => {
   if (guestBubbles.backgroundColor)
@@ -97,7 +98,7 @@ const setGuestBubbles = (
 }
 
 const setButtons = (
-  buttons: ContainerColors,
+  buttons: ContainerTheme,
   documentStyle: CSSStyleDeclaration
 ) => {
   if (buttons.backgroundColor)
@@ -112,7 +113,7 @@ const setButtons = (
     )
 }
 
-const setInputs = (inputs: InputColors, documentStyle: CSSStyleDeclaration) => {
+const setInputs = (inputs: InputTheme, documentStyle: CSSStyleDeclaration) => {
   if (inputs.backgroundColor)
     documentStyle.setProperty(
       cssVariableNames.chat.inputs.bgColor,

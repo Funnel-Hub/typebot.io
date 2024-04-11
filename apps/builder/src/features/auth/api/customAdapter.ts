@@ -8,13 +8,13 @@ import {
 } from '@typebot.io/prisma'
 import type { Adapter, AdapterUser } from 'next-auth/adapters'
 import { generateId } from '@typebot.io/lib'
-import { sendTelemetryEvents } from '@typebot.io/lib/telemetry/sendTelemetryEvent'
 import { TelemetryEvent } from '@typebot.io/schemas/features/telemetry'
 import { convertInvitationsToCollaborations } from '@/features/auth/helpers/convertInvitationsToCollaborations'
 import { getNewUserInvitations } from '@/features/auth/helpers/getNewUserInvitations'
 import { joinWorkspaces } from '@/features/auth/helpers/joinWorkspaces'
 import { env } from '@typebot.io/env'
 import { createId } from '@paralleldrive/cuid2'
+import { trackEvents } from '@typebot.io/telemetry/trackEvents'
 
 export function customAdapter(p: PrismaClient): Adapter {
   return {
@@ -34,7 +34,7 @@ export function customAdapter(p: PrismaClient): Adapter {
 
       if (
         env.DISABLE_SIGNUP &&
-        env.ADMIN_EMAIL !== data.email &&
+        env.ADMIN_EMAIL?.every((email) => email !== user.email) &&
         invitations.length === 0 &&
         workspaceInvitations.length === 0
       ) {
@@ -94,7 +94,7 @@ export function customAdapter(p: PrismaClient): Adapter {
         },
       })
 
-      await sendTelemetryEvents(events)
+      await trackEvents(events)
 
       if (invitations.length > 0) {
         await convertInvitationsToCollaborations(

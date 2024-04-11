@@ -9,7 +9,8 @@ import {
 import { SetTypebot } from '../TypebotProvider'
 import { Draft, produce } from 'immer'
 import { deleteConnectedEdgesDraft } from './edges'
-import { byId, blockHasItems } from '@typebot.io/lib'
+import { byId } from '@typebot.io/lib'
+import { blockHasItems } from '@typebot.io/schemas/helpers'
 import { createId } from '@paralleldrive/cuid2'
 import {
   BlockWithCreatableItems,
@@ -170,6 +171,7 @@ const itemsAction = (setTypebot: SetTypebot): ItemsActions => ({
         const block = typebot.groups[groupIndex].blocks[
           blockIndex
         ] as BlockWithItems
+        if (block.items.length === 1) return
         const removingItem = block.items[itemIndex]
         block.items.splice(itemIndex, 1)
         deleteConnectedEdgesDraft(typebot, removingItem.id)

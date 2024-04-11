@@ -53,11 +53,11 @@ export const SettingsSideMenu = () => {
     <Stack
       flex="1"
       maxW="400px"
-      height={`calc(100vh - ${headerHeight}px)`}
+      height="full"
       borderRightWidth={1}
       pt={10}
       spacing={10}
-      overflowY="scroll"
+      overflowY="auto"
       pb="20"
     >
       <Heading fontSize="xl" textAlign="center">

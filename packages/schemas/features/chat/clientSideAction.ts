@@ -1,8 +1,8 @@
 import { extendZodWithOpenApi } from 'zod-openapi'
 import { z } from '../../zod'
 import {
-  executableWebhookSchema,
   googleAnalyticsOptionsSchema,
+  executableHttpRequestSchema,
   pixelOptionsSchema,
   redirectOptionsSchema,
 } from '../blocks'
@@ -120,7 +120,7 @@ export const clientSideActionSchema = z.discriminatedUnion('type', [
   z
     .object({
       type: z.literal('webhookToExecute'),
-      webhookToExecute: executableWebhookSchema,
+      webhookToExecute: executableHttpRequestSchema,
     })
     .merge(clientSideActionBaseSchema)
     .openapi({

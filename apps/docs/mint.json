@@ -1,10 +1,7 @@
 {
   "$schema": "https://mintlify.com/schema.json",
   "name": "Typebot Docs",
-  "openapi": [
-    "/openapi-reference/builder.json",
-    "/openapi-reference/viewer.json"
-  ],
+  "openapi": ["/openapi/builder.json", "/openapi/viewer.json"],
   "feedback": {
     "suggestEdit": true
   },
@@ -65,17 +62,9 @@
       "pages": ["get-started/introduction", "get-started/overview"]
     },
     {
-      "group": "Workspace",
-      "pages": [
-        "workspace",
-        "workspace/add-members-and-guests",
-        "workspace/subscription",
-        "workspace/preferences"
-      ]
-    },
-    {
       "group": "Flow",
       "pages": [
+        "editor/graph",
         {
           "group": "Blocks",
           "icon": "block",
@@ -133,7 +122,10 @@
                 "editor/blocks/integrations/chatwoot",
                 "editor/blocks/integrations/meta-pixel",
                 "editor/blocks/integrations/openai",
-                "editor/blocks/integrations/zemantic-ai"
+                "editor/blocks/integrations/zemantic-ai",
+                "editor/blocks/integrations/mistral",
+                "editor/blocks/integrations/elevenlabs",
+                "editor/blocks/integrations/anthropic"
               ]
             }
           ]
@@ -147,11 +139,11 @@
     },
     {
       "group": "Theme",
-      "pages": ["theme/overview"]
+      "pages": ["theme/overview", "theme/font"]
     },
     {
       "group": "Settings",
-      "pages": ["settings/overview"]
+      "pages": ["settings/overview", "settings/remember-user"]
     },
     {
       "group": "Deploy",
@@ -191,8 +183,18 @@
       "pages": ["results/overview", "results/analytics"]
     },
     {
+      "group": "Workspace",
+      "pages": [
+        "workspace",
+        "workspace/add-members-and-guests",
+        "workspace/subscription",
+        "workspace/preferences"
+      ]
+    },
+    {
       "group": "Guides",
       "pages": [
+        "guides/how-to-get-help",
         "guides/mailer-lite",
         "guides/multi-avatars",
         "guides/rtl",
@@ -201,7 +203,7 @@
     },
     {
       "group": "Misc",
-      "pages": ["faq", "privacy-policies", "breaking-changes"]
+      "pages": ["faq", "privacy-policies", "report-abuse", "breaking-changes"]
     },
     {
       "group": "Get started",
@@ -284,6 +286,20 @@
         "api-reference/results/get",
         "api-reference/results/delete",
         "api-reference/results/list-logs"
+      ]
+    },
+    {
+      "group": "Analytics",
+      "pages": ["api-reference/analytics/get-stats"]
+    },
+    {
+      "group": "Folder",
+      "pages": [
+        "api-reference/folder/list",
+        "api-reference/folder/get",
+        "api-reference/folder/create",
+        "api-reference/folder/update",
+        "api-reference/folder/delete"
       ]
     },
     {

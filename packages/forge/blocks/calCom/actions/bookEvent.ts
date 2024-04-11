@@ -23,6 +23,10 @@ export const bookEvent = createAction({
       label: 'Email',
       placeholder: 'johndoe@gmail.com',
     }),
+    additionalNotes: option.string.layout({
+      accordion: 'Prefill information',
+      label: 'Additional notes',
+    }),
     phone: option.string.layout({
       accordion: 'Prefill information',
       label: 'Phone number',
@@ -38,6 +42,7 @@ export const bookEvent = createAction({
   run: {
     web: {
       displayEmbedBubble: {
+        maxBubbleWidth: 780,
         waitForEvent: {
           getSaveVariableId: ({ saveBookedDateInVariableId }) =>
             saveBookedDateInVariableId,
@@ -47,7 +52,9 @@ export const bookEvent = createAction({
               content: `Cal("on", {
                 action: "bookingSuccessful",
                 callback: (e) => {
+                  if(window.calComBooked) return
                   continueFlow(e.detail.data.date)
+                  window.calComBooked = true
                 }
               })`,
             }
@@ -67,6 +74,7 @@ export const bookEvent = createAction({
               email: options.email ?? null,
               layout: parseLayoutAttr(options.layout),
               phone: options.phone ?? null,
+              additionalNotes: options.additionalNotes ?? null,
             },
             content: `(function (C, A, L) {
                 let p = function (a, ar) {
@@ -98,6 +106,9 @@ export const bookEvent = createAction({
                     p(cal, ar);
                   };
               })(window, baseUrl + "/embed/embed.js", "init");
+
+              window.calComBooked = false;
+
               Cal("init", { origin: baseUrl });
 
               const location = phone ? JSON.stringify({
@@ -112,6 +123,7 @@ export const bookEvent = createAction({
                 config: {
                   name: name ?? undefined,
                   email: email ?? undefined,
+                  notes: additionalNotes ?? undefined,
                   location
                 }
               });

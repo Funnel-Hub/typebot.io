@@ -6,10 +6,10 @@ import { buffer } from 'micro'
 import prisma from '@typebot.io/lib/prisma'
 import { Plan, WorkspaceRole } from '@typebot.io/prisma'
 import { RequestHandler } from 'next/dist/server/next'
-import { sendTelemetryEvents } from '@typebot.io/lib/telemetry/sendTelemetryEvent'
 import { Settings } from '@typebot.io/schemas'
 import { env } from '@typebot.io/env'
-import { prices } from '@typebot.io/lib/billing/constants'
+import { prices } from '@typebot.io/billing/constants'
+import { trackEvents } from '@typebot.io/telemetry/trackEvents'
 
 if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET)
   throw new Error('STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET missing')
@@ -75,7 +75,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
               },
             })
 
-            await sendTelemetryEvents(
+            await trackEvents(
               workspace.members.map((m) => ({
                 name: 'Subscription updated',
                 workspaceId,
@@ -108,7 +108,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
               },
             })
 
-            await sendTelemetryEvents([
+            await trackEvents([
               {
                 name: 'Subscription updated',
                 workspaceId,
@@ -152,7 +152,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
               isPastDue: true,
             },
           })
-          await sendTelemetryEvents(
+          await trackEvents(
             existingWorkspace.members.map((m) => ({
               name: 'Workspace past due',
               workspaceId: existingWorkspace.id,
@@ -202,7 +202,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
               },
             },
           })
-          await sendTelemetryEvents(
+          await trackEvents(
             updatedWorkspace.members.map((m) => ({
               name: 'Workspace past due status removed',
               workspaceId: updatedWorkspace.id,
@@ -234,6 +234,17 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             outstandingInvoices.data.filter(
               (invoice) => invoice.amount_due > prices['PRO'] * 100
             )
+
+          const workspaceExist =
+            (await prisma.workspace.count({
+              where: {
+                stripeId: subscription.customer as string,
+              },
+            })) > 0
+
+          if (!workspaceExist)
+            return res.send({ message: 'Workspace not found, skipping...' })
+
           const workspace = await prisma.workspace.update({
             where: {
               stripeId: subscription.customer as string,
@@ -255,7 +266,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             },
           })
 
-          await sendTelemetryEvents(
+          await trackEvents(
             workspace.members.map((m) => ({
               name: 'Subscription updated',
               workspaceId: workspace.id,

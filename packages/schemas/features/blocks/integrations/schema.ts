@@ -7,7 +7,7 @@ import { openAIBlockSchema } from './openai'
 import { pabblyConnectBlockSchemas } from './pabblyConnect'
 import { pixelBlockSchema } from './pixel/schema'
 import { sendEmailBlockSchema } from './sendEmail'
-import { webhookBlockSchemas } from './webhook'
+import { httpBlockSchemas } from './webhook'
 import { whatsappBlockSchema } from './whatsapp'
 import { zapierBlockSchemas } from './zapier'
 import { zemanticAiBlockSchema } from './zemanticAi'
@@ -22,7 +22,7 @@ export const integrationBlockSchemas = {
     whatsappBlockSchema,
     pabblyConnectBlockSchemas.v5,
     sendEmailBlockSchema,
-    webhookBlockSchemas.v5,
+    httpBlockSchemas.v5,
     zapierBlockSchemas.v5,
     pixelBlockSchema,
     zemanticAiBlockSchema,
@@ -36,7 +36,7 @@ export const integrationBlockSchemas = {
     whatsappBlockSchema,
     pabblyConnectBlockSchemas.v6,
     sendEmailBlockSchema,
-    webhookBlockSchemas.v6,
+    httpBlockSchemas.v6,
     zapierBlockSchemas.v6,
     pixelBlockSchema,
     zemanticAiBlockSchema,

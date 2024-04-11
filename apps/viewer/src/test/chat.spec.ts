@@ -6,7 +6,7 @@ import {
   deleteTypebots,
   deleteWebhooks,
   importTypebotInDatabase,
-} from '@typebot.io/lib/playwright/databaseActions'
+} from '@typebot.io/playwright/databaseActions'
 import prisma from '@typebot.io/lib/prisma'
 import { StartChatInput, StartPreviewChatInput } from '@typebot.io/schemas'
 import { HttpMethod } from '@typebot.io/schemas/features/blocks/integrations/webhook/constants'

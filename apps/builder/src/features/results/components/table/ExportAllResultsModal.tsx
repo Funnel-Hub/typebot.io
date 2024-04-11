@@ -20,9 +20,9 @@ import {
 import { TRPCError } from '@trpc/server'
 import { unparse } from 'papaparse'
 import { useState } from 'react'
-import { parseResultHeader } from '@typebot.io/lib/results/parseResultHeader'
-import { convertResultsToTableData } from '@typebot.io/lib/results/convertResultsToTableData'
-import { parseColumnsOrder } from '@typebot.io/lib/results/parseColumnsOrder'
+import { parseResultHeader } from '@typebot.io/results/parseResultHeader'
+import { convertResultsToTableData } from '@typebot.io/results/convertResultsToTableData'
+import { parseColumnsOrder } from '@typebot.io/results/parseColumnsOrder'
 import { parseUniqueKey } from '@typebot.io/lib/parseUniqueKey'
 import { useResults } from '../../ResultsProvider'
 import { byId, isDefined } from '@typebot.io/lib'
@@ -67,6 +67,7 @@ export const ExportAllResultsModal = ({ isOpen, onClose }: Props) => {
             typebotId,
             limit: 100,
             cursor,
+            timeFilter: 'allTime',
           })
         allResults.push(...results)
         setExportProgressValue((allResults.length / totalResults) * 100)

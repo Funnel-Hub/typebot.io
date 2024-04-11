@@ -21,21 +21,24 @@ import { FolderIcon, MoreVerticalIcon } from '@/components/icons'
 import { ConfirmModal } from '@/components/ConfirmModal'
 import { useTypebotDnd } from '../TypebotDndProvider'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
-import { deleteFolderQuery } from '../queries/deleteFolderQuery'
+import React, { memo, useMemo } from 'react'
 import { useToast } from '@/hooks/useToast'
-import { updateFolderQuery } from '../queries/updateFolderQuery'
 import { T, useTranslate } from '@tolgee/react'
+import { trpc } from '@/lib/trpc'
 
-export const FolderButton = ({
+type Props = {
+  folder: DashboardFolder
+  index: number
+  onFolderDeleted: () => void
+  onFolderRenamed: () => void
+}
+
+const FolderButton = ({
   folder,
+  index,
   onFolderDeleted,
   onFolderRenamed,
-}: {
-  folder: DashboardFolder
-  onFolderDeleted: () => void
-  onFolderRenamed: (newName: string) => void
-}) => {
+}: Props) => {
   const { t } = useTranslate()
   const router = useRouter()
   const { draggedTypebot, setMouseOverFolderId, mouseOverFolderId } =
@@ -47,21 +50,29 @@ export const FolderButton = ({
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { showToast } = useToast()
 
-  const onDeleteClick = async () => {
-    const { error } = await deleteFolderQuery(folder.id)
-    return error
-      ? showToast({
-          description: error.message,
-        })
-      : onFolderDeleted()
-  }
+  const { mutate: deleteFolder } = trpc.folders.deleteFolder.useMutation({
+    onError: (error) => {
+      showToast({ description: error.message })
+    },
+    onSuccess: onFolderDeleted,
+  })
+
+  const { mutate: updateFolder } = trpc.folders.updateFolder.useMutation({
+    onError: (error) => {
+      showToast({ description: error.message })
+    },
+    onSuccess: onFolderRenamed,
+  })
 
   const onRenameSubmit = async (newName: string) => {
     if (newName === '' || newName === folder.name) return
-    const { error } = await updateFolderQuery(folder.id, { name: newName })
-    return error
-      ? showToast({ title: t('errorMessage'), description: error.message })
-      : onFolderRenamed(newName)
+    updateFolder({
+      workspaceId: folder.workspaceId,
+      folderId: folder.id,
+      folder: {
+        name: newName,
+      },
+    })
   }
 
   const handleClick = () => {
@@ -79,8 +90,9 @@ export const FolderButton = ({
       pos="relative"
       cursor="pointer"
       variant="outline"
-      colorScheme={isTypebotOver ? 'red' : 'gray'}
-      borderWidth={isTypebotOver ? '3px' : '1px'}
+      colorScheme={isTypebotOver || draggedTypebot ? 'red' : 'gray'}
+      borderWidth={isTypebotOver ? '2px' : '1px'}
+      transition={'border-width 0.1s ease'}
       justifyContent="center"
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
@@ -117,10 +129,11 @@ export const FolderButton = ({
           color={useColorModeValue('red.500', 'red.400')}
         />
         <Editable
-          defaultValue={folder.name}
+          defaultValue={folder.name === '' ? 'New folder' : folder.name}
           fontSize="18"
           onClick={(e) => e.stopPropagation()}
           onSubmit={onRenameSubmit}
+          startWithEditView={index === 0 && folder.name === ''}
         >
           <EditablePreview
             _hover={{
@@ -148,7 +161,12 @@ export const FolderButton = ({
           </Text>
         }
         title={`Delete ${folder.name}?`}
-        onConfirm={onDeleteClick}
+        onConfirm={() =>
+          deleteFolder({
+            workspaceId: folder.workspaceId,
+            folderId: folder.id,
+          })
+        }
         confirmButtonColor="red"
       />
     </Button>
@@ -170,4 +188,12 @@ export const ButtonSkeleton = () => (
       <SkeletonText noOfLines={2} w="full" />
     </VStack>
   </Button>
+)
+
+export default memo(
+  FolderButton,
+  (prev, next) =>
+    prev.folder.id === next.folder.id &&
+    prev.index === next.index &&
+    prev.folder.name === next.folder.name
 )

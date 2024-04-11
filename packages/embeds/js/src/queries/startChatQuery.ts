@@ -83,7 +83,11 @@ export async function startChatQuery({
               startFrom,
               typebot,
               isWhatsappIntegration: false,
-            } satisfies Omit<StartPreviewChatInput, 'typebotId'>,
+              prefilledVariables,
+            } satisfies Omit<
+              StartPreviewChatInput,
+              'typebotId' | 'isOnlyRegistering'
+            >,
             timeout: false,
           }
         )

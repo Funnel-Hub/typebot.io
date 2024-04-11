@@ -10,28 +10,23 @@ import {
   Wrap,
 } from '@chakra-ui/react'
 import { useTypebotDnd } from '../TypebotDndProvider'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BackButton } from './BackButton'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import { useToast } from '@/hooks/useToast'
-import { useFolders } from '../hooks/useFolders'
-import { createFolderQuery } from '../queries/createFolderQuery'
 import { CreateBotButton } from './CreateBotButton'
 import { CreateFolderButton } from './CreateFolderButton'
-import { ButtonSkeleton, FolderButton } from './FolderButton'
-import { TypebotButton } from './TypebotButton'
+import FolderButton, { ButtonSkeleton } from './FolderButton'
+import TypebotButton from './TypebotButton'
 import { TypebotCardOverlay } from './TypebotButtonOverlay'
-import { useTranslate } from '@tolgee/react'
 import { useTypebots } from '@/features/dashboard/hooks/useTypebots'
 import { TypebotInDashboard } from '@/features/dashboard/types'
 import { trpc } from '@/lib/trpc'
+import { NodePosition } from '@/features/graph/providers/GraphDndProvider'
 
 type Props = { folder: DashboardFolder | null }
 
-const dragDistanceTolerance = 20
-
 export const FolderContent = ({ folder }: Props) => {
-  const { t } = useTranslate()
   const { workspace, currentRole } = useWorkspace()
   const [isCreatingFolder, setIsCreatingFolder] = useState(false)
   const {
@@ -40,28 +35,39 @@ export const FolderContent = ({ folder }: Props) => {
     mouseOverFolderId,
     setMouseOverFolderId,
   } = useTypebotDnd()
-  const [mouseDownPosition, setMouseDownPosition] = useState({ x: 0, y: 0 })
   const [draggablePosition, setDraggablePosition] = useState({ x: 0, y: 0 })
-  const [relativeDraggablePosition, setRelativeDraggablePosition] = useState({
+  const [mousePositionInElement, setMousePositionInElement] = useState({
     x: 0,
     y: 0,
   })
-  const [typebotDragCandidate, setTypebotDragCandidate] =
-    useState<TypebotInDashboard>()
 
   const { showToast } = useToast()
 
   const {
-    folders,
+    data: { folders } = {},
     isLoading: isFolderLoading,
-    mutate: mutateFolders,
-  } = useFolders({
-    workspaceId: workspace?.id,
-    parentId: folder?.id,
+    refetch: refetchFolders,
+  } = trpc.folders.listFolders.useQuery(
+    {
+      workspaceId: workspace?.id as string,
+      parentFolderId: folder?.id,
+    },
+    {
+      enabled: !!workspace,
+      onError: (error) => {
+        showToast({
+          description: error.message,
+        })
+      },
+    }
+  )
+
+  const { mutate: createFolder } = trpc.folders.createFolder.useMutation({
     onError: (error) => {
-      showToast({
-        description: error.message,
-      })
+      showToast({ description: error.message })
+    },
+    onSuccess: () => {
+      refetchFolders()
     },
   })
 
@@ -98,78 +104,71 @@ export const FolderContent = ({ folder }: Props) => {
     })
   }
 
-  const handleCreateFolder = async () => {
+  const handleCreateFolder = () => {
     if (!folders || !workspace) return
     setIsCreatingFolder(true)
-    const { error, data: newFolder } = await createFolderQuery(workspace.id, {
-      parentFolderId: folder?.id ?? null,
+    createFolder({
+      workspaceId: workspace.id,
+      parentFolderId: folder?.id,
     })
     setIsCreatingFolder(false)
-    if (error)
-      return showToast({
-        title: t('errorMessage'),
-        description: error.message,
-      })
-    if (newFolder) mutateFolders({ folders: [...folders, newFolder] })
-  }
-
-  const handleTypebotUpdated = () => {
-    if (!typebots) return
-    refetchTypebots()
-  }
-
-  const handleFolderDeleted = (deletedId: string) => {
-    if (!folders) return
-    mutateFolders({ folders: folders.filter((f) => f.id !== deletedId) })
-  }
-
-  const handleFolderRenamed = (folderId: string, name: string) => {
-    if (!folders) return
-    mutateFolders({
-      folders: folders.map((f) => (f.id === folderId ? { ...f, name } : f)),
-    })
   }
 
   const handleMouseUp = async () => {
     if (mouseOverFolderId !== undefined && draggedTypebot)
       await moveTypebotToFolder(draggedTypebot.id, mouseOverFolderId ?? 'root')
-    setTypebotDragCandidate(undefined)
     setMouseOverFolderId(undefined)
     setDraggedTypebot(undefined)
   }
   useEventListener('mouseup', handleMouseUp)
 
-  const handleMouseDown =
-    (typebot: TypebotInDashboard) => (e: React.MouseEvent) => {
-      const element = e.currentTarget as HTMLDivElement
-      const rect = element.getBoundingClientRect()
-      setDraggablePosition({ x: rect.left, y: rect.top })
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      setRelativeDraggablePosition({ x, y })
-      setMouseDownPosition({ x: e.screenX, y: e.screenY })
-      setTypebotDragCandidate(typebot)
+  const handleTypebotDrag =
+    (typebot: TypebotInDashboard) =>
+    ({ absolute, relative }: NodePosition) => {
+      if (draggedTypebot) return
+      setMousePositionInElement(relative)
+      setDraggablePosition({
+        x: absolute.x - relative.x,
+        y: absolute.y - relative.y,
+      })
+      setDraggedTypebot(typebot)
     }
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (!typebotDragCandidate) return
-    const { clientX, clientY, screenX, screenY } = e
-    if (
-      Math.abs(mouseDownPosition.x - screenX) > dragDistanceTolerance ||
-      Math.abs(mouseDownPosition.y - screenY) > dragDistanceTolerance
-    )
-      setDraggedTypebot(typebotDragCandidate)
+    if (!draggedTypebot) return
+    const { clientX, clientY } = e
     setDraggablePosition({
-      ...draggablePosition,
-      x: clientX - relativeDraggablePosition.x,
-      y: clientY - relativeDraggablePosition.y,
+      x: clientX - mousePositionInElement.x,
+      y: clientY - mousePositionInElement.y,
     })
   }
   useEventListener('mousemove', handleMouseMove)
 
+  useEffect(() => {
+    if (!draggablePosition || !draggedTypebot) return
+    const { innerHeight } = window
+    const scrollSpeed = 10
+    const scrollMargin = 50
+    const clientY = draggablePosition.y + mousePositionInElement.y
+    const scrollY =
+      clientY < scrollMargin
+        ? -scrollSpeed
+        : clientY > innerHeight - scrollMargin
+        ? scrollSpeed
+        : 0
+    window.scrollBy(0, scrollY)
+    const interval = setInterval(() => {
+      window.scrollBy(0, scrollY)
+    }, 5)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [draggablePosition, draggedTypebot, mousePositionInElement])
+
   return (
     <Flex w="full" flex="1" justify="center">
-      <Stack w="1000px" spacing={6}>
+      <Stack w="1000px" spacing={6} pt="4">
         <Skeleton isLoaded={folder?.name !== undefined}>
           <Heading as="h1">{folder?.name}</Heading>
         </Skeleton>
@@ -193,24 +192,24 @@ export const FolderContent = ({ folder }: Props) => {
             )}
             {isFolderLoading && <ButtonSkeleton />}
             {folders &&
-              folders.map((folder) => (
+              folders.map((folder, index) => (
                 <FolderButton
-                  key={folder.id.toString()}
+                  key={folder.id}
+                  index={index}
                   folder={folder}
-                  onFolderDeleted={() => handleFolderDeleted(folder.id)}
-                  onFolderRenamed={(newName: string) =>
-                    handleFolderRenamed(folder.id, newName)
-                  }
+                  onFolderDeleted={refetchFolders}
+                  onFolderRenamed={() => refetchFolders()}
                 />
               ))}
             {isTypebotLoading && <ButtonSkeleton />}
             {typebots &&
               typebots.map((typebot) => (
                 <TypebotButton
-                  key={typebot.id.toString()}
+                  key={typebot.id}
                   typebot={typebot}
-                  onTypebotUpdated={handleTypebotUpdated}
-                  onMouseDown={handleMouseDown(typebot)}
+                  draggedTypebot={draggedTypebot}
+                  onTypebotUpdated={refetchTypebots}
+                  onDrag={handleTypebotDrag(typebot)}
                 />
               ))}
           </Wrap>
@@ -227,6 +226,7 @@ export const FolderContent = ({ folder }: Props) => {
             style={{
               transform: `translate(${draggablePosition.x}px, ${draggablePosition.y}px) rotate(-2deg)`,
             }}
+            transformOrigin="0 0 0"
           />
         </Portal>
       )}
