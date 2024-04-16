@@ -95,8 +95,6 @@ export const WhatsappCredentialsModal = ({
     const now = new Date().getTime()
     const socketClient = io(env.NEXT_PUBLIC_WHATSAPP_SERVER, {
       autoConnect: true,
-      // upgrade: false,
-      // transports: ['websocket'],
       rejectUnauthorized: false,
       query: {
         clientId: `${workspace.id}_${now}`,

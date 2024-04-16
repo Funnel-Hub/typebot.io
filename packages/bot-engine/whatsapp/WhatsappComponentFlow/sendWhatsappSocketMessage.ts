@@ -66,8 +66,6 @@ export async function sendSocketWhatsappMessage(
         operationType: WhatsappOperationTypes.SEND_MESSAGE,
       },
       rejectUnauthorized: false,
-      // upgrade: false,
-      // transports: ['websocket'],
     })
 
     socket.on('qr', async () => {
