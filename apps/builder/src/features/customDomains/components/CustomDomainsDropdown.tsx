@@ -81,7 +81,7 @@ export const CustomDomainsDropdown = ({
   }
 
   return (
-    <Menu isLazy placement="bottom-start" matchWidth>
+    <Menu isLazy placement="bottom-start">
       {workspace?.id && (
         <CreateCustomDomainModal
           workspaceId={workspace.id}
@@ -103,7 +103,7 @@ export const CustomDomainsDropdown = ({
         </Text>
       </MenuButton>
       <MenuList maxW="500px" shadow="lg">
-        <Stack maxH={'35vh'} overflowY="scroll" spacing="0">
+        <Stack maxH={'35vh'} overflowY="auto" spacing="0">
           {(data?.customDomains ?? []).map((customDomain) => (
             <Button
               role="menuitem"

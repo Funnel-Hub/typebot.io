@@ -4,10 +4,11 @@ import { createSignal, onCleanup, onMount } from 'solid-js'
 import { clsx } from 'clsx'
 import { CustomEmbedBubble as CustomEmbedBubbleProps } from '@typebot.io/schemas'
 import { executeCode } from '@/features/blocks/logic/script/executeScript'
+import { botContainerHeight } from '@/utils/botContainerHeightSignal'
 
 type Props = {
   content: CustomEmbedBubbleProps['content']
-  onTransitionEnd: (offsetTop?: number) => void
+  onTransitionEnd?: (offsetTop?: number) => void
   onCompleted: (reply?: string) => void
 }
 
@@ -17,14 +18,12 @@ export const showAnimationDuration = 400
 
 export const CustomEmbedBubble = (props: Props) => {
   let ref: HTMLDivElement | undefined
-  const [isTyping, setIsTyping] = createSignal(true)
+  const [isTyping, setIsTyping] = createSignal(
+    props.onTransitionEnd ? true : false
+  )
   let containerRef: HTMLDivElement | undefined
 
   onMount(() => {
-    console.log(
-      props.content.initFunction.content,
-      props.content.initFunction.args
-    )
     executeCode({
       args: {
         ...props.content.initFunction.args,
@@ -45,7 +44,7 @@ export const CustomEmbedBubble = (props: Props) => {
     typingTimeout = setTimeout(() => {
       setIsTyping(false)
       setTimeout(
-        () => props.onTransitionEnd(ref?.offsetTop),
+        () => props.onTransitionEnd?.(ref?.offsetTop),
         showAnimationDuration
       )
     }, 2000)
@@ -56,9 +55,22 @@ export const CustomEmbedBubble = (props: Props) => {
   })
 
   return (
-    <div class="flex flex-col w-full animate-fade-in" ref={ref}>
+    <div
+      class={clsx(
+        'flex flex-col w-full',
+        props.onTransitionEnd ? 'animate-fade-in' : undefined
+      )}
+      ref={ref}
+    >
       <div class="flex w-full items-center">
-        <div class="flex relative z-10 items-start typebot-host-bubble w-full max-w-full">
+        <div
+          class="flex relative z-10 items-start typebot-host-bubble w-full"
+          style={{
+            'max-width': props.content.maxBubbleWidth
+              ? `${props.content.maxBubbleWidth}px`
+              : '100%',
+          }}
+        >
           <div
             class="flex items-center absolute px-4 py-2 bubble-typing z-10 "
             style={{
@@ -77,7 +89,11 @@ export const CustomEmbedBubble = (props: Props) => {
               height: isTyping() ? (isMobile() ? '32px' : '36px') : undefined,
             }}
           >
-            <div class="w-full h-full overflow-scroll" ref={containerRef} />
+            <div
+              class="w-full overflow-y-auto"
+              style={{ 'max-height': `calc(${botContainerHeight()} - 100px)` }}
+              ref={containerRef}
+            />
           </div>
         </div>
       </div>

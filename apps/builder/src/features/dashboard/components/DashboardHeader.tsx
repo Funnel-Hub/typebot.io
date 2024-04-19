@@ -37,7 +37,7 @@ export const DashboardHeader = () => {
           />
         </Link>
         <HStack>
-          {user && workspace && (
+          {user && workspace && !workspace.isPastDue && (
             <WorkspaceSettingsModal
               isOpen={isOpen}
               onClose={onClose}

@@ -3,8 +3,6 @@ sidebarTitle: Overview
 title: WhatsApp
 ---
 
-WhatsApp integration is currently in beta. If you encounter any issue, please contact me directly using the Bubble in app.typebot.io.
-
 ## Preview
 
 You can preview and test your bot by clicking on the Preview button in the editor and change the runtime to "WhatsApp".
@@ -21,7 +19,9 @@ You can preview and test your bot by clicking on the Preview button in the edito
 WhatsApp environment have some limitations that you need to keep in mind when building the bot:
 
 - GIF and SVG image files are not supported. They won't be displayed.
+- Only .mp4 videos are supported (See [Supported Media Types](https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#supported-media-types) for more info).
 - Buttons content can't be longer than 20 characters. If the content is longer, it will be truncated.
+- WhatsApp only allows to display 3 buttons at a time. So we work around that by adding "..." messages to display more buttons.
 - Incompatible blocks, if present, they will be skipped:
 
   - Payment input block
@@ -63,14 +63,20 @@ You can customize how your bot behaves on WhatsApp in the `Configure integration
 
 ## FAQ
 
-### How many WhatsApp numbers can I use?
+<AccordionGroup>
+  <Accordion title="How many WhatsApp numbers can I use?">
+    You can integrate as many numbers as you'd like. Keep in mind that Typebot does not provide those numbers. We work as a "Bring your own Meta application" and we give you clear instructions on [how to set up your Meta app](./create-meta-app).
+  </Accordion>
+  <Accordion title="Can I link multiple bots to the same WhatsApp number?">
+    Yes, you can. You will have to add a "Start bot condition" to each of your bots to make sure that the right bot is triggered when a user starts a conversation.
+  </Accordion>
+  <Accordion title="Does the integration with WhatsApp requires any paid API?">
+    You integrate your typebots with your own WhatsApp Business Platform which is the official service from Meta. At the moment, the first 1,000 Service conversations each month are free. For more information, refer to <a href="https://developers.facebook.com/docs/whatsapp/cloud-api/get-started#pricing---payment-methods" target="_blank">their documentation</a>
+  </Accordion>
+  <Accordion title="I receive the preview initial message but then the bot doesn't respond">
+    This can be due to a mismatch between the WhatsApp number displayed in your WhatsApp application profile settings and the number you have typed in Typebot.
 
-You can integrate as many numbers as you'd like. Keep in mind that Typebot does not provide those numbers. We work as a "Bring your own Meta application" and we give you clear instructions on [how to set up your Meta app](./create-meta-app).
+    For example, some Brazilians have 2 numbers, 1 with 8 digits, the other with 9 digits. In Typebot, you need to type the number that is displayed in your WhatsApp application profile settings to make sure the bot works properly.
 
-### Can I link multiple bots to the same WhatsApp number?
-
-Yes, you can. You will have to add a "Start bot condition" to each of your bots to make sure that the right bot is triggered when a user starts a conversation.
-
-### Does the integration with WhatsApp requires any paid API?
-
-You integrate your typebots with your own WhatsApp Business Platform which is the official service from Meta. At the moment, the first 1,000 Service conversations each month are free. For more information, refer to [their documentation](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started#pricing---payment-methods)
+  </Accordion>
+</AccordionGroup>

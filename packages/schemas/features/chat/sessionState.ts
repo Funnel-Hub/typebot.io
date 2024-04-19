@@ -91,6 +91,11 @@ const sessionStateSchemaV2 = z.object({
   typingEmulation: settingsSchema.shape.typingEmulation.optional(),
   currentVisitedEdgeIndex: z.number().optional(),
   sessionId: z.string().optional(),
+  progressMetadata: z
+    .object({
+      totalAnswers: z.number(),
+    })
+    .optional(),
 })
 
 const sessionStateSchemaV3 = sessionStateSchemaV2

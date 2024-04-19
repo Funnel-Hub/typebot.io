@@ -4,8 +4,6 @@
   "license": "AGPL-3.0-or-later",
   "private": true,
   "dependencies": {
-    "@prisma/debug": "^5.8.1",
-    "@typebot.io/lib": "workspace:*",
-    "@typebot.io/schemas": "workspace:*"
+    "@typebot.io/lib": "workspace:*"
   }
 }

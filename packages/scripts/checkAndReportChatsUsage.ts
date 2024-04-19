@@ -1,11 +1,11 @@
 import { Plan, PrismaClient, WorkspaceRole } from '@typebot.io/prisma'
 import { isDefined, isEmpty } from '@typebot.io/lib'
-import { getChatsLimit } from '@typebot.io/lib/billing/getChatsLimit'
+import { getChatsLimit } from '@typebot.io/billing/getChatsLimit'
 import { promptAndSetEnvironment } from './utils'
 import { Workspace } from '@typebot.io/schemas'
 import { sendAlmostReachedChatsLimitEmail } from '@typebot.io/emails/src/emails/AlmostReachedChatsLimitEmail'
 import { TelemetryEvent } from '@typebot.io/schemas/features/telemetry'
-import { sendTelemetryEvents } from '@typebot.io/lib/telemetry/sendTelemetryEvent'
+import { trackEvents } from '@typebot.io/telemetry/trackEvents'
 import Stripe from 'stripe'
 import { createId } from '@paralleldrive/cuid2'
 
@@ -222,7 +222,7 @@ export const checkAndReportChatsUsage = async () => {
     `Send ${newResultsCollectedEvents.length} new results events and ${quarantineEvents.length} auto quarantine events...`
   )
 
-  await sendTelemetryEvents(quarantineEvents.concat(newResultsCollectedEvents))
+  await trackEvents(quarantineEvents.concat(newResultsCollectedEvents))
 }
 
 const getSubscription = async (

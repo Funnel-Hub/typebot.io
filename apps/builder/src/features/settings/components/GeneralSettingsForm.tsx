@@ -9,6 +9,7 @@ import {
   Stack,
   Tag,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react'
 import { useTranslate } from '@tolgee/react'
 import { isDefined } from '@typebot.io/lib'
@@ -27,6 +28,7 @@ export const GeneralSettingsForm = ({
   generalSettings,
   onGeneralSettingsChange,
 }: Props) => {
+  const keyBg = useColorModeValue(undefined, 'gray.600')
   const { t } = useTranslate()
 
   const toggleRememberUser = (isEnabled: boolean) =>
@@ -112,7 +114,9 @@ export const GeneralSettingsForm = ({
                   {t(
                     'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose'
                   )}{' '}
-                  <Tag size="sm">session</Tag>{' '}
+                  <Tag size="sm" bgColor={keyBg}>
+                    session
+                  </Tag>{' '}
                   {t(
                     'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose.session'
                   )}
@@ -121,7 +125,9 @@ export const GeneralSettingsForm = ({
                   {t(
                     'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose'
                   )}{' '}
-                  <Tag size="sm">local</Tag>{' '}
+                  <Tag size="sm" bgColor={keyBg}>
+                    local
+                  </Tag>{' '}
                   {t(
                     'settings.settingsSideMenu.generalMenu.rememberUser.formLabel.choose.local'
                   )}

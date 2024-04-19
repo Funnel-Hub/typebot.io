@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { trpc } from '@/lib/trpc'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
-import { ForgedBlockDefinition } from '@typebot.io/forge-schemas'
+import { ForgedBlockDefinition } from '@typebot.io/forge-repository/types'
 import { useToast } from '@/hooks/useToast'
 
 type Props = Omit<ButtonProps, 'type'> & {
@@ -109,7 +109,7 @@ export const ForgedCredentialsDropdown = ({
         isLoading={isLoading}
         {...props}
       >
-        Add {blockDef.auth.name}
+        Add {blockDef.auth?.name}
       </Button>
     )
   }
@@ -130,11 +130,11 @@ export const ForgedCredentialsDropdown = ({
         >
           {currentCredential
             ? currentCredential.name
-            : `Select ${blockDef.auth.name}`}
+            : `Select ${blockDef.auth?.name}`}
         </Text>
       </MenuButton>
       <MenuList>
-        <Stack maxH={'35vh'} overflowY="scroll" spacing="0">
+        <Stack maxH={'35vh'} overflowY="auto" spacing="0">
           {data?.credentials.map((credentials) => (
             <MenuItem
               role="menuitem"

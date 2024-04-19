@@ -154,7 +154,6 @@ export const PreCheckoutModal = ({
                 <Select
                   placeholder={t('billing.preCheckoutModal.taxId.placeholder')}
                   items={vatCodeLabels}
-                  isPopoverMatchingInputWidth={false}
                   onSelect={updateVatType}
                 />
                 <TextInput
@@ -163,6 +162,7 @@ export const PreCheckoutModal = ({
                   withVariableButton={false}
                   debounceTimeout={0}
                   placeholder={vatValuePlaceholder}
+                  flexShrink={0}
                 />
               </HStack>
             </FormControl>

@@ -1,12 +1,9 @@
-import { publicProcedure } from '@/helpers/server/trpc'
-import { restartSession } from '@typebot.io/bot-engine/queries/restartSession'
-import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
-import { startSession } from '@typebot.io/bot-engine/startSession'
-import { multipleWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/multipleWhatsappFlow'
 import {
   startPreviewChatInputSchema,
   startPreviewChatResponseSchema,
 } from '@typebot.io/schemas/features/chat/schema'
+import { publicProcedure } from '@/helpers/server/trpc'
+import { startChatPreview as startChatPreviewFn } from '@typebot.io/bot-engine/apiHandlers/startChatPreview'
 
 export const startChatPreview = publicProcedure
   .meta({
@@ -30,87 +27,19 @@ export const startChatPreview = publicProcedure
         typebotId,
         typebot: startTypebot,
         isWhatsappIntegration,
+        prefilledVariables,
       },
       ctx: { user },
-    }) => {
-      const {
-        typebot,
-        messages,
-        input,
-        dynamicTheme,
-        logs,
-        clientSideActions,
-        newSessionState,
-        visitedEdges,
-      } = await startSession({
-        version: 2,
-        startParams: {
-          type: 'preview',
-          isOnlyRegistering,
-          isStreamEnabled,
-          startFrom,
-          typebotId,
-          typebot: startTypebot,
-          userId: user?.id,
-          isWhatsappIntegration,
-        },
+    }) =>
+      startChatPreviewFn({
         message,
+        isOnlyRegistering,
+        isStreamEnabled,
+        startFrom,
+        typebotId,
+        typebot: startTypebot,
+        userId: user?.id,
+        isWhatsappIntegration,
+        prefilledVariables,
       })
-
-      const session = isOnlyRegistering
-        ? await restartSession({
-            state: newSessionState,
-          })
-        : await saveStateToDatabase({
-            session: {
-              state: newSessionState,
-            },
-            input,
-            logs,
-            clientSideActions,
-            visitedEdges,
-          })
-
-      if (newSessionState.whatsappComponent?.canExecute) {
-        await multipleWhatsappFlow({
-          state: { ...newSessionState, sessionId: session.id },
-          messages,
-          input,
-          clientSideActions,
-          sessionId: session.id,
-        })
-
-        return {
-          sessionId: session.id,
-          typebot: {
-            id: typebot.id,
-            theme: typebot.theme,
-            settings: typebot.settings,
-          },
-          messages: [],
-          input: undefined,
-          dynamicTheme: undefined,
-          logs: [],
-          clientSideActions: [],
-        }
-      }
-
-      return {
-        sessionId: session.id,
-        typebot: {
-          id: typebot.id,
-          theme: typebot.theme,
-          settings: typebot.settings,
-        },
-        messages,
-        input: newSessionState?.whatsappComponent?.canExecute
-          ? undefined
-          : input,
-        dynamicTheme,
-        logs,
-        clientSideActions: newSessionState?.whatsappComponent?.canExecute
-          ? []
-          : clientSideActions,
-      }
-    }
   )

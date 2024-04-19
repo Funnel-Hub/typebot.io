@@ -89,7 +89,7 @@ const WorkspaceRoleMenuButton = ({
   onChange: (role: WorkspaceRole) => void
 }) => {
   return (
-    <Menu placement="bottom-end" isLazy matchWidth>
+    <Menu placement="bottom" isLazy matchWidth>
       <MenuButton
         flexShrink={0}
         as={Button}
@@ -98,7 +98,7 @@ const WorkspaceRoleMenuButton = ({
         {convertWorkspaceRoleToReadable(role)}
       </MenuButton>
       <MenuList minW={0}>
-        <Stack maxH={'35vh'} overflowY="scroll" spacing="0">
+        <Stack maxH={'35vh'} overflowY="auto" spacing="0">
           <MenuItem onClick={() => onChange(WorkspaceRole.ADMIN)}>
             {convertWorkspaceRoleToReadable(WorkspaceRole.ADMIN)}
           </MenuItem>

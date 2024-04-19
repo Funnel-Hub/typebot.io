@@ -1,14 +1,7 @@
 import { publicProcedure } from '@/helpers/server/trpc'
-import { TRPCError } from '@trpc/server'
-import { continueBotFlow } from '@typebot.io/bot-engine/continueBotFlow'
-import { filterPotentiallySensitiveLogs } from '@typebot.io/bot-engine/logs/filterPotentiallySensitiveLogs'
-import { parseDynamicTheme } from '@typebot.io/bot-engine/parseDynamicTheme'
-import { getSession } from '@typebot.io/bot-engine/queries/getSession'
-import { saveStateToDatabase } from '@typebot.io/bot-engine/saveStateToDatabase'
-import { multipleWhatsappFlow } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/multipleWhatsappFlow'
-import { isDefined, isNotDefined } from '@typebot.io/lib/utils'
 import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
 import { z } from 'zod'
+import { continueChat as continueChatFn } from '@typebot.io/bot-engine/apiHandlers/continueChat'
 
 export const continueChat = publicProcedure
   .meta({
@@ -29,96 +22,12 @@ export const continueChat = publicProcedure
     })
   )
   .output(continueChatResponseSchema)
-  .mutation(async ({ input: { sessionId, message }, ctx: { res, origin } }) => {
-    const session = await getSession(sessionId)
-
-    if (!session) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Session not found.',
-      })
-    }
-
-    const isSessionExpired =
-      session &&
-      isDefined(session.state.expiryTimeout) &&
-      session.updatedAt.getTime() + session.state.expiryTimeout < Date.now()
-
-    if (isSessionExpired)
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Session expired. You need to start a new session.',
-      })
-
-    if (
-      session?.state.allowedOrigins &&
-      session.state.allowedOrigins.length > 0
-    ) {
-      if (origin && session.state.allowedOrigins.includes(origin))
-        res.setHeader('Access-Control-Allow-Origin', origin)
-      else
-        res.setHeader(
-          'Access-Control-Allow-Origin',
-          session.state.allowedOrigins[0]
-        )
-    }
-
-    const {
-      messages,
-      input,
-      clientSideActions,
-      newSessionState,
-      logs,
-      lastMessageNewFormat,
-      visitedEdges,
-    } = await continueBotFlow(message, {
-      version: 2,
-      state: { ...session.state, sessionId: session.id },
-      startTime: Date.now(),
+  .mutation(async ({ input: { sessionId, message }, ctx: { origin, res } }) => {
+    const { corsOrigin, ...response } = await continueChatFn({
+      origin,
+      sessionId,
+      message,
     })
-
-    if (newSessionState)
-      await saveStateToDatabase({
-        session: {
-          id: session.id,
-          state: newSessionState,
-        },
-        input,
-        logs,
-        clientSideActions,
-        visitedEdges,
-      })
-
-    // multiple whatsapp integration - funnelhub
-    if (newSessionState.whatsappComponent?.canExecute) {
-      await multipleWhatsappFlow({
-        messages,
-        sessionId: session.id,
-        state: newSessionState,
-        clientSideActions,
-        input,
-      })
-      return {
-        messages: [],
-        input: undefined,
-        clientSideActions: [],
-        dynamicTheme: undefined,
-        logs: [],
-        lastMessageNewFormat: undefined,
-        whatsappComponent: newSessionState.whatsappComponent,
-      }
-    }
-
-    const isPreview = isNotDefined(session.state.typebotsQueue[0].resultId)
-
-    return {
-      messages,
-      input: newSessionState?.whatsappComponent?.canExecute ? undefined : input,
-      clientSideActions: newSessionState?.whatsappComponent?.canExecute
-        ? []
-        : clientSideActions,
-      dynamicTheme: parseDynamicTheme(newSessionState),
-      logs: isPreview ? logs : logs?.filter(filterPotentiallySensitiveLogs),
-      lastMessageNewFormat,
-    }
+    if (corsOrigin) res.setHeader('Access-Control-Allow-Origin', corsOrigin)
+    return response
   })

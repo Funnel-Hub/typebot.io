@@ -6,7 +6,7 @@ import {
   SessionState,
   Settings,
 } from '@typebot.io/schemas'
-import { HTTPError } from 'got'
+import { HTTPError } from 'ky'
 import { computeTypingDuration } from '../../computeTypingDuration'
 import { continueBotFlow } from '../../continueBotFlow'
 import { convertInputToWhatsAppComponent } from './convertInputToWhatsappComponent'
@@ -91,7 +91,7 @@ export async function executeWhatsappFlow({
       Sentry.captureException(err, { extra: { message } })
       console.log('Failed to send message:', JSON.stringify(message, null, 2))
       if (err instanceof HTTPError)
-        console.log('HTTPError', err.response.statusCode, err.response.body)
+        console.log('HTTPError', err.response.status, err.response.body)
       if (err instanceof TRPCError) throw err
     }
   }
@@ -123,7 +123,7 @@ export async function executeWhatsappFlow({
         Sentry.captureException(err, { extra: { message } })
         console.log('Failed to send message:', JSON.stringify(message, null, 2))
         if (err instanceof HTTPError)
-          console.log('HTTPError', err.response.statusCode, err.response.body)
+          console.log('HTTPError', err.response.status, err.response.body)
       }
     }
   }

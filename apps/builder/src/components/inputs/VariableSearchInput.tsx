@@ -213,9 +213,9 @@ export const VariableSearchInput = ({
         <Popover
           isOpen={isOpen}
           initialFocusRef={inputRef}
-          matchWidth
           isLazy
           offset={[0, 2]}
+          placement="bottom-start"
         >
           <PopoverAnchor>
             <Input
@@ -233,12 +233,14 @@ export const VariableSearchInput = ({
           <Portal containerRef={parentModalRef}>
             <PopoverContent
               maxH="35vh"
-              overflowY="scroll"
+              maxW="35vw"
+              overflowY="auto"
               role="menu"
               w="inherit"
               shadow="lg"
               onMouseDown={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
+              minW="250px"
             >
               {isCreateVariableButtonDisplayed && (
                 <Button

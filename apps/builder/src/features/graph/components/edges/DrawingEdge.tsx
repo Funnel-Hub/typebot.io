@@ -8,18 +8,27 @@ import { Coordinates } from '@dnd-kit/utilities'
 import { computeConnectingEdgePath } from '../../helpers/computeConnectingEdgePath'
 import { computeEdgePathToMouse } from '../../helpers/computeEdgePathToMouth'
 import { useGraph } from '../../providers/GraphProvider'
-import { useGroupsCoordinates } from '../../providers/GroupsCoordinateProvider'
 import { ConnectingIds } from '../../types'
 import { useEventsCoordinates } from '../../providers/EventsCoordinateProvider'
 import { eventWidth, groupWidth } from '../../constants'
+import { useGroupsStore } from '../../hooks/useGroupsStore'
+import { omit } from '@typebot.io/lib'
 
-export const DrawingEdge = () => {
-  const { graphPosition, setConnectingIds, connectingIds } = useGraph()
+type Props = {
+  connectingIds: ConnectingIds
+}
+
+export const DrawingEdge = ({ connectingIds }: Props) => {
+  const { graphPosition, setConnectingIds } = useGraph()
   const {
     sourceEndpointYOffsets: sourceEndpoints,
     targetEndpointYOffsets: targetEndpoints,
   } = useEndpoints()
-  const { groupsCoordinates } = useGroupsCoordinates()
+  const groupsCoordinates = useGroupsStore(
+    (state) => state.groupsCoordinates,
+    // Keep in cache because groups are not changing while drawing an edge
+    () => true
+  )
   const { eventsCoordinates } = useEventsCoordinates()
   const { createEdge } = useTypebot()
   const [mousePosition, setMousePosition] = useState<Coordinates | null>(null)
@@ -27,7 +36,9 @@ export const DrawingEdge = () => {
   const sourceElementCoordinates = connectingIds
     ? 'eventId' in connectingIds.source
       ? eventsCoordinates[connectingIds?.source.eventId]
-      : groupsCoordinates[connectingIds?.source.groupId ?? '']
+      : groupsCoordinates
+      ? groupsCoordinates[connectingIds?.source.groupId ?? '']
+      : undefined
     : undefined
 
   const targetGroupCoordinates =
@@ -103,13 +114,16 @@ export const DrawingEdge = () => {
 
   const createNewEdge = (connectingIds: ConnectingIds) => {
     assert(connectingIds.target)
-    createEdge({ from: connectingIds.source, to: connectingIds.target })
+    createEdge({
+      from:
+        'groupId' in connectingIds.source
+          ? omit(connectingIds.source, 'groupId')
+          : connectingIds.source,
+      to: connectingIds.target,
+    })
   }
 
-  if (
-    (mousePosition && mousePosition.x === 0 && mousePosition.y === 0) ||
-    !connectingIds
-  )
+  if (mousePosition && mousePosition.x === 0 && mousePosition.y === 0)
     return <></>
   return (
     <path

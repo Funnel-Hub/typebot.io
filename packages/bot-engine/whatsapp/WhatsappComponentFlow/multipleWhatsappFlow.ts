@@ -1,8 +1,7 @@
 import { ContinueChatResponse, SessionState } from '@typebot.io/schemas'
 import { executeWhatsappFlow } from './executeWhatsappFlow'
-import { getBlockById } from '@typebot.io/lib/getBlockById'
+import { getBlockById } from '@typebot.io/schemas/helpers'
 import { continueBotFlow } from '../../continueBotFlow'
-import { getSession } from '../../queries/getSession'
 import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import { saveStateToDatabase } from '../../saveStateToDatabase'
 

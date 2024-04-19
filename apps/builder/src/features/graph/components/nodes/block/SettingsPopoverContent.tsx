@@ -8,7 +8,7 @@ import { MakeComSettings } from '@/features/blocks/integrations/makeCom/componen
 import { OpenAISettings } from '@/features/blocks/integrations/openai/components/OpenAISettings'
 import { PabblyConnectSettings } from '@/features/blocks/integrations/pabbly/components/PabblyConnectSettings'
 import { SendEmailSettings } from '@/features/blocks/integrations/sendEmail/components/SendEmailSettings'
-import { WebhookSettings } from '@/features/blocks/integrations/webhook/components/WebhookSettings'
+import { HttpRequestSettings } from '@/features/blocks/integrations/webhook/components/HttpRequestSettings'
 import { JumpSettings } from '@/features/blocks/logic/jump/components/JumpSettings'
 import { ScriptSettings } from '@/features/blocks/logic/script/components/ScriptSettings'
 import { WaitSettings } from '@/features/blocks/logic/wait/components/WaitSettings'
@@ -70,7 +70,7 @@ export const SettingsPopoverContent = ({ onExpandClick, ...props }: Props) => {
         <PopoverArrow bgColor={arrowColor} />
         <PopoverBody
           py="3"
-          overflowY="scroll"
+          overflowY="auto"
           maxH="400px"
           ref={ref}
           shadow="lg"
@@ -289,7 +289,9 @@ export const BlockSettings = ({
       )
     }
     case IntegrationBlockType.WEBHOOK: {
-      return <WebhookSettings block={block} onOptionsChange={updateOptions} />
+      return (
+        <HttpRequestSettings block={block} onOptionsChange={updateOptions} />
+      )
     }
     case IntegrationBlockType.EMAIL: {
       return (
