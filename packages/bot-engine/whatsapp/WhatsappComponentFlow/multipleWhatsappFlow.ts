@@ -31,17 +31,7 @@ export async function multipleWhatsappFlow({
   let block = getBlockById(
     state.currentBlockId,
     state.typebotsQueue[0].typebot.groups
-  ).block as any
-
-  let whatsappComponents = 0
-  for (const group of state.typebotsQueue[0].typebot.groups) {
-    const block = group.blocks.find(
-      (block) => block.type === IntegrationBlockType.WHATSAPP
-    )
-    if (block) whatsappComponents += 1
-  }
-
-  if (whatsappComponents === 1) return
+  ).block
 
   let currentState = state
   const blocksNotRepeat = [block.id]
@@ -61,6 +51,9 @@ export async function multipleWhatsappFlow({
     })
 
     currentState = newSessionState
+
+    const firstMessageId = messages[0].id
+    if (messagesProps.some((message) => message.id === firstMessageId)) return
 
     if (newSessionState)
       await saveStateToDatabase({
