@@ -67,9 +67,6 @@ export const TypingEmulationForm = ({ typingEmulation, onUpdate }: Props) => {
         />
         <HStack>
           <NumberInput
-            label={t(
-              'settings.settingsSideMenu.typingEmulationMenu.maxDelay.label'
-            )}
             data-testid="max-delay"
             defaultValue={
               typingEmulation?.maxDelay ??
