@@ -36,6 +36,12 @@ jobs:
             packages/schemas
             packages/tsconfig
             packages/variables
+            packages/theme
+            packages/billing
+            packages/migrations
+            packages/playwright
+            packages/results
+            packages/telemetry
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
