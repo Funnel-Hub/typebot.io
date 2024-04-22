@@ -11,9 +11,10 @@ import { useResultsQuery } from './hooks/useResultsQuery'
 import { trpc } from '@/lib/trpc'
 import { isDefined } from '@typebot.io/lib/utils'
 import { LogicBlockType } from '@typebot.io/schemas/features/blocks/logic/constants'
-import { parseResultHeader } from '@typebot.io/lib/results/parseResultHeader'
-import { convertResultsToTableData } from '@typebot.io/lib/results/convertResultsToTableData'
+import { parseResultHeader } from '@typebot.io/results/parseResultHeader'
+import { convertResultsToTableData } from '@typebot.io/results/convertResultsToTableData'
 import { parseCellContent } from './helpers/parseCellContent'
+import { timeFilterValues } from '../analytics/constants'
 
 const resultsContext = createContext<{
   resultsList: { results: ResultWithAnswers[] }[] | undefined
@@ -30,11 +31,13 @@ const resultsContext = createContext<{
 }>({})
 
 export const ResultsProvider = ({
+  timeFilter,
   children,
   typebotId,
   totalResults,
   onDeleteResults,
 }: {
+  timeFilter: (typeof timeFilterValues)[number]
   children: ReactNode
   typebotId: string
   totalResults: number
@@ -43,6 +46,7 @@ export const ResultsProvider = ({
   const { publishedTypebot } = useTypebot()
   const { showToast } = useToast()
   const { data, fetchNextPage, hasNextPage, refetch } = useResultsQuery({
+    timeFilter,
     typebotId,
     onError: (error) => {
       showToast({ description: error })

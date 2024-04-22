@@ -160,9 +160,9 @@ export const AutocompleteInput = ({
         <Popover
           isOpen={isOpen}
           initialFocusRef={inputRef}
-          matchWidth
           offset={[0, 1]}
           isLazy
+          placement="bottom-start"
         >
           <PopoverAnchor>
             <Input
@@ -181,7 +181,8 @@ export const AutocompleteInput = ({
             <Portal containerRef={parentModalRef}>
               <PopoverContent
                 maxH="35vh"
-                overflowY="scroll"
+                maxW="35vw"
+                overflowY="auto"
                 role="menu"
                 w="inherit"
                 shadow="lg"

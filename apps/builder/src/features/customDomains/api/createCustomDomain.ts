@@ -3,9 +3,10 @@ import { authenticatedProcedure } from '@/helpers/server/trpc'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { customDomainSchema } from '@typebot.io/schemas/features/customDomains'
-import got, { HTTPError } from 'got'
+import ky, { HTTPError } from 'ky'
 import { env } from '@typebot.io/env'
 import { isWriteWorkspaceForbidden } from '@/features/workspace/helpers/isWriteWorkspaceForbidden'
+import { trackEvents } from '@typebot.io/telemetry/trackEvents'
 
 export const createCustomDomain = authenticatedProcedure
   .meta({
@@ -60,12 +61,12 @@ export const createCustomDomain = authenticatedProcedure
     try {
       await createDomainOnVercel(name)
     } catch (err) {
-      console.log(err)
-      if (err instanceof HTTPError && err.response.statusCode !== 409)
+      if (err instanceof HTTPError && err.response.status !== 409) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create custom domain on Vercel',
         })
+      }
     }
 
     const customDomain = await prisma.customDomain.create({
@@ -75,12 +76,27 @@ export const createCustomDomain = authenticatedProcedure
       },
     })
 
+    await trackEvents([
+      {
+        name: 'Custom domain added',
+        userId: user.id,
+        workspaceId,
+        data: {
+          domain: name,
+        },
+      },
+    ])
+
     return { customDomain }
   })
 
 const createDomainOnVercel = (name: string) =>
-  got.post({
-    url: `https://api.vercel.com/v10/projects/${env.NEXT_PUBLIC_VERCEL_VIEWER_PROJECT_NAME}/domains?teamId=${env.VERCEL_TEAM_ID}`,
-    headers: { Authorization: `Bearer ${env.VERCEL_TOKEN}` },
-    json: { name },
-  })
+  ky.post(
+    `https://api.vercel.com/v10/projects/${env.NEXT_PUBLIC_VERCEL_VIEWER_PROJECT_NAME}/domains?teamId=${env.VERCEL_TEAM_ID}`,
+    {
+      headers: {
+        authorization: `Bearer ${env.VERCEL_TOKEN}`,
+      },
+      json: { name },
+    }
+  )

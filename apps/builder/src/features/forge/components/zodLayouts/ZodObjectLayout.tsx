@@ -9,11 +9,16 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { z } from '@typebot.io/forge/zod'
+import React from 'react'
 import { ZodLayoutMetadata } from '@typebot.io/forge/zod'
 import { ReactNode } from 'react'
 import { ZodTypeAny } from 'zod'
 import { ZodFieldLayout } from './ZodFieldLayout'
-import { ForgedBlockDefinition, ForgedBlock } from '@typebot.io/forge-schemas'
+import {
+  ForgedBlockDefinition,
+  ForgedBlock,
+} from '@typebot.io/forge-repository/types'
+import { getZodInnerSchema } from '../../helpers/getZodInnerSchema'
 
 export const ZodObjectLayout = ({
   schema,
@@ -31,22 +36,26 @@ export const ZodObjectLayout = ({
   blockDef?: ForgedBlockDefinition
   blockOptions?: ForgedBlock['options']
   onDataChange: (value: any) => void
-}) => {
+}): ReactNode[] => {
+  const layout = getZodInnerSchema(schema)._def.layout
+  if (layout?.isHidden) return []
   return Object.keys(schema.shape).reduce<{
     nodes: ReactNode[]
     accordionsCreated: string[]
   }>(
     (nodes, key, index) => {
       if (ignoreKeys?.includes(key)) return nodes
-      const keySchema = schema.shape[key]
+      const keySchema = getZodInnerSchema(schema.shape[key])
       const layout = keySchema._def.layout as
         | ZodLayoutMetadata<ZodTypeAny>
         | undefined
+
+      if (layout?.isHidden) return nodes
       if (
         layout &&
         layout.accordion &&
         !isInAccordion &&
-        keySchema._def.innerType._def.typeName !== 'ZodArray'
+        keySchema._def.typeName !== 'ZodArray'
       ) {
         if (nodes.accordionsCreated.includes(layout.accordion)) return nodes
         const accordionKeys = getObjectKeysWithSameAccordionAttr(

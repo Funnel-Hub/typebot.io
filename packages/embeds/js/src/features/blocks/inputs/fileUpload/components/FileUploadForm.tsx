@@ -39,7 +39,22 @@ export const FileUploadForm = (props: Props) => {
       return setErrorMessage(`A file is larger than ${sizeLimit}MB`)
     if (!props.block.options?.isMultipleAllowed && files)
       return startSingleFileUpload(newFiles[0])
-    setSelectedFiles([...selectedFiles(), ...newFiles])
+    if (selectedFiles().length === 0) {
+      setSelectedFiles(newFiles)
+      return
+    }
+    const parsedNewFiles = newFiles.map((newFile) => {
+      let fileName = newFile.name
+      let counter = 1
+      while (selectedFiles().some((file) => file.name === fileName)) {
+        const dotIndex = newFile.name.lastIndexOf('.')
+        const extension = dotIndex !== -1 ? newFile.name.slice(dotIndex) : ''
+        fileName = `${newFile.name.slice(0, dotIndex)}(${counter})${extension}`
+        counter++
+      }
+      return new File([newFile], fileName, { type: newFile.type })
+    })
+    setSelectedFiles([...selectedFiles(), ...parsedNewFiles])
   }
 
   const handleSubmit = async (e: SubmitEvent) => {
@@ -51,12 +66,15 @@ export const FileUploadForm = (props: Props) => {
   const startSingleFileUpload = async (file: File) => {
     if (props.context.isPreview || !props.context.resultId)
       return props.onSubmit({
-        label: `File uploaded`,
+        label:
+          props.block.options?.labels?.success?.single ??
+          defaultFileInputOptions.labels.success.single,
         value: 'http://fake-upload-url.com',
       })
     setIsUploading(true)
     const urls = await uploadFiles({
-      apiHost: props.context.apiHost ?? guessApiHost(),
+      apiHost:
+        props.context.apiHost ?? guessApiHost({ ignoreChatApiUrl: true }),
       files: [
         {
           file,
@@ -70,7 +88,9 @@ export const FileUploadForm = (props: Props) => {
     setIsUploading(false)
     if (urls.length)
       return props.onSubmit({
-        label: `File uploaded`,
+        label:
+          props.block.options?.labels?.success?.single ??
+          defaultFileInputOptions.labels.success.single,
         value: urls[0] ? encodeUrl(urls[0]) : '',
       })
     setErrorMessage('An error occured while uploading the file')
@@ -79,14 +99,22 @@ export const FileUploadForm = (props: Props) => {
     const resultId = props.context.resultId
     if (props.context.isPreview || !resultId)
       return props.onSubmit({
-        label: `${files.length} file${files.length > 1 ? 's' : ''} uploaded`,
+        label:
+          files.length > 1
+            ? (
+                props.block.options?.labels?.success?.multiple ??
+                defaultFileInputOptions.labels.success.multiple
+              ).replaceAll('{total}', files.length.toString())
+            : props.block.options?.labels?.success?.single ??
+              defaultFileInputOptions.labels.success.single,
         value: files
           .map((_, idx) => `http://fake-upload-url.com/${idx}`)
           .join(', '),
       })
     setIsUploading(true)
     const urls = await uploadFiles({
-      apiHost: props.context.apiHost ?? guessApiHost(),
+      apiHost:
+        props.context.apiHost ?? guessApiHost({ ignoreChatApiUrl: true }),
       files: files.map((file) => ({
         file: file,
         input: {
@@ -101,7 +129,14 @@ export const FileUploadForm = (props: Props) => {
     if (urls.length !== files.length)
       return setErrorMessage('An error occured while uploading the files')
     props.onSubmit({
-      label: `${urls.length} file${urls.length > 1 ? 's' : ''} uploaded`,
+      label:
+        urls.length > 1
+          ? (
+              props.block.options?.labels?.success?.multiple ??
+              defaultFileInputOptions.labels.success.multiple
+            ).replaceAll('{total}', urls.length.toString())
+          : props.block.options?.labels?.success?.single ??
+            defaultFileInputOptions.labels.success.single,
       value: urls.filter(isDefined).map(encodeUrl).join(', '),
     })
   }

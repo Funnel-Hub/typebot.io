@@ -24,6 +24,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import { MoreInfoTooltip } from '../MoreInfoTooltip'
 
 export type TextInputProps = {
+  forceDebounce?: boolean
   defaultValue?: string
   onChange?: (value: string) => void
   debounceTimeout?: number
@@ -46,6 +47,7 @@ export type TextInputProps = {
   | 'autoFocus'
   | 'size'
   | 'maxWidth'
+  | 'flexShrink'
 >
 
 export const TextInput = forwardRef(function TextInput(
@@ -62,6 +64,7 @@ export const TextInput = forwardRef(function TextInput(
     autoComplete,
     isDisabled,
     autoFocus,
+    forceDebounce,
     onChange: _onChange,
     onFocus,
     onKeyUp,
@@ -69,7 +72,8 @@ export const TextInput = forwardRef(function TextInput(
     maxWidth,
     direction = 'column',
     width,
-    onlySelectVariable = false,
+    flexShrink,
+    onlySelectVariable,
   }: TextInputProps,
   ref
 ) {
@@ -83,7 +87,7 @@ export const TextInput = forwardRef(function TextInput(
   const onChange = useDebouncedCallback(
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     _onChange ?? (() => {}),
-    env.NEXT_PUBLIC_E2E_TEST ? 0 : debounceTimeout
+    env.NEXT_PUBLIC_E2E_TEST && !forceDebounce ? 0 : debounceTimeout
   )
 
   useEffect(() => {
@@ -149,6 +153,7 @@ export const TextInput = forwardRef(function TextInput(
       justifyContent="space-between"
       width={label || width === 'full' ? 'full' : 'auto'}
       spacing={direction === 'column' ? 2 : 3}
+      flexShrink={flexShrink}
     >
       {label && (
         <FormLabel display="flex" flexShrink={0} gap="1" mb="0" mr="0">

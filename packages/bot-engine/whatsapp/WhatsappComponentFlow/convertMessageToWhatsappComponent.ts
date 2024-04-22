@@ -2,7 +2,7 @@ import { ContinueChatResponse } from '@typebot.io/schemas'
 import { BubbleBlockType } from '@typebot.io/schemas/features/blocks/bubbles/constants'
 import { VideoBubbleContentType } from '@typebot.io/schemas/features/blocks/bubbles/video/constants'
 import { serialize } from 'remark-slate'
-import { isImageUrlNotCompatible, isVideoUrlNotCompatible } from '../convertMessageToWhatsAppMessage'
+import { isImageUrlNotCompatible } from '../convertMessageToWhatsAppMessage'
 
 export enum TypeWhatsappMessage {
   TEXT = 'text',
@@ -20,6 +20,9 @@ export type WhatsappSocketSendingMessage = {
   type: TypeWhatsappMessage.INTERACTIVE
   interactive: Record<string, any>
 }
+
+const mp4HttpsUrlRegex = /^https:\/\/.*\.mp4$/
+const isVideoUrlNotCompatible = (url: string) => !mp4HttpsUrlRegex.test(url)
 
 export const convertMessageToWhatsappComponent = (
   message: ContinueChatResponse['messages'][number]

@@ -11,9 +11,9 @@ import {
   sanitizeGroups,
   sanitizeSettings,
 } from '../helpers/sanitizers'
-import { sendTelemetryEvents } from '@typebot.io/lib/telemetry/sendTelemetryEvent'
 import { createId } from '@paralleldrive/cuid2'
 import { EventType } from '@typebot.io/schemas/features/events/constants'
+import { trackEvents } from '@typebot.io/telemetry/trackEvents'
 
 const typebotCreateSchemaPick = {
   name: true,
@@ -67,7 +67,10 @@ export const createTypebot = authenticatedProcedure
 
     if (
       typebot.customDomain &&
-      (await isCustomDomainNotAvailable(typebot.customDomain))
+      (await isCustomDomainNotAvailable({
+        customDomain: typebot.customDomain,
+        workspaceId,
+      }))
     )
       throw new TRPCError({
         code: 'BAD_REQUEST',
@@ -79,6 +82,15 @@ export const createTypebot = authenticatedProcedure
         code: 'BAD_REQUEST',
         message: 'Public id not available',
       })
+
+    if (typebot.folderId) {
+      const existingFolder = await prisma.dashboardFolder.findUnique({
+        where: {
+          id: typebot.folderId,
+        },
+      })
+      if (!existingFolder) typebot.folderId = null
+    }
 
     const newTypebot = await prisma.typebot.create({
       data: {
@@ -116,7 +128,7 @@ export const createTypebot = authenticatedProcedure
 
     const parsedNewTypebot = typebotV6Schema.parse(newTypebot)
 
-    await sendTelemetryEvents([
+    await trackEvents([
       {
         name: 'Typebot created',
         workspaceId: parsedNewTypebot.workspaceId,

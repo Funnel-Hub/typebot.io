@@ -1,19 +1,17 @@
 import { createId } from '@paralleldrive/cuid2'
 import { TRPCError } from '@trpc/server'
-import { env } from '@typebot.io/env'
-import { isDefined, isInputBlock, isNotEmpty, omit } from '@typebot.io/lib'
-import { VisitedEdge } from '@typebot.io/prisma'
+import { isDefined, omit, isNotEmpty } from '@typebot.io/lib'
+import { isInputBlock } from '@typebot.io/schemas/helpers'
 import {
-  Block,
+  Variable,
+  VariableWithValue,
+  Theme,
   GoogleAnalyticsBlock,
   PixelBlock,
   SessionState,
-  Theme,
   TypebotInSession,
-  Variable,
-  VariableWithValue,
+  Block,
 } from '@typebot.io/schemas'
-import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
 import {
   StartChatInput,
   StartChatResponse,
@@ -21,21 +19,29 @@ import {
   StartTypebot,
   startTypebotSchema,
 } from '@typebot.io/schemas/features/chat/schema'
-import { defaultSettings } from '@typebot.io/schemas/features/typebot/settings/constants'
-import { defaultTheme } from '@typebot.io/schemas/features/typebot/theme/constants'
-import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
-import { injectVariablesFromExistingResult } from '@typebot.io/variables/injectVariablesFromExistingResult'
-import { parseVariables } from '@typebot.io/variables/parseVariables'
-import { prefillVariables } from '@typebot.io/variables/prefillVariables'
 import parse, { NodeType } from 'node-html-parser'
-import { continueBotFlow } from './continueBotFlow'
-import { getNextGroup } from './getNextGroup'
 import { parseDynamicTheme } from './parseDynamicTheme'
+import { findTypebot } from './queries/findTypebot'
 import { findPublicTypebot } from './queries/findPublicTypebot'
 import { findResult } from './queries/findResult'
-import { findTypebot } from './queries/findTypebot'
-import { upsertResult } from './queries/upsertResult'
 import { startBotFlow } from './startBotFlow'
+import { prefillVariables } from '@typebot.io/variables/prefillVariables'
+import { deepParseVariables } from '@typebot.io/variables/deepParseVariables'
+import { injectVariablesFromExistingResult } from '@typebot.io/variables/injectVariablesFromExistingResult'
+import { getNextGroup } from './getNextGroup'
+import { upsertResult } from './queries/upsertResult'
+import { continueBotFlow } from './continueBotFlow'
+import { parseVariables } from '@typebot.io/variables/parseVariables'
+import { defaultSettings } from '@typebot.io/schemas/features/typebot/settings/constants'
+import { IntegrationBlockType } from '@typebot.io/schemas/features/blocks/integrations/constants'
+import { VisitedEdge } from '@typebot.io/prisma'
+import { env } from '@typebot.io/env'
+import { getFirstEdgeId } from './getFirstEdgeId'
+import { Reply } from './types'
+import {
+  defaultGuestAvatarIsEnabled,
+  defaultHostAvatarIsEnabled,
+} from '@typebot.io/schemas/features/typebot/theme/constants'
 
 type StartParams =
   | ({
@@ -48,7 +54,7 @@ type StartParams =
 
 type Props = {
   version: 1 | 2
-  message: string | undefined
+  message: Reply
   startParams: StartParams
   initialSessionState?: Pick<
     SessionState,
@@ -70,10 +76,9 @@ export const startSession = async ({
 > => {
   const typebot = await getTypebot(startParams)
 
-  const prefilledVariables =
-    startParams.type === 'live' && startParams.prefilledVariables
-      ? prefillVariables(typebot.variables, startParams.prefilledVariables)
-      : typebot.variables
+  const prefilledVariables = startParams.prefilledVariables
+    ? prefillVariables(typebot.variables, startParams.prefilledVariables)
+    : typebot.variables
 
   const result = await getResult({
     resultId: startParams.type === 'live' ? startParams.resultId : undefined,
@@ -138,6 +143,11 @@ export const startSession = async ({
       startParams.type === 'preview'
         ? undefined
         : typebot.settings.security?.allowedOrigins,
+    progressMetadata: initialSessionState?.whatsApp
+      ? undefined
+      : typebot.theme.general?.progressBar?.isEnabled
+      ? { totalAnswers: 0 }
+      : undefined,
     ...initialSessionState,
     isWhatsappIntegration: startParams.isWhatsappIntegration,
   }
@@ -170,9 +180,14 @@ export const startSession = async ({
 
   // If params has message and first block is an input block, we can directly continue the bot flow
   if (message) {
-    const firstEdgeId =
-      chatReply.newSessionState.typebotsQueue[0].typebot.groups[0].blocks[0]
-        .outgoingEdgeId
+    const firstEdgeId = getFirstEdgeId({
+      state: chatReply.newSessionState,
+      startEventId:
+        startParams.type === 'preview' &&
+        startParams.startFrom?.type === 'event'
+          ? startParams.startFrom.eventId
+          : undefined,
+    })
     const nextGroup = await getNextGroup(chatReply.newSessionState)(firstEdgeId)
     const newSessionState = nextGroup.newSessionState
     const firstBlock = nextGroup.group?.blocks.at(0)
@@ -377,12 +392,11 @@ const getResult = async ({
 
 const parseDynamicThemeInState = (theme: Theme) => {
   const hostAvatarUrl =
-    theme.chat?.hostAvatar?.isEnabled ?? defaultTheme.chat.hostAvatar.isEnabled
+    theme.chat?.hostAvatar?.isEnabled ?? defaultHostAvatarIsEnabled
       ? theme.chat?.hostAvatar?.url
       : undefined
   const guestAvatarUrl =
-    theme.chat?.guestAvatar?.isEnabled ??
-    defaultTheme.chat.guestAvatar.isEnabled
+    theme.chat?.guestAvatar?.isEnabled ?? defaultGuestAvatarIsEnabled
       ? theme.chat?.guestAvatar?.url
       : undefined
   if (!hostAvatarUrl?.startsWith('{{') && !guestAvatarUrl?.startsWith('{{'))

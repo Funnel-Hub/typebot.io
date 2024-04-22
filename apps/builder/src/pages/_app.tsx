@@ -19,11 +19,9 @@ import { NewVersionPopup } from '@/components/NewVersionPopup'
 import { TypebotProvider } from '@/features/editor/providers/TypebotProvider'
 import { WorkspaceProvider } from '@/features/workspace/WorkspaceProvider'
 import { isCloudProdInstance } from '@/helpers/isCloudProdInstance'
-import { initPostHogIfEnabled } from '@/features/telemetry/posthog'
 import { TolgeeProvider, useTolgeeSSR } from '@tolgee/react'
 import { tolgee } from '@/lib/tolgee'
-
-initPostHogIfEnabled()
+import { Toaster } from '@/components/Toaster'
 
 const { ToastContainer, toast } = createStandaloneToast(customTheme)
 
@@ -63,6 +61,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     <TolgeeProvider tolgee={ssrTolgee}>
       <ToastContainer />
       <ChakraProvider theme={customTheme}>
+        <Toaster />
         <SessionProvider session={pageProps.session}>
           <UserProvider>
             <TypebotProvider typebotId={typebotId}>

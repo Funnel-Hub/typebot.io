@@ -19,9 +19,14 @@ import {
 } from '@chakra-ui/react'
 import { VariableSearchInput } from '@/components/inputs/VariableSearchInput'
 import { DropdownList } from '@/components/DropdownList'
-import { ForgedBlockDefinition, ForgedBlock } from '@typebot.io/forge-schemas'
+import {
+  ForgedBlockDefinition,
+  ForgedBlock,
+} from '@typebot.io/forge-repository/types'
 import { PrimitiveList } from '@/components/PrimitiveList'
 import { SwitchWithLabel } from '@/components/inputs/SwitchWithLabel'
+import { CodeEditor } from '@/components/inputs/CodeEditor'
+import { getZodInnerSchema } from '../../helpers/getZodInnerSchema'
 
 const mdComponents = {
   a: ({ href, children }) => (
@@ -56,16 +61,16 @@ export const ZodFieldLayout = ({
   propName?: string
   onDataChange: (val: any) => void
 }) => {
-  const layout = schema._def.layout as ZodLayoutMetadata<ZodTypeAny> | undefined
-  const type = schema._def.innerType
-    ? schema._def.innerType._def.typeName
-    : schema._def.typeName
+  const innerSchema = getZodInnerSchema(schema)
+  const layout = innerSchema._def.layout
 
-  switch (type) {
+  if (layout?.isHidden) return null
+
+  switch (innerSchema._def.typeName) {
     case 'ZodObject':
       return (
         <ZodObjectLayout
-          schema={schema as z.ZodObject<any>}
+          schema={innerSchema as z.ZodObject<any>}
           data={data}
           onDataChange={onDataChange}
           isInAccordion={isInAccordion}
@@ -76,10 +81,12 @@ export const ZodFieldLayout = ({
     case 'ZodDiscriminatedUnion': {
       return (
         <ZodDiscriminatedUnionLayout
-          discriminant={schema._def.discriminator}
+          discriminant={innerSchema._def.discriminator}
           data={data}
-          schema={schema as z.ZodDiscriminatedUnion<string, z.ZodObject<any>[]>}
-          dropdownPlaceholder={`Select a ${schema._def.discriminator}`}
+          schema={
+            innerSchema as z.ZodDiscriminatedUnion<string, z.ZodObject<any>[]>
+          }
+          dropdownPlaceholder={`Select a ${innerSchema._def.discriminator}`}
           onDataChange={onDataChange}
         />
       )
@@ -98,7 +105,9 @@ export const ZodFieldLayout = ({
               <AccordionPanel as={Stack} pt="4">
                 <ZodArrayContent
                   data={data}
-                  schema={schema}
+                  schema={innerSchema}
+                  blockDef={blockDef}
+                  blockOptions={blockOptions}
                   layout={layout}
                   onDataChange={onDataChange}
                   isInAccordion
@@ -110,7 +119,9 @@ export const ZodFieldLayout = ({
       return (
         <ZodArrayContent
           data={data}
-          schema={schema}
+          schema={innerSchema}
+          blockDef={blockDef}
+          blockOptions={blockOptions}
           layout={layout}
           onDataChange={onDataChange}
         />
@@ -121,7 +132,7 @@ export const ZodFieldLayout = ({
         <DropdownList
           currentItem={data ?? layout?.defaultValue}
           onItemSelect={onDataChange}
-          items={schema._def.innerType._def.values}
+          items={innerSchema._def.values}
           label={layout?.label}
           helperText={
             layout?.helperText ? (
@@ -152,6 +163,7 @@ export const ZodFieldLayout = ({
           onValueChange={onDataChange}
           direction={layout?.direction}
           width={width}
+          debounceTimeout={layout?.isDebounceDisabled ? 0 : undefined}
         />
       )
     }
@@ -226,9 +238,33 @@ export const ZodFieldLayout = ({
             moreInfoTooltip={layout.moreInfoTooltip}
             onChange={onDataChange}
             width={width}
+            debounceTimeout={layout?.isDebounceDisabled ? 0 : undefined}
           />
         )
       }
+
+      if (layout?.inputType === 'code')
+        return (
+          <CodeEditor
+            defaultValue={data ?? layout?.defaultValue}
+            lang={layout.lang ?? 'javascript'}
+            label={layout?.label}
+            placeholder={layout?.placeholder}
+            helperText={
+              layout?.helperText ? (
+                <Markdown components={mdComponents}>
+                  {layout.helperText}
+                </Markdown>
+              ) : undefined
+            }
+            isRequired={layout?.isRequired}
+            withVariableButton={layout?.withVariableButton}
+            moreInfoTooltip={layout.moreInfoTooltip}
+            onChange={onDataChange}
+            width={width}
+            debounceTimeout={layout?.isDebounceDisabled ? 0 : undefined}
+          />
+        )
       return (
         <TextInput
           defaultValue={data ?? layout?.defaultValue}
@@ -245,6 +281,7 @@ export const ZodFieldLayout = ({
           moreInfoTooltip={layout?.moreInfoTooltip}
           onChange={onDataChange}
           width={width}
+          debounceTimeout={layout?.isDebounceDisabled ? 0 : undefined}
         />
       )
     }
@@ -254,19 +291,21 @@ export const ZodFieldLayout = ({
 const ZodArrayContent = ({
   schema,
   data,
+  blockDef,
+  blockOptions,
   layout,
   isInAccordion,
   onDataChange,
 }: {
   schema: z.ZodTypeAny
   data: any
+  blockDef?: ForgedBlockDefinition
+  blockOptions?: ForgedBlock['options']
   layout: ZodLayoutMetadata<ZodTypeAny> | undefined
   isInAccordion?: boolean
   onDataChange: (val: any) => void
 }) => {
-  const type = schema._def.innerType
-    ? schema._def.innerType._def.typeName
-    : schema._def.typeName
+  const type = schema._def.type._def.innerType?._def.typeName
   if (type === 'ZodString' || type === 'ZodNumber' || type === 'ZodEnum')
     return (
       <Stack spacing={0}>
@@ -281,8 +320,10 @@ const ZodArrayContent = ({
           >
             {({ item, onItemChange }) => (
               <ZodFieldLayout
-                schema={schema._def.innerType._def.type}
+                schema={schema._def.type}
                 data={item}
+                blockDef={blockDef}
+                blockOptions={blockOptions}
                 isInAccordion={isInAccordion}
                 onDataChange={onItemChange}
                 width="full"
@@ -302,9 +343,11 @@ const ZodArrayContent = ({
       isOrdered={layout?.isOrdered}
     >
       {({ item, onItemChange }) => (
-        <Stack p="4" rounded="md" flex="1" borderWidth="1px">
+        <Stack p="4" rounded="md" flex="1" borderWidth="1px" maxW="100%">
           <ZodFieldLayout
-            schema={schema._def.innerType._def.type}
+            schema={schema._def.type}
+            blockDef={blockDef}
+            blockOptions={blockOptions}
             data={item}
             isInAccordion={isInAccordion}
             onDataChange={onItemChange}

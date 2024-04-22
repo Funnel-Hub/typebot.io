@@ -32,6 +32,7 @@ import {
 import { InputBlockType } from '@typebot.io/schemas/features/blocks/inputs/constants'
 import { saveClientLogsQuery } from '@/queries/saveClientLogsQuery'
 import { HTTPError } from 'ky'
+import { persist } from '@/utils/persist'
 
 const parseDynamicTheme = (
   initialTheme: Theme,
@@ -64,17 +65,29 @@ type Props = {
   onAnswer?: (answer: { message: string; blockId: string }) => void
   onEnd?: () => void
   onNewLogs?: (logs: OutgoingLog[]) => void
+  onProgressUpdate?: (progress: number) => void
 }
 
 export const ConversationContainer = (props: Props) => {
   let chatContainer: HTMLDivElement | undefined
-  const [chatChunks, setChatChunks] = createSignal<ChatChunkType[]>([
+  const [chatChunks, setChatChunks, isRecovered] = persist(
+    createSignal<ChatChunkType[]>([
+      {
+        input: props.initialChatReply.input,
+        messages: props.initialChatReply.messages,
+        clientSideActions: props.initialChatReply.clientSideActions,
+      },
+    ]),
     {
-      input: props.initialChatReply.input,
-      messages: props.initialChatReply.messages,
-      clientSideActions: props.initialChatReply.clientSideActions,
-    },
-  ])
+      key: `typebot-${props.context.typebot.id}-chatChunks`,
+      storage: props.context.storage,
+      onRecovered: () => {
+        setTimeout(() => {
+          chatContainer?.scrollTo(0, chatContainer.scrollHeight)
+        }, 200)
+      },
+    }
+  )
   const [dynamicTheme, setDynamicTheme] = createSignal<
     ContinueChatResponse['dynamicTheme']
   >(props.initialChatReply.dynamicTheme)
@@ -90,27 +103,7 @@ export const ConversationContainer = (props: Props) => {
       const actionsBeforeFirstBubble = initialChunk.clientSideActions.filter(
         (action) => isNotDefined(action.lastBubbleBlockId)
       )
-      for (const action of actionsBeforeFirstBubble) {
-        if (
-          'streamOpenAiChatCompletion' in action ||
-          'webhookToExecute' in action
-        )
-          setIsSending(true)
-        const response = await executeClientSideAction({
-          clientSideAction: action,
-          context: {
-            apiHost: props.context.apiHost,
-            sessionId: props.initialChatReply.sessionId,
-          },
-          onMessageStream: streamMessage,
-        })
-        if (response && 'replyToSend' in response) {
-          sendMessage(response.replyToSend, response.logs)
-          return
-        }
-        if (response && 'blockedPopupUrl' in response)
-          setBlockedPopupUrl(response.blockedPopupUrl)
-      }
+      await processClientSideActions(actionsBeforeFirstBubble)
     })()
   })
 
@@ -192,6 +185,7 @@ export const ConversationContainer = (props: Props) => {
       return
     }
     if (!data) return
+    if (data.progress) props.onProgressUpdate?.(data.progress)
     if (data.lastMessageNewFormat) {
       setFormattedMessages([
         ...formattedMessages(),
@@ -210,27 +204,7 @@ export const ConversationContainer = (props: Props) => {
       const actionsBeforeFirstBubble = data.clientSideActions.filter((action) =>
         isNotDefined(action.lastBubbleBlockId)
       )
-      for (const action of actionsBeforeFirstBubble) {
-        if (
-          'streamOpenAiChatCompletion' in action ||
-          'webhookToExecute' in action
-        )
-          setIsSending(true)
-        const response = await executeClientSideAction({
-          clientSideAction: action,
-          context: {
-            apiHost: props.context.apiHost,
-            sessionId: props.initialChatReply.sessionId,
-          },
-          onMessageStream: streamMessage,
-        })
-        if (response && 'replyToSend' in response) {
-          sendMessage(response.replyToSend, response.logs)
-          return
-        }
-        if (response && 'blockedPopupUrl' in response)
-          setBlockedPopupUrl(response.blockedPopupUrl)
-      }
+      await processClientSideActions(actionsBeforeFirstBubble)
     }
     setChatChunks((displayedChunks) => [
       ...displayedChunks,
@@ -267,27 +241,36 @@ export const ConversationContainer = (props: Props) => {
       const actionsToExecute = lastChunk.clientSideActions.filter(
         (action) => action.lastBubbleBlockId === blockId
       )
-      for (const action of actionsToExecute) {
-        if (
-          'streamOpenAiChatCompletion' in action ||
-          'webhookToExecute' in action
-        )
-          setIsSending(true)
-        const response = await executeClientSideAction({
-          clientSideAction: action,
-          context: {
-            apiHost: props.context.apiHost,
-            sessionId: props.initialChatReply.sessionId,
-          },
-          onMessageStream: streamMessage,
-        })
-        if (response && 'replyToSend' in response) {
-          sendMessage(response.replyToSend, response.logs)
-          return
-        }
-        if (response && 'blockedPopupUrl' in response)
-          setBlockedPopupUrl(response.blockedPopupUrl)
+      await processClientSideActions(actionsToExecute)
+    }
+  }
+
+  const processClientSideActions = async (
+    actions: NonNullable<ContinueChatResponse['clientSideActions']>
+  ) => {
+    if (isRecovered()) return
+    for (const action of actions) {
+      if (
+        'streamOpenAiChatCompletion' in action ||
+        'webhookToExecute' in action ||
+        'stream' in action
+      )
+        setIsSending(true)
+      const response = await executeClientSideAction({
+        clientSideAction: action,
+        context: {
+          apiHost: props.context.apiHost,
+          sessionId: props.initialChatReply.sessionId,
+        },
+        onMessageStream: streamMessage,
+      })
+      if (response && 'replyToSend' in response) {
+        setIsSending(false)
+        sendMessage(response.replyToSend, response.logs)
+        return
       }
+      if (response && 'blockedPopupUrl' in response)
+        setBlockedPopupUrl(response.blockedPopupUrl)
     }
   }
 
@@ -301,12 +284,12 @@ export const ConversationContainer = (props: Props) => {
   return (
     <div
       ref={chatContainer}
-      class="flex flex-col overflow-y-scroll w-full min-h-full px-3 pt-10 relative scrollable-container typebot-chat-view scroll-smooth gap-2"
+      class="flex flex-col overflow-y-auto w-full px-3 pt-10 relative scrollable-container typebot-chat-view scroll-smooth gap-2"
     >
       <For each={chatChunks()}>
         {(chatChunk, index) => (
           <ChatChunk
-            inputIndex={index()}
+            index={index()}
             messages={chatChunk.messages}
             input={chatChunk.input}
             theme={theme()}
@@ -317,9 +300,10 @@ export const ConversationContainer = (props: Props) => {
               !chatChunk.input &&
               ((chatChunks()[index() + 1]?.messages ?? 0).length > 0 ||
                 chatChunks()[index() + 1]?.streamingMessageId !== undefined ||
-                isSending())
+                (chatChunk.messages.length > 0 && isSending()))
             }
             hasError={hasError() && index() === chatChunks().length - 1}
+            isTransitionDisabled={index() !== chatChunks().length - 1}
             onNewBubbleDisplayed={handleNewBubbleDisplayed}
             onAllBubblesDisplayed={handleAllBubblesDisplayed}
             onSubmit={sendMessage}

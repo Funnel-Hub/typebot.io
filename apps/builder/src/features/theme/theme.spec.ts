@@ -1,8 +1,12 @@
 import { getTestAsset } from '@/test/utils/playwright'
 import test, { expect } from '@playwright/test'
 import { createId } from '@paralleldrive/cuid2'
-import { importTypebotInDatabase } from '@typebot.io/lib/playwright/databaseActions'
-import { freeWorkspaceId } from '@typebot.io/lib/playwright/databaseSetup'
+import { importTypebotInDatabase } from '@typebot.io/playwright/databaseActions'
+import { freeWorkspaceId } from '@typebot.io/playwright/databaseSetup'
+import {
+  defaultContainerMaxHeight,
+  defaultContainerMaxWidth,
+} from '@typebot.io/schemas/features/typebot/theme/constants'
 
 const hostAvatarUrl =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1760&q=80'
@@ -30,10 +34,12 @@ test.describe.parallel('Theme page', () => {
       await expect(page.locator('a:has-text("Made with Typebot")')).toBeHidden()
 
       // Font
+      await page.getByRole('button', { name: 'Font' }).click()
       await page.getByRole('textbox').fill('Roboto Slab')
+      await page.getByRole('menuitem', { name: 'Roboto Slab' }).click()
       await expect(page.locator('.typebot-container')).toHaveCSS(
         'font-family',
-        /"Roboto Slab"/
+        /Roboto Slab/
       )
 
       // BG color
@@ -41,6 +47,7 @@ test.describe.parallel('Theme page', () => {
         'background-color',
         'rgba(0, 0, 0, 0)'
       )
+      await page.getByRole('button', { name: 'Background' }).click()
       await page.click('text=Color')
       await page.waitForTimeout(100)
       await page.getByRole('button', { name: 'Pick a color' }).click()
@@ -81,6 +88,38 @@ test.describe.parallel('Theme page', () => {
       await expect(page.getByRole('button', { name: 'Go' })).toBeVisible()
       await page.click('button:has-text("Chat")')
 
+      // Container
+      await expect(page.locator('.typebot-chat-view')).toHaveCSS(
+        'max-width',
+        defaultContainerMaxWidth
+      )
+      await page
+        .locator('div')
+        .filter({ hasText: /^Max width:px$/ })
+        .getByRole('spinbutton')
+        .fill('600')
+      await expect(page.locator('.typebot-chat-view')).toHaveCSS(
+        'max-width',
+        '600px'
+      )
+      await expect(page.locator('.typebot-chat-view')).toHaveCSS(
+        'max-height',
+        defaultContainerMaxHeight
+      )
+      await page
+        .locator('div')
+        .filter({ hasText: /^Max height:%$/ })
+        .getByRole('spinbutton')
+        .fill('80')
+      await expect(page.locator('.typebot-chat-view')).toHaveCSS(
+        'max-height',
+        '80%'
+      )
+      await expect(page.locator('.typebot-chat-view')).toHaveCSS(
+        'color',
+        'rgb(48, 50, 53)'
+      )
+
       // Host avatar
       await expect(
         page.locator('[data-testid="default-avatar"]').nth(1)
@@ -101,39 +140,13 @@ test.describe.parallel('Theme page', () => {
 
       await expect(page.locator('.typebot-container img')).toBeHidden()
 
-      // Roundness
-      await expect(page.getByRole('button', { name: 'Go' })).toHaveCSS(
-        'border-radius',
-        '6px'
-      )
-      await page
-        .getByRole('region', { name: 'Chat' })
-        .getByRole('radiogroup')
-        .locator('div')
-        .first()
-        .click()
-      await expect(page.getByRole('button', { name: 'Go' })).toHaveCSS(
-        'border-radius',
-        '0px'
-      )
-      await page
-        .getByRole('region', { name: 'Chat' })
-        .getByRole('radiogroup')
-        .locator('div')
-        .nth(2)
-        .click()
-      await expect(page.getByRole('button', { name: 'Go' })).toHaveCSS(
-        'border-radius',
-        '20px'
-      )
-
       // Host bubbles
       await page.click(
-        '[data-testid="host-bubbles-theme"] >> [aria-label="Pick a color"] >> nth=0'
+        '[data-testid="hostBubblesTheme"] >> [aria-label="Pick a color"] >> nth=0'
       )
       await page.fill('input[value="#F7F8FF"]', '#2a9d8f')
       await page.click(
-        '[data-testid="host-bubbles-theme"] >> [aria-label="Pick a color"] >> nth=1'
+        '[data-testid="hostBubblesTheme"] >> [aria-label="Pick a color"] >> nth=1'
       )
       await page.fill('input[value="#303235"]', '#ffffff')
       const hostBubble = page.locator('[data-testid="host-bubble"] >> nth=-1')
@@ -145,11 +158,11 @@ test.describe.parallel('Theme page', () => {
 
       // Buttons
       await page.click(
-        '[data-testid="buttons-theme"] >> [aria-label="Pick a color"] >> nth=0'
+        '[data-testid="buttonsTheme"] >> [aria-label="Pick a color"] >> nth=0'
       )
       await page.fill('input[value="#0042DA"]', '#7209b7')
       await page.click(
-        '[data-testid="buttons-theme"] >> [aria-label="Pick a color"] >> nth=1'
+        '[data-testid="buttonsTheme"] >> [aria-label="Pick a color"] >> nth=1'
       )
       await page.fill('input[value="#FFFFFF"]', '#e9c46a')
       const button = page.getByRole('button', { name: 'Go' })
@@ -158,11 +171,11 @@ test.describe.parallel('Theme page', () => {
 
       // Guest bubbles
       await page.click(
-        '[data-testid="guest-bubbles-theme"] >> [aria-label="Pick a color"] >> nth=0'
+        '[data-testid="guestBubblesTheme"] >> [aria-label="Pick a color"] >> nth=0'
       )
       await page.fill('input[value="#FF8E21"]', '#d8f3dc')
       await page.click(
-        '[data-testid="guest-bubbles-theme"] >> [aria-label="Pick a color"] >> nth=1'
+        '[data-testid="guestBubblesTheme"] >> [aria-label="Pick a color"] >> nth=1'
       )
       await page.fill('input[value="#FFFFFF"]', '#264653')
       await page.getByRole('button', { name: 'Go' }).click()
@@ -184,19 +197,18 @@ test.describe.parallel('Theme page', () => {
         .locator('input[placeholder="Paste the image link..."]')
         .fill(guestAvatarUrl)
       await page.getByRole('button', { name: 'Go' }).click()
-      await expect(page.locator('.typebot-container img')).toHaveAttribute(
-        'src',
-        guestAvatarUrl
-      )
+      await expect(
+        page.getByRole('img', { name: 'Bot avatar' }).nth(2)
+      ).toHaveAttribute('src', guestAvatarUrl)
 
       await page.waitForTimeout(1000)
       // Input
       await page.click(
-        '[data-testid="inputs-theme"] >> [aria-label="Pick a color"] >> nth=0'
+        '[data-testid="inputsTheme"] >> [aria-label="Pick a color"] >> nth=0'
       )
       await page.fill('input[value="#FFFFFF"]', '#ffe8d6')
       await page.click(
-        '[data-testid="inputs-theme"] >> [aria-label="Pick a color"] >> nth=1'
+        '[data-testid="inputsTheme"] >> [aria-label="Pick a color"] >> nth=1'
       )
       await page.fill('input[value="#303235"]', '#023e8a')
       const input = page.locator('.typebot-input')

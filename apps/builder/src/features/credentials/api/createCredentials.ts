@@ -17,6 +17,7 @@ import {
   whatsappSocketCredentialsSchema,
 } from '@typebot.io/schemas/features/whatsapp'
 import { z } from 'zod'
+import { trackEvents } from '@typebot.io/telemetry/trackEvents'
 
 const inputShape = {
   data: true,
@@ -81,6 +82,14 @@ export const createCredentials = authenticatedProcedure
         id: true,
       },
     })
+    if (credentials.type === 'whatsApp')
+      await trackEvents([
+        {
+          workspaceId: workspace.id,
+          userId: user.id,
+          name: 'WhatsApp credentials created',
+        },
+      ])
     return { credentialsId: createdCredentials.id }
   })
 

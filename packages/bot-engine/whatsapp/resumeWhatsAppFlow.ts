@@ -12,11 +12,13 @@ import { decrypt } from '@typebot.io/lib/api/encryption/decrypt'
 import { saveStateToDatabase } from '../saveStateToDatabase'
 import prisma from '@typebot.io/lib/prisma'
 import { isDefined } from '@typebot.io/lib/utils'
+import { Reply } from '../types'
 
 type Props = {
   receivedMessage: WhatsAppIncomingMessage
   sessionId: string
   credentialsId?: string
+  phoneNumberId?: string
   workspaceId?: string
   contact: NonNullable<SessionState['whatsApp']>['contact']
 }
@@ -26,6 +28,7 @@ export const resumeWhatsAppFlow = async ({
   sessionId,
   workspaceId,
   credentialsId,
+  phoneNumberId,
   contact,
 }: Props): Promise<{ message: string }> => {
   const messageSendDate = new Date(Number(receivedMessage.timestamp) * 1000)
@@ -38,15 +41,7 @@ export const resumeWhatsAppFlow = async ({
     }
   }
 
-  const session = await getSession(sessionId)
-
   const isPreview = workspaceId === undefined || credentialsId === undefined
-
-  const { typebot } = session?.state.typebotsQueue[0] ?? {}
-  const messageContent = await getIncomingMessageContent({
-    message: receivedMessage,
-    typebotId: typebot?.id,
-  })
 
   const credentials = await getCredentials({ credentialsId, isPreview })
 
@@ -57,6 +52,21 @@ export const resumeWhatsAppFlow = async ({
     }
   }
 
+  if (credentials.phoneNumberId !== phoneNumberId && !isPreview) {
+    console.error('Credentials point to another phone ID, skipping...')
+    return {
+      message: 'Message received',
+    }
+  }
+
+  const reply = await getIncomingMessageContent({
+    message: receivedMessage,
+    workspaceId,
+    accessToken: credentials?.systemUserAccessToken,
+  })
+
+  const session = await getSession(sessionId)
+
   const isSessionExpired =
     session &&
     isDefined(session.state.expiryTimeout) &&
@@ -64,13 +74,13 @@ export const resumeWhatsAppFlow = async ({
 
   const resumeResponse =
     session && !isSessionExpired
-      ? await continueBotFlow(messageContent, {
+      ? await continueBotFlow(reply, {
           version: 2,
           state: { ...session.state, whatsApp: { contact } },
         })
       : workspaceId
       ? await startWhatsAppSession({
-          incomingMessage: messageContent,
+          incomingMessage: reply,
           workspaceId,
           credentials: { ...credentials, id: credentialsId as string },
           contact,
@@ -93,10 +103,12 @@ export const resumeWhatsAppFlow = async ({
     visitedEdges,
   } = resumeResponse
 
+  const isFirstChatChunk = (!session || isSessionExpired) ?? false
   await sendChatReplyToWhatsApp({
     to: receivedMessage.from,
     messages,
     input,
+    isFirstChatChunk,
     typingEmulation: newSessionState.typingEmulation,
     clientSideActions,
     credentials,
@@ -125,11 +137,13 @@ export const resumeWhatsAppFlow = async ({
 
 const getIncomingMessageContent = async ({
   message,
-  typebotId,
+  workspaceId,
+  accessToken,
 }: {
   message: WhatsAppIncomingMessage
-  typebotId?: string
-}): Promise<string | undefined> => {
+  workspaceId?: string
+  accessToken: string
+}): Promise<Reply> => {
   switch (message.type) {
     case 'text':
       return message.text.body
@@ -142,17 +156,13 @@ const getIncomingMessageContent = async ({
     case 'audio':
     case 'video':
     case 'image':
-      if (!typebotId) return
       let mediaId: string | undefined
       if (message.type === 'video') mediaId = message.video.id
       if (message.type === 'image') mediaId = message.image.id
       if (message.type === 'audio') mediaId = message.audio.id
       if (message.type === 'document') mediaId = message.document.id
       if (!mediaId) return
-      return (
-        env.NEXTAUTH_URL +
-        `/api/typebots/${typebotId}/whatsapp/media/${mediaId}`
-      )
+      return { type: 'whatsapp media', mediaId, workspaceId, accessToken }
     case 'location':
       return `${message.location.latitude}, ${message.location.longitude}`
   }

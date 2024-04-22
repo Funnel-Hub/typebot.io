@@ -22,7 +22,7 @@ import { MakeComContent } from '@/features/blocks/integrations/makeCom/component
 import { OpenAINodeBody } from '@/features/blocks/integrations/openai/components/OpenAINodeBody'
 import { PabblyConnectContent } from '@/features/blocks/integrations/pabbly/components/PabblyConnectContent'
 import { SendEmailContent } from '@/features/blocks/integrations/sendEmail/components/SendEmailContent'
-import { WebhookContent } from '@/features/blocks/integrations/webhook/components/WebhookContent'
+import { WebhookContent } from '@/features/blocks/integrations/webhook/components/HttpRequestContent'
 import { ZapierContent } from '@/features/blocks/integrations/zapier/components/ZapierContent'
 import { PictureChoiceNode } from '@/features/blocks/inputs/pictureChoice/components/PictureChoiceNode'
 import { ChatwootNodeBody } from '@/features/blocks/integrations/chatwoot/components/ChatwootNodeBody'
