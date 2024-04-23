@@ -16,9 +16,9 @@ import { createId } from '@paralleldrive/cuid2'
 import { useTranslate } from '@tolgee/react'
 import { WhatsappOperationTypes } from '@typebot.io/bot-engine/whatsapp/WhatsappComponentFlow/WhatsappOperationType'
 import { env } from '@typebot.io/env'
-import { useQRCode } from 'next-qrcode'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Socket, io } from 'socket.io-client'
+import { QRCodeSVG } from 'qrcode.react';
 
 type Props = {
   isOpen: boolean
@@ -47,7 +47,6 @@ export const WhatsappCredentialsModal = ({
 
   const { workspace } = useWorkspace()
   const { typebot } = useTypebot()
-  const { SVG } = useQRCode()
   const { showToast } = useToast()
   const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
   const [processAuthWppLoading, setProcessAuthWppLoading] = useState(true)
@@ -102,7 +101,7 @@ export const WhatsappCredentialsModal = ({
       },
     })
 
-    socketClient.on('qr', (payload) => {
+    socketClient.on('qr', (payload: { qr: string }) => {
       if (
         (stepLoadingMessage === stepMessages.loadingQrCode &&
           !isFinishedLoadingScreenWhatsapp.current) ||
@@ -113,10 +112,11 @@ export const WhatsappCredentialsModal = ({
         setProcessAuthWppLoading(false)
         setStepLoadingMessage(stepMessages.loadingQrCode)
         isFinishedLoadingScreenWhatsapp.current = false
+        console.log(payload.qr)
       }
     })
 
-    socketClient.on('loading', (payload) => {
+    socketClient.on('loading', (payload: { percent: number }) => {
       setProcessAuthWppLoading(true)
       setStepLoadingMessage(stepMessages.loadingAuthentication)
       setAuthFailure(false)
@@ -124,7 +124,7 @@ export const WhatsappCredentialsModal = ({
         isFinishedLoadingScreenWhatsapp.current = true
     })
 
-    socketClient.on('ready', (payload) => {
+    socketClient.on('ready', (payload: { phoneNumber: string }) => {
       mutate({
         credentials: {
           id: createId(),
@@ -174,17 +174,7 @@ export const WhatsappCredentialsModal = ({
                 direction="column"
                 gap={4}
               >
-                <SVG
-                  text={whatsappQrCode}
-                  options={{
-                    type: 'image/jpeg',
-                    quality: 0.3,
-                    errorCorrectionLevel: 'M',
-                    margin: 3,
-                    scale: 5,
-                    width: 200,
-                  }}
-                />
+                <QRCodeSVG value={whatsappQrCode} width={300} scale={5} height={250} />
                 {!!authFailure && <Text>{stepMessages.authFailure}</Text>}
               </Flex>
             )}
