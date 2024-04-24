@@ -100,7 +100,7 @@ export async function sendSocketWhatsappMessage(
       )
     })
 
-    socket.on('ready', () => {
+    socket.on('ready', async () => {
       await new Promise((resolve) => setTimeout(resolve, 200))
       phones.forEach((phone) => {
         socket.emit('sendMessage', {
