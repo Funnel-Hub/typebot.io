@@ -101,19 +101,18 @@ export async function sendSocketWhatsappMessage(
     })
 
     socket.on('ready', () => {
+      phones.forEach((phone) => {
+        socket.emit('sendMessage', {
+          phoneNumber: phone,
+          message,
+          sessionId,
+        })
+      })
       resolve(socket)
     })
 
     socket.on('error', (err) => {
       reject(new Error(JSON.stringify(err)))
-    })
-  })
-
-  phones.forEach((phone) => {
-    socketClient.emit('sendMessage', {
-      phoneNumber: phone,
-      message,
-      sessionId,
     })
   })
 
