@@ -1,6 +1,6 @@
 {
   "name": "builder",
-  "version": "1.0.18-aaa",
+  "version": "1.0.18-b",
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "dev": "dotenv -e ./.env -e ../../.env -- next dev -p 3000 --experimental-https",
@@ -23,7 +23,7 @@
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
     "@faire/mjml-react": "3.3.0",
-    "@funnelhub/sidebar": "1.1.2",
+    "@funnelhub/sidebar": "1.2.0",
     "@giphy/js-fetch-api": "5.0.0",
     "@giphy/js-types": "4.4.0",
     "@giphy/js-util": "5.0.0",
