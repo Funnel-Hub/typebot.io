@@ -64,7 +64,7 @@ export const sendMessageWhatsappComponent = async (
       message,
     })
   } catch (err: any) {
-    if (err.response.status === 401) {
+    if (err?.response?.status === 401) {
       if (!state?.typebotsQueue[0]?.typebot?.id) return
       const typebot = await getMembersByTypebotSession(
         state.typebotsQueue[0].typebot.id
