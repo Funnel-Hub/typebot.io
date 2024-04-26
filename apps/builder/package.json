@@ -23,7 +23,7 @@
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
     "@faire/mjml-react": "3.3.0",
-    "@funnelhub/sidebar": "1.2.0",
+    "@funnelhub/sidebar": "1.2.1",
     "@giphy/js-fetch-api": "5.0.0",
     "@giphy/js-types": "4.4.0",
     "@giphy/js-util": "5.0.0",
