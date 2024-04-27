@@ -60,8 +60,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(mjml@4.15.3)(react-dom@18.2.0)(react@18.2.0)
       '@funnelhub/sidebar':
-        specifier: 1.1.2
-        version: 1.1.2(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.25)(@types/react@18.2.15)(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 1.2.1
+        version: 1.2.1(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.25)(@types/react@18.2.15)(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
       '@giphy/js-fetch-api':
         specifier: 5.0.0
         version: 5.0.0
@@ -7661,8 +7661,8 @@ packages:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
     dev: false
 
-  /@funnelhub/sidebar@1.1.2(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.25)(@types/react@18.2.15)(next@14.1.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-MNDVCpdWnxHqiO1X4/piZZWQF0hDJ7VzUDbMr52RP6Db2xPBVDiNwyEBIYqPPKRdakSCYeVKsVAcrZvmmFn3BQ==}
+  /@funnelhub/sidebar@1.2.1(@chakra-ui/styled-system@2.9.1)(@chakra-ui/system@2.6.2)(@tanstack/react-query@4.29.19)(@types/react-dom@18.2.25)(@types/react@18.2.15)(next@14.1.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-/NydeBIl3nG0B5gakAmfcpcl2ned6TL1Xy3xDR/J2PtblEImjr0uzftK6JkspPO/Bq/qWRQvvxtlAjpvdT2AAA==}
     engines: {node: '>=20'}
     peerDependencies:
       next: 13.5.6
