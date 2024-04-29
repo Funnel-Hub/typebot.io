@@ -15,7 +15,7 @@ import {
   WhatsappSocketSendingMessage,
   convertMessageToWhatsappComponent,
 } from './convertMessageToWhatsappComponent'
-import { sendSocketWhatsappMessage } from './sendWhatsappSocketMessage'
+import { sendMessageWhatsappComponent } from './sendMessageWhatsappComponent'
 
 type Props = {
   state: SessionState
@@ -62,7 +62,7 @@ export async function executeWhatsappFlow({
     const whatsAppMessage = convertMessageToWhatsappComponent(message)
     if (isNotDefined(whatsAppMessage)) continue
     try {
-      await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
+      await sendMessageWhatsappComponent(state.whatsappComponent?.clientId, {
         message: whatsAppMessage,
         phones: [state.whatsappComponent.phone],
         sessionId: state.sessionId as unknown as string,
@@ -112,7 +112,7 @@ export async function executeWhatsappFlow({
             })
         if (typingDuration)
           await new Promise((resolve) => setTimeout(resolve, typingDuration))
-        await sendSocketWhatsappMessage(state.whatsappComponent?.clientId, {
+        await sendMessageWhatsappComponent(state.whatsappComponent?.clientId, {
           message,
           phones: [state.whatsappComponent.phone],
           sessionId: state.sessionId as unknown as string,
