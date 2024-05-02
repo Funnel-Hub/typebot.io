@@ -9,6 +9,7 @@ const whatsappBaseOptionsSchema = z.object({
 const whatsappOptionsSchema = z
   .object({
     phone: z.string().optional(),
+    countryCode: z.string().optional(),
   })
   .merge(whatsappBaseOptionsSchema)
 
