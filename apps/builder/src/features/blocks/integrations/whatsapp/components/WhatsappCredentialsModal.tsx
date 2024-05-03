@@ -18,7 +18,7 @@ import { WhatsappOperationTypes } from '@typebot.io/bot-engine/whatsapp/Whatsapp
 import { env } from '@typebot.io/env'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Socket, io } from 'socket.io-client'
-import { QRCodeSVG } from 'qrcode.react'
+import QRCode from "react-qr-code";
 
 type Props = {
   isOpen: boolean
@@ -173,12 +173,10 @@ export const WhatsappCredentialsModal = ({
                 justifyContent="center"
                 direction="column"
                 gap={4}
+                backgroundColor={'white'}
               >
-                <QRCodeSVG
+                <QRCode
                   value={whatsappQrCode}
-                  width={300}
-                  scale={5}
-                  height={250}
                 />
                 {!!authFailure && <Text>{stepMessages.authFailure}</Text>}
               </Flex>
