@@ -239,6 +239,9 @@ importers:
       prettier:
         specifier: 2.8.8
         version: 2.8.8
+      qrcode.react:
+        specifier: ^3.1.0
+        version: 3.1.0(react@18.2.0)
       qs:
         specifier: 6.11.2
         version: 6.11.2
@@ -257,9 +260,6 @@ importers:
       react-markdown:
         specifier: ^9.0.1
         version: 9.0.1(@types/react@18.2.15)(react@18.2.0)
-      react-qr-code:
-        specifier: ^2.0.12
-        version: 2.0.12(react@18.2.0)
       shared-zustand:
         specifier: 2.0.0
         version: 2.0.0
@@ -21284,10 +21284,6 @@ packages:
     resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
     dev: true
 
-  /qr.js@0.0.0:
-    resolution: {integrity: sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ==}
-    dev: false
-
   /qrcode.react@3.1.0(react@18.2.0):
     resolution: {integrity: sha512-oyF+Urr3oAMUG/OiOuONL3HXM+53wvuH3mtIWQrYmsXoAq0DkvZp2RYUWFSMFtbdOpuS++9v+WAkzNVkMlNW6Q==}
     peerDependencies:
@@ -22105,20 +22101,6 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /react-qr-code@2.0.12(react@18.2.0):
-    resolution: {integrity: sha512-k+pzP5CKLEGBRwZsDPp98/CAJeXlsYRHM2iZn1Sd5Th/HnKhIZCSg27PXO58zk8z02RaEryg+60xa4vyywMJwg==}
-    peerDependencies:
-      react: ^16.x || ^17.x || ^18.x
-      react-native-svg: '*'
-    peerDependenciesMeta:
-      react-native-svg:
-        optional: true
-    dependencies:
-      prop-types: 15.8.1
-      qr.js: 0.0.0
-      react: 18.2.0
     dev: false
 
   /react-refresh@0.14.0:

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useTypebot } from '@/features/editor/providers/TypebotProvider'
 import { useWorkspace } from '@/features/workspace/WorkspaceProvider'
 import { useToast } from '@/hooks/useToast'
@@ -18,7 +19,8 @@ import { WhatsappOperationTypes } from '@typebot.io/bot-engine/whatsapp/Whatsapp
 import { env } from '@typebot.io/env'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Socket, io } from 'socket.io-client'
-import QRCode from "react-qr-code";
+import { QRCodeSVG } from 'qrcode.react';
+
 
 type Props = {
   isOpen: boolean
@@ -56,7 +58,6 @@ export const WhatsappCredentialsModal = ({
     stepMessages.loadingQrCode
   )
   const [authFailure, setAuthFailure] = useState(false)
-
   const {
     credentials: {
       listCredentials: { refetch: refetchCredentials },
@@ -173,11 +174,8 @@ export const WhatsappCredentialsModal = ({
                 justifyContent="center"
                 direction="column"
                 gap={4}
-                backgroundColor={'white'}
               >
-                <QRCode
-                  value={whatsappQrCode}
-                />
+                <QRCodeSVG value={whatsappQrCode} size={360} level='M' bgColor='#000' fgColor='#FFF' />
                 {!!authFailure && <Text>{stepMessages.authFailure}</Text>}
               </Flex>
             )}
