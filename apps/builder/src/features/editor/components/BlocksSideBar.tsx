@@ -42,10 +42,8 @@ const uselessIntegrationBlocks = [
 
 //Funnelhub
 const uselessForgedBlocks = [
-  'anthropic',
   'chat-node',
   'dify-ai',
-  'elevenlabs',
   'mistral',
   'open-router',
   'qr-code',
