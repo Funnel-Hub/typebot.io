@@ -21,8 +21,8 @@ function selectPhoneInputTypeByPhoneString(value?: string) {
     ? 'phone_number'
     : //eslint-disable-next-line no-extra-boolean-cast
     !!value
-      ? 'variable'
-      : undefined
+    ? 'variable'
+    : undefined
 }
 
 export const WhatsappSettings = ({
@@ -32,8 +32,9 @@ export const WhatsappSettings = ({
   const { t } = useTranslate()
   const { workspace } = useWorkspace()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [selectedCountryCode, setSelectedCountryCode] =
-    useState<keyof typeof phoneMasks>(options?.countryCode as keyof typeof phoneMasks ?? 'BR')
+  const [selectedCountryCode, setSelectedCountryCode] = useState<
+    keyof typeof phoneMasks
+  >((options?.countryCode as keyof typeof phoneMasks) ?? 'BR')
   const [selectedMask, setSelectedMask] = useState<string>(
     phoneMasks[selectedCountryCode]
   )
@@ -60,7 +61,7 @@ export const WhatsappSettings = ({
     onOptionsChange({
       ...options,
       phone: phone.trim().replace(/[^0-9]/g, ''),
-      countryCode: selectedCountryCode as string
+      countryCode: selectedCountryCode as string,
     })
   }
 
