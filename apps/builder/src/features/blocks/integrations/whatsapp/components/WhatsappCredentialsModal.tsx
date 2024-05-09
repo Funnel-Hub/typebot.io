@@ -19,7 +19,9 @@ import { WhatsappOperationTypes } from '@typebot.io/bot-engine/whatsapp/Whatsapp
 import { env } from '@typebot.io/env'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Socket, io } from 'socket.io-client'
-import { QRCodeSVG } from 'qrcode.react'
+import { QRCodeSVG } from 'qrcode.react';
+import { useSession } from 'next-auth/react'
+
 
 type Props = {
   isOpen: boolean
@@ -47,6 +49,7 @@ export const WhatsappCredentialsModal = ({
   }
 
   const { workspace } = useWorkspace()
+  const { data: sessionData } = useSession()
   const { typebot } = useTypebot()
   const { showToast } = useToast()
   const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
@@ -112,7 +115,6 @@ export const WhatsappCredentialsModal = ({
         setProcessAuthWppLoading(false)
         setStepLoadingMessage(stepMessages.loadingQrCode)
         isFinishedLoadingScreenWhatsapp.current = false
-        console.log(payload.qr)
       }
     })
 
@@ -174,13 +176,16 @@ export const WhatsappCredentialsModal = ({
                 direction="column"
                 gap={4}
               >
-                <QRCodeSVG
-                  value={whatsappQrCode}
-                  size={360}
-                  level="M"
-                  bgColor="#000"
-                  fgColor="#FFF"
-                />
+                <Flex
+                  alignItems="center"
+                  justifyContent="center"
+                  direction="column"
+                  border={sessionData?.user?.preferredAppAppearance === 'dark' ? 'none' : '2px'}
+
+                >
+                  <QRCodeSVG value={whatsappQrCode} size={360} level='M' bgColor='#000' fgColor='#FFF' />
+                </Flex>
+
                 {!!authFailure && <Text>{stepMessages.authFailure}</Text>}
               </Flex>
             )}
