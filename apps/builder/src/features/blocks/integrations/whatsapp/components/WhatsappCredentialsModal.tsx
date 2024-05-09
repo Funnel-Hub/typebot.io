@@ -50,7 +50,6 @@ export const WhatsappCredentialsModal = ({
 
   const { workspace } = useWorkspace()
   const { data: sessionData } = useSession()
-  console.log(sessionData)
   const { typebot } = useTypebot()
   const { showToast } = useToast()
   const [whatsappQrCode, setWhatsappQrCode] = useState<string | null>(null)
@@ -96,7 +95,7 @@ export const WhatsappCredentialsModal = ({
       socketRef.current = null
     }
     const now = new Date().getTime()
-    const socketClient = io('wss://whatsapp.funnelhub.io:2053', {
+    const socketClient = io(env.NEXT_PUBLIC_WHATSAPP_SERVER, {
       autoConnect: true,
       rejectUnauthorized: false,
       query: {
