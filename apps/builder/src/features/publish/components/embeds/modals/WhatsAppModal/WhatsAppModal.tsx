@@ -43,6 +43,10 @@ import { hasProPerks } from '@/features/billing/helpers/hasProPerks'
 import { UnlockPlanAlertInfo } from '@/components/UnlockPlanAlertInfo'
 import { PlanTag } from '@/features/billing/components/PlanTag'
 import { LogicalOperator } from '@typebot.io/schemas/features/blocks/logic/condition/constants'
+import { Select } from '@/components/inputs/Select'
+import { useState } from 'react'
+import { useTranslate } from '@tolgee/react'
+import { WhatsappLiteCredentialsModal } from './WhatsappLiteCredentialsModal'
 
 export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
   const { typebot, updateTypebot, isPublished } = useTypebot()
@@ -142,9 +146,9 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
             startCondition: !isEnabled
               ? undefined
               : {
-                  comparisons: [],
-                  logicalOperator: LogicalOperator.AND,
-                },
+                comparisons: [],
+                logicalOperator: LogicalOperator.AND,
+              },
           },
         },
       },
@@ -171,6 +175,20 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
     })
   }
 
+  const [selectedTypeWhatsapp, setSelectedTypeWhatsapp] = useState<string | undefined>(undefined)
+
+  const whatsappLiteUpdateCredentialsId = (credentialsId: string | undefined) => {
+    if (!typebot) return
+    updateTypebot({
+      updates: {
+        whatsappLiteCredentialsId: credentialsId,
+      },
+    })
+  }
+
+  const { t } = useTranslate()
+
+  const { onOpen: onOpenWhatsappLite, isOpen: isOpenWhatsappLiteModal, onClose: onWhatsappLiteModalClose } = useDisclosure()
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -191,29 +209,58 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
           )}
           <OrderedList spacing={4} pl="4">
             <ListItem>
-              <HStack>
-                <Text>Select a phone number:</Text>
-                {workspace && (
-                  <>
-                    <WhatsAppCredentialsModal
-                      isOpen={isCredentialsModalOpen}
-                      onClose={onCredentialsModalClose}
-                      onNewCredentials={updateCredentialsId}
-                    />
-                    <CredentialsDropdown
-                      type="whatsApp"
-                      workspaceId={workspace.id}
-                      currentCredentialsId={
-                        typebot?.whatsAppCredentialsId ?? undefined
-                      }
-                      onCredentialsSelect={updateCredentialsId}
-                      onCreateNewClick={onOpen}
-                      credentialsName="WA phone number"
-                      size="sm"
-                    />
-                  </>
-                )}
-              </HStack>
+              <Text>Selecione o tipo de integração whatsapp</Text>
+              <Select
+                items={['Whatsapp Cloud API', 'Whatsapp Lite']}
+                selectedItem={selectedTypeWhatsapp}
+                onSelect={(value) => setSelectedTypeWhatsapp(value)}
+                placeholder='Tipo de integração'
+              />
+              {selectedTypeWhatsapp === 'Whatsapp Lite' && workspace && (
+                <div style={{ marginTop: '8px' }}>
+                  <WhatsappLiteCredentialsModal
+                    isOpen={isOpenWhatsappLiteModal}
+                    onClose={onWhatsappLiteModalClose}
+                    onNewCredentials={whatsappLiteUpdateCredentialsId}
+                  />
+                  <CredentialsDropdown
+                    type="whatsappLite"
+                    workspaceId={workspace.id}
+                    currentCredentialsId={typebot?.whatsappLiteCredentialsId ?? undefined}
+                    onCredentialsSelect={whatsappLiteUpdateCredentialsId}
+                    onCreateNewClick={onOpenWhatsappLite}
+                    credentialsName={t(
+                      'editor.blocks.integrations.whatsapp.WhatsappSettings.CredentialsDropdown.credentialsName'
+                    )}
+                  />
+                </div>
+              )}
+              {selectedTypeWhatsapp === 'Whatsapp Cloud API' && (
+                <HStack>
+                  <Text>Select a phone number:</Text>
+                  {workspace && (
+                    <>
+                      <WhatsAppCredentialsModal
+                        isOpen={isCredentialsModalOpen}
+                        onClose={onCredentialsModalClose}
+                        onNewCredentials={updateCredentialsId}
+                      />
+                      <CredentialsDropdown
+                        type="whatsApp"
+                        workspaceId={workspace.id}
+                        currentCredentialsId={
+                          typebot?.whatsAppCredentialsId ?? undefined
+                        }
+                        onCredentialsSelect={updateCredentialsId}
+                        onCreateNewClick={onOpen}
+                        credentialsName="WA phone number"
+                        size="sm"
+                      />
+                    </>
+                  )}
+                </HStack>
+              )}
+
             </ListItem>
             {typebot?.whatsAppCredentialsId && (
               <>

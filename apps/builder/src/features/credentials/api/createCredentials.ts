@@ -14,6 +14,7 @@ import { openAICredentialsSchema } from '@typebot.io/schemas/features/blocks/int
 import { smtpCredentialsSchema } from '@typebot.io/schemas/features/blocks/integrations/sendEmail'
 import {
   whatsAppCredentialsSchema,
+  whatsAppLiteCredentialsSchema,
   whatsappSocketCredentialsSchema,
 } from '@typebot.io/schemas/features/whatsapp'
 import { z } from 'zod'
@@ -47,6 +48,7 @@ export const createCredentials = authenticatedProcedure
           whatsAppCredentialsSchema.pick(inputShape),
           whatsappSocketCredentialsSchema.pick(inputShape),
           zemanticAiCredentialsSchema.pick(inputShape),
+          whatsAppLiteCredentialsSchema.pick(inputShape),
         ])
         .and(z.object({ id: z.string().cuid2().optional() })),
     })
