@@ -148,6 +148,14 @@ export const incomingMessageSchema = z.discriminatedUnion('type', [
   }),
 ])
 
+export const incomingMessageLiteSchema = z.discriminatedUnion('type', [
+  z.object({
+    value: z.string(),
+    type: z.literal('text'),
+    timestamp: z.number(),
+  }),
+])
+
 export const whatsAppWebhookRequestBodySchema = z.object({
   entry: z.array(
     z.object({
@@ -174,6 +182,17 @@ export const whatsAppWebhookRequestBodySchema = z.object({
   ),
 })
 
+export const whatsAppLiteWebhookRequestBodySchema = z.object({
+  event: z.enum(['new_message', 'expired_session']),
+  phone: z.string(),
+  myPhone: z.string(),
+  message: z.object({
+    type: z.enum(['text']),
+    value: z.string(),
+    timestamp: z.number(),
+  }),
+})
+
 export type WhatsAppWebhookRequestBody = z.infer<
   typeof whatsAppWebhookRequestBodySchema
 >
@@ -184,6 +203,16 @@ export const whatsAppCredentialsSchema = z
     data: z.object({
       systemUserAccessToken: z.string(),
       phoneNumberId: z.string(),
+    }),
+  })
+  .merge(credentialsBaseSchema)
+
+export const whatsAppLiteCredentialsSchema = z
+  .object({
+    type: z.literal('whatsappLite'),
+    data: z.object({
+      phoneNumberId: z.string(),
+      whatsappLiteBaseUrl: z.string(),
     }),
   })
   .merge(credentialsBaseSchema)
@@ -230,5 +259,11 @@ export const whatsAppSettingsSchema = z.object({
 export const defaultSessionExpiryTimeout = 4
 
 export type WhatsAppIncomingMessage = z.infer<typeof incomingMessageSchema>
+export type WHatsappLiteIncomingMessage = z.infer<
+  typeof incomingMessageLiteSchema
+>
 export type WhatsAppSendingMessage = z.infer<typeof sendingMessageSchema>
 export type WhatsAppCredentials = z.infer<typeof whatsAppCredentialsSchema>
+export type whatsAppLiteCredentials = z.infer<
+  typeof whatsAppLiteCredentialsSchema
+>

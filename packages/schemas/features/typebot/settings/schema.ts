@@ -39,6 +39,7 @@ export const settingsSchema = z
     typingEmulation: typingEmulation.optional(),
     metadata: metadataSchema.optional(),
     whatsApp: whatsAppSettingsSchema.optional(),
+    whatsappLite: whatsAppSettingsSchema.optional(),
     publicShare: z
       .object({
         isEnabled: z.boolean().optional(),

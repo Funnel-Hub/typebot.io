@@ -98,7 +98,7 @@ const baseEnv = {
       )
       .optional(),
     WORKSPACE_TOKEN: z.string(),
-    WHATSAPP_SERVER: z.string().url()
+    WHATSAPP_SERVER: z.string().url(),
   },
   client: {
     NEXT_PUBLIC_E2E_TEST: boolean.optional(),
@@ -114,6 +114,7 @@ const baseEnv = {
     NEXT_PUBLIC_FUNNELHUB_URL: z.string().url(),
     NEXT_PUBLIC_APP_URL: z.string().url(),
     NEXT_PUBLIC_WHATSAPP_SERVER: z.string().url(),
+    NEXT_PUBLIC_WHATSAPP_ORCHESTRATOR_URL: z.string().url(),
     NEXT_PUBLIC_CHAT_API_URL: z.string().url().optional(),
     // To remove to deploy chat API for all typebots
     NEXT_PUBLIC_USE_EXPERIMENTAL_CHAT_API_ON: z
@@ -140,7 +141,12 @@ const baseEnv = {
     ),
     NEXT_PUBLIC_FUNNELHUB_URL: getRuntimeVariable('NEXT_PUBLIC_FUNNELHUB_URL'),
     NEXT_PUBLIC_APP_URL: getRuntimeVariable('NEXT_PUBLIC_APP_URL'),
-    NEXT_PUBLIC_WHATSAPP_SERVER: getRuntimeVariable('NEXT_PUBLIC_WHATSAPP_SERVER'),
+    NEXT_PUBLIC_WHATSAPP_SERVER: getRuntimeVariable(
+      'NEXT_PUBLIC_WHATSAPP_SERVER'
+    ),
+    NEXT_PUBLIC_WHATSAPP_ORCHESTRATOR_URL: getRuntimeVariable(
+      'NEXT_PUBLIC_WHATSAPP_ORCHESTRATOR_URL'
+    ),
     NEXT_PUBLIC_CHAT_API_URL: getRuntimeVariable('NEXT_PUBLIC_CHAT_API_URL'),
     NEXT_PUBLIC_USE_EXPERIMENTAL_CHAT_API_ON: getRuntimeVariable(
       'NEXT_PUBLIC_USE_EXPERIMENTAL_CHAT_API_ON'
@@ -327,6 +333,7 @@ const unsplashEnv = {
 
 const whatsAppEnv = {
   server: {
+    WHATSAPP_CLIENT_VERIFICATION_TOKEN: z.string(),
     META_SYSTEM_USER_TOKEN: z.string().min(1).optional(),
     WHATSAPP_PREVIEW_FROM_PHONE_NUMBER_ID: z.string().min(1).optional(),
     WHATSAPP_PREVIEW_TEMPLATE_NAME: z.string().min(1).optional(),

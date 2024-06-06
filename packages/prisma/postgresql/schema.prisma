@@ -162,36 +162,37 @@ model DashboardFolder {
 }
 
 model Typebot {
-  id                      String                    @id @default(cuid())
-  version                 String?
-  createdAt               DateTime                  @default(now())
-  updatedAt               DateTime                  @default(now()) @updatedAt
-  icon                    String?
-  name                    String
-  folderId                String?
-  groups                  Json
-  events                  Json?
-  variables               Json
-  edges                   Json
-  theme                   Json
-  selectedThemeTemplateId String?
-  settings                Json
-  publicId                String?                   @unique
-  customDomain            String?                   @unique
-  workspaceId             String
-  resultsTablePreferences Json?
-  folder                  DashboardFolder?          @relation(fields: [folderId], references: [id])
-  workspace               Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  collaborators           CollaboratorsOnTypebots[]
-  invitations             Invitation[]
-  publishedTypebot        PublicTypebot?
-  results                 Result[]
-  webhooks                Webhook[]
-  isArchived              Boolean                   @default(false)
-  isClosed                Boolean                   @default(false)
-  whatsAppCredentialsId   String?
-  riskLevel               Int?
-  bannedIps               BannedIp[]
+  id                        String                    @id @default(cuid())
+  version                   String?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @default(now()) @updatedAt
+  icon                      String?
+  name                      String
+  folderId                  String?
+  groups                    Json
+  events                    Json?
+  variables                 Json
+  edges                     Json
+  theme                     Json
+  selectedThemeTemplateId   String?
+  settings                  Json
+  publicId                  String?                   @unique
+  customDomain              String?                   @unique
+  workspaceId               String
+  resultsTablePreferences   Json?
+  folder                    DashboardFolder?          @relation(fields: [folderId], references: [id])
+  workspace                 Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  collaborators             CollaboratorsOnTypebots[]
+  invitations               Invitation[]
+  publishedTypebot          PublicTypebot?
+  results                   Result[]
+  webhooks                  Webhook[]
+  isArchived                Boolean                   @default(false)
+  isClosed                  Boolean                   @default(false)
+  whatsAppCredentialsId     String?
+  whatsappLiteCredentialsId String?
+  riskLevel                 Int?
+  bannedIps                 BannedIp[]
 
   @@index([workspaceId])
   @@index([isArchived, createdAt(sort: Desc)])
