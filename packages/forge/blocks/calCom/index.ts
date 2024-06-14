@@ -2,6 +2,7 @@ import { createBlock } from '@typebot.io/forge'
 import { CalComLogo } from './logo'
 import { bookEvent } from './actions/bookEvent'
 import { baseOptions } from './baseOptions'
+import { getEventAvailability } from './actions/getEventAvailability'
 
 export const calComBlock = createBlock({
   id: 'cal-com',
@@ -9,5 +10,5 @@ export const calComBlock = createBlock({
   tags: ['calendar', 'scheduling', 'meetings'],
   LightLogo: CalComLogo,
   options: baseOptions,
-  actions: [bookEvent],
+  actions: [bookEvent, getEventAvailability],
 })
