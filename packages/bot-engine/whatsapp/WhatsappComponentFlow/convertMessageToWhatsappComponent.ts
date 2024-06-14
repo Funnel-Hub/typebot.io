@@ -10,16 +10,23 @@ export enum TypeWhatsappMessage {
   AUDIO = 'audio',
   VIDEO = 'video',
   EMBED = 'embed',
-  INTERACTIVE = 'interactive'
+  INTERACTIVE = 'interactive',
 }
 
-export type WhatsappSocketSendingMessage = {
-  type: TypeWhatsappMessage.TEXT | TypeWhatsappMessage.EMBED | TypeWhatsappMessage.IMAGE | TypeWhatsappMessage.VIDEO | TypeWhatsappMessage.AUDIO
-  body: string
-} | {
-  type: TypeWhatsappMessage.INTERACTIVE
-  interactive: Record<string, any>
-}
+export type WhatsappSocketSendingMessage =
+  | {
+      type:
+        | TypeWhatsappMessage.TEXT
+        | TypeWhatsappMessage.EMBED
+        | TypeWhatsappMessage.IMAGE
+        | TypeWhatsappMessage.VIDEO
+        | TypeWhatsappMessage.AUDIO
+      body: string
+    }
+  | {
+      type: TypeWhatsappMessage.INTERACTIVE
+      interactive: Record<string, any>
+    }
 
 const mp4HttpsUrlRegex = /^https:\/\/.*\.mp4$/
 const isVideoUrlNotCompatible = (url: string) => !mp4HttpsUrlRegex.test(url)
@@ -33,11 +40,15 @@ export const convertMessageToWhatsappComponent = (
         return
       return {
         type: TypeWhatsappMessage.TEXT,
-        body:  message.content.richText
-        .map((chunk) =>
-          serialize(chunk)?.replaceAll('&amp;amp;#39;', "'").replaceAll('**', '*').replaceAll('&amp;quot;', '"')
-        )
-        .join('\n')
+        body: message.content.richText
+          .map((chunk) =>
+            serialize(chunk)
+              ?.replaceAll('&amp;amp;#39;', "'")
+              .replaceAll('**', '*')
+              .replaceAll('&amp;quot;', '"')
+              .replaceAll('&amp;amp;quot;', '"')
+          )
+          .join('\n'),
       }
     }
     case BubbleBlockType.IMAGE: {
