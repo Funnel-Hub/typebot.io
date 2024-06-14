@@ -1,6 +1,6 @@
 {
   "name": "builder",
-  "version": "1.0.22",
+  "version": "1.0.2-a",
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "dev": "dotenv -e ./.env -e ../../.env -- next dev -p 3000 --experimental-https",
