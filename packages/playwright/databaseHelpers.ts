@@ -71,7 +71,8 @@ export const parseTestTypebot = (partialTypebot: Partial<Typebot>): Typebot => {
           },
           ...(partialTypebot.groups ?? []),
         ]) as any[],
-  }
+    whatsappLiteCredentialsId: null,
+  } as Typebot
 }
 
 export const parseTypebotToPublicTypebot = (

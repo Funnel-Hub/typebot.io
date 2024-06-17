@@ -58,7 +58,11 @@ type Props = {
   startParams: StartParams
   initialSessionState?: Pick<
     SessionState,
-    'whatsApp' | 'expiryTimeout' | 'whatsappComponent' | 'sessionId'
+    | 'whatsApp'
+    | 'expiryTimeout'
+    | 'whatsappComponent'
+    | 'sessionId'
+    | 'whatsappLite'
   >
 }
 

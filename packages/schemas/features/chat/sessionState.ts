@@ -75,6 +75,13 @@ const sessionStateSchemaV2 = z.object({
       }),
     })
     .optional(),
+  whatsappLite: z
+    .object({
+      contact: z.object({
+        phoneNumber: z.string(),
+      }),
+    })
+    .optional(),
   whatsappComponent: z
     .object({
       phone: z.string(),

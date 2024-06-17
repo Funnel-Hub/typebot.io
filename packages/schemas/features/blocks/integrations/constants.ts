@@ -5,6 +5,7 @@ export enum IntegrationBlockType {
   WEBHOOK = 'Webhook',
   EMAIL = 'Email',
   WHATSAPP = 'Whatsapp',
+  WHATSAPP_LITE = 'Whatsapp Lite',
   ZAPIER = 'Zapier',
   MAKE_COM = 'Make.com',
   PABBLY_CONNECT = 'Pabbly',
