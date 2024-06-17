@@ -14,7 +14,7 @@ export const sendWhatsAppLiteMessage = async ({
   message,
   credentials,
 }: Props) =>
-  ky.post(`${credentials.whatsappLiteBaseUrl}/send-messages`, {
+  ky.post(`https://${credentials.whatsappLiteBaseUrl}/send-messages`, {
     headers: {
       authorization: env.WHATSAPP_CLIENT_VERIFICATION_TOKEN,
     },
