@@ -4,6 +4,7 @@ import { auth } from '../auth'
 import { ClientOptions, OpenAI } from 'openai'
 import { baseOptions } from '../baseOptions'
 import { executeFunction } from '@typebot.io/variables/executeFunction'
+import { eventFunctions } from '../functions'
 
 export const askAssistant = createAction({
   auth,
@@ -207,12 +208,20 @@ export const askAssistant = createAction({
                     if (!functionToExecute) return
 
                     const name = toolCall.function.name
-                    if (!name || !functionToExecute.code) return
+                    if (!name) return
+
+										const usesCalendarAI = Object.keys(eventFunctions).includes(name)
+
+										if (usesCalendarAI) {
+											functionToExecute.code = eventFunctions[name]
+										}
+
+										if (!functionToExecute.code) return
 
                     const { output, newVariables } = await executeFunction({
                       variables: variables.list(),
                       body: functionToExecute.code,
-                      args: parameters,
+                      args: usesCalendarAI ? { fnParameters: parameters } : parameters,
                     })
 
                     newVariables?.forEach((variable) => {
