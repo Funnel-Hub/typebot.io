@@ -139,6 +139,7 @@ export const sendChatReplyToWhatsAppLite = async ({
       }
     } catch (err) {
       Sentry.captureException(err, { extra: { message } })
+      console.log(err)
       console.log('Failed to send message:', JSON.stringify(message, null, 2))
       if (err instanceof HTTPError)
         console.log('HTTPError', err.response.status, await err.response.text())
@@ -167,6 +168,7 @@ export const sendChatReplyToWhatsAppLite = async ({
         })
       } catch (err) {
         Sentry.captureException(err, { extra: { message } })
+        console.log(err)
         console.log('Failed to send message:', JSON.stringify(message, null, 2))
         if (err instanceof HTTPError)
           console.log(
