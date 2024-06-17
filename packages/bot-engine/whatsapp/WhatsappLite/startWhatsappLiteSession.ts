@@ -42,7 +42,7 @@ export const startWhatsAppLiteSession = async ({
   const publicTypebotsWithWhatsAppEnabled =
     (await prisma.publicTypebot.findMany({
       where: {
-        typebot: { workspaceId, whatsAppCredentialsId: credentials.id },
+        typebot: { workspaceId, whatsappLiteCredentialsId: credentials.id },
       },
       select: {
         settings: true,
