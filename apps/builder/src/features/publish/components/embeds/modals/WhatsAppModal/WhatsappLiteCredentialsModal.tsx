@@ -64,7 +64,7 @@ export const WhatsappLiteCredentialsModal = ({
         },
         body: JSON.stringify({
           sessionId,
-          notifyMessagesWebhook: `https://typebot.funnelhub.io/api/v1/workspaces/${workspace.id}/whatsapp-lite/${credentialsId}/webhook`,
+          notifyMessagesWebhook: `https://bot.funnelhub.io/api/v1/workspaces/${workspace.id}/whatsapp-lite/${credentialsId}/webhook`,
         }),
       }
     )
