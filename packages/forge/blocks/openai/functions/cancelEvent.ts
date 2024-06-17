@@ -1,5 +1,5 @@
 export const cancelEvent = 'const response = await fetch(\n' +
-  '  "https://calendar.funnelhub.io" + "/api/integrations/funnelhub/bookings/" + {{bookingId}} + "/cancel",\n' +
+  '  "https://calendar.funnelhub.io/api/integrations/funnelhub/bookings/" + {{BOOKING_ID}} + "/cancel",\n' +
   '  {\n' +
   '    method: "DELETE"\n' +
   '  }\n' +

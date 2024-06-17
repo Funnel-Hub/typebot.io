@@ -1,7 +1,7 @@
 export const bookEvent = 'const { start, ...responses } = fnParameters' +
   '\n' +
   'const body = {\n' +
-  '  eventTypeId: {{eventTypeId}},\n' +
+  '  eventTypeId: {{EVENT_TYPE_ID}},\n' +
   '  start: start,\n' +
   '  responses: responses,\n' +
   '  metadata: {},\n' +
