@@ -46,9 +46,9 @@ export const WhatsappLiteCredentialsModal = ({
         status: 'error',
       })
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       refetchCredentials()
-      onNewCredentials(data.credentialsId)
+      onNewCredentials(credentialsId)
       onClose()
     },
   })
