@@ -1,13 +1,8 @@
-
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  Flex,
-  Spinner,
-  Text,
-} from '@chakra-ui/react'
-import { QRCodeSVG } from 'qrcode.react';
+import { Flex, Spinner, Text } from '@chakra-ui/react'
+import { QRCodeSVG } from 'qrcode.react'
 import { Socket, io } from 'socket.io-client'
-import { useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react'
 
 type Props = {
   workspaceId: string
@@ -15,8 +10,14 @@ type Props = {
   onSucess: (sessionId: string, phoneNumberId: string) => Promise<void>
 }
 
-export const QrCodeWhatsappLite = ({ workspaceId, isOpenModal, onSucess }: Props) => {
-  const [whatsappQrCode, setWhatsappQrCode] = useState<string | undefined>(undefined)
+export const QrCodeWhatsappLite = ({
+  workspaceId,
+  isOpenModal,
+  onSucess,
+}: Props) => {
+  const [whatsappQrCode, setWhatsappQrCode] = useState<string | undefined>(
+    undefined
+  )
   const [isLoading, setIsLoading] = useState(true)
   const socketRef = useRef<Socket | null>(null)
   const { data: sessionData } = useSession()
@@ -27,7 +28,6 @@ export const QrCodeWhatsappLite = ({ workspaceId, isOpenModal, onSucess }: Props
   }, [])
 
   const handleStartWebsocket = useCallback(async () => {
-
     if (socketRef.current) {
       socketRef.current.close()
       socketRef.current = null
@@ -38,7 +38,7 @@ export const QrCodeWhatsappLite = ({ workspaceId, isOpenModal, onSucess }: Props
       autoConnect: true,
       rejectUnauthorized: false,
       query: {
-        sessionId
+        sessionId,
       },
     })
 
@@ -73,11 +73,21 @@ export const QrCodeWhatsappLite = ({ workspaceId, isOpenModal, onSucess }: Props
           alignItems="center"
           justifyContent="center"
           direction="column"
-          border={sessionData?.user?.preferredAppAppearance === 'dark' ? 'none' : '2px'}
+          border={
+            sessionData?.user?.preferredAppAppearance === 'dark'
+              ? 'none'
+              : '2px'
+          }
           width={'280px'}
           height={'280px'}
         >
-          <QRCodeSVG value={whatsappQrCode} size={250} level='M' bgColor='#000' fgColor='#FFF' />
+          <QRCodeSVG
+            value={whatsappQrCode}
+            size={250}
+            level="M"
+            bgColor="#000"
+            fgColor="#FFF"
+          />
         </Flex>
       )}
       {isLoading && (
