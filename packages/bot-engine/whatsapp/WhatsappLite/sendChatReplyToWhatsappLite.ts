@@ -242,6 +242,11 @@ const executeClientSideAction =
         value: clientSideAction.redirect.url as string,
       } as any
       try {
+        console.log({
+          to: context.to,
+          message,
+          credentials: context.credentials,
+        })
         await sendWhatsAppLiteMessage({
           to: context.to,
           message,
@@ -249,6 +254,7 @@ const executeClientSideAction =
         })
       } catch (err) {
         Sentry.captureException(err, { extra: { message } })
+        console.log(err)
         console.log('Failed to send message:', JSON.stringify(message, null, 2))
         if (err instanceof HTTPError)
           console.log(
