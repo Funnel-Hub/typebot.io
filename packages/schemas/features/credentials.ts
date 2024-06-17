@@ -6,6 +6,7 @@ import { smtpCredentialsSchema } from './blocks/integrations/sendEmail'
 import { openAICredentialsSchema } from './blocks/integrations/openai'
 import {
   whatsAppCredentialsSchema,
+  whatsAppLiteCredentialsSchema,
   whatsappSocketCredentialsSchema,
 } from './whatsapp'
 
@@ -15,6 +16,7 @@ export const credentialsSchema = z.discriminatedUnion('type', [
   stripeCredentialsSchema,
   openAICredentialsSchema,
   whatsAppCredentialsSchema,
+  whatsAppLiteCredentialsSchema,
   whatsappSocketCredentialsSchema,
   zemanticAiCredentialsSchema,
 ])

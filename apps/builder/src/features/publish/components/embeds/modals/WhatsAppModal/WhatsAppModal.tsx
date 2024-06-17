@@ -43,6 +43,10 @@ import { hasProPerks } from '@/features/billing/helpers/hasProPerks'
 import { UnlockPlanAlertInfo } from '@/components/UnlockPlanAlertInfo'
 import { PlanTag } from '@/features/billing/components/PlanTag'
 import { LogicalOperator } from '@typebot.io/schemas/features/blocks/logic/condition/constants'
+import { Select } from '@/components/inputs/Select'
+import { useState } from 'react'
+import { useTranslate } from '@tolgee/react'
+import { WhatsappLiteCredentialsModal } from './WhatsappLiteCredentialsModal'
 
 export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
   const { typebot, updateTypebot, isPublished } = useTypebot()
@@ -55,7 +59,7 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
   } = useDisclosure()
 
   const whatsAppSettings = typebot?.settings.whatsApp
-
+  const whatsappLiteSettings = typebot?.settings?.whatsappLite
   const { data: phoneNumberData } =
     trpc.whatsAppInternal.getPhoneNumber.useQuery(
       {
@@ -67,15 +71,23 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
     )
 
   const toggleEnableWhatsApp = (isChecked: boolean) => {
-    if (!phoneNumberData?.id || !typebot) return
+    if (!(selectedTypeWhatsapp === 'Whatsapp Lite') && !phoneNumberData?.id) return
+    if (!typebot) return
     updateTypebot({
       updates: {
         settings: {
           ...typebot.settings,
-          whatsApp: {
-            ...typebot.settings.whatsApp,
-            isEnabled: isChecked,
-          },
+          ...(selectedTypeWhatsapp === 'Whatsapp Lite' ? {
+            whatsappLite: {
+              ...typebot.settings.whatsappLite,
+              isEnabled: isChecked,
+            },
+          } : {
+            whatsApp: {
+              ...typebot.settings.whatsApp,
+              isEnabled: isChecked,
+            },
+          }),
         },
       },
     })
@@ -96,15 +108,29 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
       updates: {
         settings: {
           ...typebot.settings,
-          whatsApp: {
-            ...typebot.settings.whatsApp,
-            startCondition: {
-              logicalOperator:
-                typebot.settings.whatsApp?.startCondition?.logicalOperator ??
-                LogicalOperator.AND,
-              comparisons,
+          ...(selectedTypeWhatsapp === 'Whatsapp Lite' ? {
+            whatsappLite: {
+              ...typebot.settings.whatsappLite,
+              startCondition: {
+                logicalOperator:
+                  typebot.settings.whatsappLite?.startCondition?.logicalOperator ??
+                  LogicalOperator.AND,
+                comparisons,
+              },
             },
-          },
+            whatsapp: undefined
+          } : {
+            whatsApp: {
+              ...typebot.settings.whatsApp,
+              startCondition: {
+                logicalOperator:
+                  typebot.settings.whatsApp?.startCondition?.logicalOperator ??
+                  LogicalOperator.AND,
+                comparisons,
+              },
+            },
+            whatsappLite: undefined
+          }),
         },
       },
     })
@@ -118,14 +144,27 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
       updates: {
         settings: {
           ...typebot.settings,
-          whatsApp: {
-            ...typebot.settings.whatsApp,
-            startCondition: {
-              comparisons:
-                typebot.settings.whatsApp?.startCondition?.comparisons ?? [],
-              logicalOperator,
+          ...(selectedTypeWhatsapp === 'Whatsapp Lite' ? {
+            whatsappLite: {
+              ...typebot.settings.whatsappLite,
+              startCondition: {
+                comparisons:
+                  typebot.settings.whatsappLite?.startCondition?.comparisons ?? [],
+                logicalOperator,
+              },
             },
-          },
+            whatsapp: undefined,
+          } : {
+            whatsApp: {
+              ...typebot.settings.whatsApp,
+              startCondition: {
+                comparisons:
+                  typebot.settings.whatsApp?.startCondition?.comparisons ?? [],
+                logicalOperator,
+              },
+            },
+            whatsappLite: undefined,
+          }),
         },
       },
     })
@@ -137,15 +176,29 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
       updates: {
         settings: {
           ...typebot.settings,
-          whatsApp: {
-            ...typebot.settings.whatsApp,
-            startCondition: !isEnabled
-              ? undefined
-              : {
+          ...(selectedTypeWhatsapp === 'Whatsapp Lite' ? {
+            whatsappLite: {
+              ...typebot.settings.whatsappLite,
+              startCondition: !isEnabled
+                ? undefined
+                : {
                   comparisons: [],
                   logicalOperator: LogicalOperator.AND,
                 },
-          },
+            },
+            whatsapp: undefined,
+          } : {
+            whatsApp: {
+              ...typebot.settings.whatsApp,
+              startCondition: !isEnabled
+                ? undefined
+                : {
+                  comparisons: [],
+                  logicalOperator: LogicalOperator.AND,
+                },
+            },
+            whatsappLite: undefined
+          }),
         },
       },
     })
@@ -162,15 +215,38 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
       updates: {
         settings: {
           ...typebot.settings,
-          whatsApp: {
-            ...typebot.settings.whatsApp,
-            sessionExpiryTimeout,
-          },
+          ...(selectedTypeWhatsapp === 'Whatsapp Lite' ? {
+            whatsappLite: {
+              ...typebot.settings.whatsappLite,
+              sessionExpiryTimeout,
+            },
+            whatsapp: undefined,
+          } : {
+            whatsApp: {
+              ...typebot.settings.whatsApp,
+              sessionExpiryTimeout,
+            },
+            whatsappLite: undefined,
+          })
         },
       },
     })
   }
 
+  const [selectedTypeWhatsapp, setSelectedTypeWhatsapp] = useState<string | undefined>(undefined)
+
+  const whatsappLiteUpdateCredentialsId = (credentialsId: string | undefined) => {
+    if (!typebot) return
+    updateTypebot({
+      updates: {
+        whatsappLiteCredentialsId: credentialsId,
+      },
+    })
+  }
+
+  const { t } = useTranslate()
+
+  const { onOpen: onOpenWhatsappLite, isOpen: isOpenWhatsappLiteModal, onClose: onWhatsappLiteModalClose } = useDisclosure()
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -191,37 +267,66 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
           )}
           <OrderedList spacing={4} pl="4">
             <ListItem>
-              <HStack>
-                <Text>Select a phone number:</Text>
-                {workspace && (
-                  <>
-                    <WhatsAppCredentialsModal
-                      isOpen={isCredentialsModalOpen}
-                      onClose={onCredentialsModalClose}
-                      onNewCredentials={updateCredentialsId}
-                    />
-                    <CredentialsDropdown
-                      type="whatsApp"
-                      workspaceId={workspace.id}
-                      currentCredentialsId={
-                        typebot?.whatsAppCredentialsId ?? undefined
-                      }
-                      onCredentialsSelect={updateCredentialsId}
-                      onCreateNewClick={onOpen}
-                      credentialsName="WA phone number"
-                      size="sm"
-                    />
-                  </>
-                )}
-              </HStack>
+              <Text>Selecione o tipo de integração whatsapp</Text>
+              <Select
+                items={['Whatsapp Cloud API', 'Whatsapp Lite']}
+                selectedItem={selectedTypeWhatsapp}
+                onSelect={(value) => setSelectedTypeWhatsapp(value)}
+                placeholder='Tipo de integração'
+              />
+              {selectedTypeWhatsapp === 'Whatsapp Lite' && workspace && (
+                <div style={{ marginTop: '8px' }}>
+                  <WhatsappLiteCredentialsModal
+                    isOpen={isOpenWhatsappLiteModal}
+                    onClose={onWhatsappLiteModalClose}
+                    onNewCredentials={whatsappLiteUpdateCredentialsId}
+                  />
+                  <CredentialsDropdown
+                    type="whatsappLite"
+                    workspaceId={workspace.id}
+                    currentCredentialsId={typebot?.whatsappLiteCredentialsId ?? undefined}
+                    onCredentialsSelect={whatsappLiteUpdateCredentialsId}
+                    onCreateNewClick={onOpenWhatsappLite}
+                    credentialsName={t(
+                      'editor.blocks.integrations.whatsapp.WhatsappSettings.CredentialsDropdown.credentialsName'
+                    )}
+                  />
+                </div>
+              )}
+              {selectedTypeWhatsapp === 'Whatsapp Cloud API' && (
+                <HStack>
+                  <Text>Select a phone number:</Text>
+                  {workspace && (
+                    <>
+                      <WhatsAppCredentialsModal
+                        isOpen={isCredentialsModalOpen}
+                        onClose={onCredentialsModalClose}
+                        onNewCredentials={updateCredentialsId}
+                      />
+                      <CredentialsDropdown
+                        type="whatsApp"
+                        workspaceId={workspace.id}
+                        currentCredentialsId={
+                          typebot?.whatsAppCredentialsId ?? undefined
+                        }
+                        onCredentialsSelect={updateCredentialsId}
+                        onCreateNewClick={onOpen}
+                        credentialsName="WA phone number"
+                        size="sm"
+                      />
+                    </>
+                  )}
+                </HStack>
+              )}
+
             </ListItem>
-            {typebot?.whatsAppCredentialsId && (
+            {typebot?.whatsAppCredentialsId || typebot?.whatsappLiteCredentialsId && (
               <>
                 <ListItem>
                   <Accordion allowToggle>
                     <AccordionItem>
                       <AccordionButton justifyContent="space-between">
-                        Configure integration
+                        Configuração da integração
                         <AccordionIcon />
                       </AccordionButton>
                       <AccordionPanel as={Stack} spacing="4" pt="4">
@@ -230,36 +335,37 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
                             max={48}
                             min={0}
                             width="100px"
-                            label="Session expire timeout:"
+                            label="Tempo de expiração da sessão:"
                             defaultValue={
-                              whatsAppSettings?.sessionExpiryTimeout
+                              selectedTypeWhatsapp === 'Whatsapp Cloud API' ? whatsAppSettings?.sessionExpiryTimeout : whatsappLiteSettings?.sessionExpiryTimeout
                             }
                             placeholder={defaultSessionExpiryTimeout.toString()}
-                            moreInfoTooltip="A number between 0 and 48 that represents the time in hours after which the session will expire if the user does not interact with the bot. The conversation restarts if the user sends a message after that expiration time."
+                            moreInfoTooltip="Um número entre 0 e 48 que representa o tempo em horas para a sessão se expirar caso o usuário não interaja com o bot. A conversa será reiniciada caso o usuário mande a mensagem após o tempo de expiração do chat entre ele e o bot."
                             onValueChange={updateSessionExpiryTimeout}
                             withVariableButton={false}
-                            suffix="hours"
+                            suffix="horas"
                           />
                         </HStack>
                         <SwitchWithRelatedSettings
-                          label={'Start bot condition'}
+                          label={'Condição para iniciar o bot'}
                           initialValue={isDefined(
-                            whatsAppSettings?.startCondition
+                            selectedTypeWhatsapp === 'Whatsapp Cloud API' ? whatsAppSettings?.startCondition : whatsappLiteSettings?.startCondition
                           )}
                           onCheckChange={updateIsStartConditionEnabled}
                         >
                           <TableList<Comparison>
                             initialItems={
-                              whatsAppSettings?.startCondition?.comparisons ??
-                              []
+
+                              selectedTypeWhatsapp === 'Whatsapp Cloud API' ? whatsAppSettings?.startCondition?.comparisons : whatsappLiteSettings?.startCondition?.comparisons
+                                ??
+                                []
                             }
                             onItemsChange={updateStartConditionComparisons}
                             ComponentBetweenItems={() => (
                               <Flex justify="center">
                                 <DropdownList
                                   currentItem={
-                                    whatsAppSettings?.startCondition
-                                      ?.logicalOperator
+                                    selectedTypeWhatsapp === 'Whatsapp Cloud API' ? whatsAppSettings?.startCondition?.logicalOperator : whatsappLiteSettings?.startCondition?.logicalOperator
                                   }
                                   onItemSelect={
                                     updateStartConditionLogicalOperator
@@ -269,7 +375,7 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
                                 />
                               </Flex>
                             )}
-                            addLabel="Add a comparison"
+                            addLabel="Adicionar comparação"
                           >
                             {(props) => <WhatsAppComparisonItem {...props} />}
                           </TableList>
@@ -282,9 +388,9 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
                 <ListItem>
                   <SwitchWithLabel
                     isDisabled={!hasProPerks(workspace)}
-                    label="Enable WhatsApp integration"
+                    label="Habilitar integração no whatsapp"
                     initialValue={
-                      typebot?.settings.whatsApp?.isEnabled ?? false
+                      (selectedTypeWhatsapp === 'Whatsapp Cloud API' ? typebot?.settings?.whatsApp?.isEnabled : typebot?.settings.whatsappLite?.isEnabled) ?? false
                     }
                     onCheckChange={toggleEnableWhatsApp}
                     justifyContent="flex-start"
@@ -292,7 +398,7 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
                 </ListItem>
                 <ListItem>
                   <HStack>
-                    <Text>Publish your bot:</Text>
+                    <Text>Publicar typebot:</Text>
                     <PublishButton size="sm" isMoreMenuDisabled />
                   </HStack>
                 </ListItem>

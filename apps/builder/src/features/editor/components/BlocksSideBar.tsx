@@ -205,7 +205,7 @@ export const BlocksSideBar = () => {
               .map((type) => (
                 <BlockCard
                   key={type}
-                  type={type}
+                  type={type as any}
                   onMouseDown={handleMouseDown}
                 />
               ))}
