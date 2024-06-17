@@ -26,6 +26,11 @@ export const askAssistant = createAction({
       label: 'Message',
       inputType: 'textarea',
     }),
+		usesCalendarAI: option.boolean.layout({
+			label: 'Use Calendar AI?',
+			defaultValue: false,
+			moreInfoTooltip: 'A helpfull scheduling assistant',
+		}),
     functions: option
       .array(
         option.object({
@@ -132,6 +137,7 @@ export const askAssistant = createAction({
         responseMapping,
         threadId,
         functions,
+				usesCalendarAI,
       },
       variables,
       logs,
@@ -144,6 +150,21 @@ export const askAssistant = createAction({
         logs.add('Message is empty')
         return
       }
+
+			if (usesCalendarAI) {
+				const currentVariables = variables.list()
+				
+				const calendarConfigVars = currentVariables.filter(({ name }) => name === 'EVENT_TYPE_ID' || name === 'BOOKING_ID')
+
+				if (calendarConfigVars.length !== 2) {
+					logs.add({
+						status: 'error',
+						description: 'EVENT_TYPE_ID and BOOKING_ID variables must be declared'
+					})
+					return
+				}
+			}
+
       const config = {
         apiKey,
         baseURL: baseUrl,
@@ -210,19 +231,24 @@ export const askAssistant = createAction({
                     const name = toolCall.function.name
                     if (!name) return
 
-										const usesCalendarAI = Object.keys(eventFunctions).includes(name)
-
-										if (usesCalendarAI) {
+										if (usesCalendarAI && Object.keys(eventFunctions).includes(name)) {
 											functionToExecute.code = eventFunctions[name]
 										}
 
 										if (!functionToExecute.code) return
 
-                    const { output, newVariables } = await executeFunction({
+                    const { output, newVariables, error } = await executeFunction({
                       variables: variables.list(),
                       body: functionToExecute.code,
                       args: usesCalendarAI ? { fnParameters: parameters } : parameters,
                     })
+
+										if (error) {
+											logs.add({
+												status: 'error',
+												description: error
+											})
+										}
 
                     newVariables?.forEach((variable) => {
                       variables.set(variable.id, variable.value)
