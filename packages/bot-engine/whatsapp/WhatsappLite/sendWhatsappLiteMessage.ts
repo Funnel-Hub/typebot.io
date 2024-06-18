@@ -23,7 +23,7 @@ export const sendWhatsAppLiteMessage = async ({
     },
     {
       headers: {
-        authorization: env.WHATSAPP_CLIENT_VERIFICATION_TOKEN,
+        Authorization: `Bearer ${env.WHATSAPP_CLIENT_VERIFICATION_TOKEN}`,
       },
       httpsAgent: new Agent({
         rejectUnauthorized: false,
