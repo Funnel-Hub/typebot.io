@@ -1,6 +1,7 @@
 import { whatsAppLiteCredentials } from '@typebot.io/schemas/features/whatsapp'
 import { env } from '@typebot.io/env'
-import ky from 'ky'
+import axios from 'axios'
+import { Agent } from 'https'
 import { WhatsappLiteMessage } from './convetMessageToWhatsappLiteMessage'
 
 type Props = {
@@ -14,12 +15,18 @@ export const sendWhatsAppLiteMessage = async ({
   message,
   credentials,
 }: Props) =>
-  ky.post(`https://${credentials.whatsappLiteBaseUrl}/send-messages`, {
-    headers: {
-      authorization: env.WHATSAPP_CLIENT_VERIFICATION_TOKEN,
-    },
-    json: {
+  axios.post(
+    `https://${credentials.whatsappLiteBaseUrl}/send-messages`,
+    {
       phoneNumber: to,
       messages: [message],
     },
-  })
+    {
+      headers: {
+        authorization: env.WHATSAPP_CLIENT_VERIFICATION_TOKEN,
+      },
+      httpsAgent: new Agent({
+        rejectUnauthorized: false,
+      }),
+    }
+  )
