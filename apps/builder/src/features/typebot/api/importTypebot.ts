@@ -23,6 +23,7 @@ import { trackEvents } from '@typebot.io/telemetry/trackEvents'
 const omittedProps = {
   id: true,
   whatsAppCredentialsId: true,
+  whatsappLiteCredentialsId: true,
   riskLevel: true,
   isClosed: true,
   isArchived: true,
@@ -77,6 +78,7 @@ const migrateImportingTypebot = (
     isArchived: false,
     whatsAppCredentialsId: null,
     publicId: null,
+    whatsappLiteCredentialsId: null,
     riskLevel: null,
   } satisfies Typebot
   return migrateTypebot(fullTypebot)
