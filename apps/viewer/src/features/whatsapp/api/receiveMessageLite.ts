@@ -30,7 +30,8 @@ export const receiveWhatsappLiteMessage = publicProcedure
     }) => {
       switch (event) {
         case 'new_message': {
-          if (isNotDefined(message)) return { message: 'No message found' }
+          if (isNotDefined(message) || !phone || !myPhone)
+            return { message: 'invalid data' }
           return resumeWhatsAppLiteFlow({
             receivedMessage: message,
             credentialsId,

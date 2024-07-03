@@ -184,13 +184,15 @@ export const whatsAppWebhookRequestBodySchema = z.object({
 
 export const whatsAppLiteWebhookRequestBodySchema = z.object({
   event: z.enum(['new_message', 'expired_session']),
-  phone: z.string(),
-  myPhone: z.string(),
-  message: z.object({
-    type: z.enum(['text']),
-    value: z.string(),
-    timestamp: z.number(),
-  }),
+  phone: z.string().optional(),
+  myPhone: z.string().optional(),
+  message: z
+    .object({
+      type: z.enum(['text']),
+      value: z.string(),
+      timestamp: z.number(),
+    })
+    .optional(),
 })
 
 export type WhatsAppWebhookRequestBody = z.infer<
