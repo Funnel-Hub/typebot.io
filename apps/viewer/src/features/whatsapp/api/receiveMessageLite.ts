@@ -1,4 +1,5 @@
 import { publicProcedure } from '@/helpers/server/trpc'
+import prisma from '@typebot.io/lib/prisma'
 import { whatsAppLiteWebhookRequestBodySchema } from '@typebot.io/schemas/features/whatsapp'
 import { z } from 'zod'
 import { isNotDefined } from '@typebot.io/lib'
@@ -27,16 +28,29 @@ export const receiveWhatsappLiteMessage = publicProcedure
     async ({
       input: { workspaceId, message, phone, myPhone, credentialsId, event },
     }) => {
-      if (event !== 'new_message') return { message: 'invalid event' }
-      if (isNotDefined(message)) return { message: 'No message found' }
-      return resumeWhatsAppLiteFlow({
-        receivedMessage: message,
-        credentialsId,
-        sessionId: `wa-${myPhone}-${phone}`,
-        workspaceId,
-        contact: {
-          phoneNumber: phone,
-        },
-      })
+      switch (event) {
+        case 'new_message': {
+          if (isNotDefined(message)) return { message: 'No message found' }
+          return resumeWhatsAppLiteFlow({
+            receivedMessage: message,
+            credentialsId,
+            sessionId: `wa-${myPhone}-${phone}`,
+            workspaceId,
+            contact: {
+              phoneNumber: phone,
+            },
+          })
+        }
+        case 'expired_session':
+          await prisma.credentials.delete({
+            where: {
+              id: credentialsId,
+            },
+          })
+          return { message: 'whatsapp lite removed' }
+        default: {
+          return { message: 'invalid event' }
+        }
+      }
     }
   )
