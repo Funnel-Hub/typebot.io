@@ -214,7 +214,7 @@ export const whatsAppLiteCredentialsSchema = z
     type: z.literal('whatsappLite'),
     data: z.object({
       phoneNumberId: z.string(),
-      whatsappLiteBaseUrl: z.string(),
+      sessionId: z.string(),
     }),
   })
   .merge(credentialsBaseSchema)
