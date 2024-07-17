@@ -21,7 +21,7 @@ export type WhatsappLiteMessage =
         | TypeWhatsappMessage.IMAGE
         | TypeWhatsappMessage.VIDEO
         | TypeWhatsappMessage.AUDIO
-      value: string
+      body: string
     }
   | {
       type: TypeWhatsappMessage.INTERACTIVE
@@ -37,7 +37,7 @@ export const convertMessageToWhatsAppLiteMessage = (
         return
       return {
         type: TypeWhatsappMessage.TEXT,
-        value: message.content.richText
+        body: message.content.richText
           .map((chunk) =>
             serialize(chunk)
               ?.replaceAll('&amp;amp;#39;', "'")
@@ -53,14 +53,14 @@ export const convertMessageToWhatsAppLiteMessage = (
         return
       return {
         type: TypeWhatsappMessage.IMAGE,
-        value: message.content.url,
+        body: message.content.url,
       }
     }
     case BubbleBlockType.AUDIO: {
       if (!message.content.url) return
       return {
         type: TypeWhatsappMessage.AUDIO,
-        value: message.content.url,
+        body: message.content.url,
       }
     }
     case BubbleBlockType.VIDEO: {
@@ -72,14 +72,14 @@ export const convertMessageToWhatsAppLiteMessage = (
         return
       return {
         type: TypeWhatsappMessage.VIDEO,
-        value: message.content.url,
+        body: message.content.url,
       }
     }
     case BubbleBlockType.EMBED: {
       if (!message.content.url) return
       return {
         type: TypeWhatsappMessage.TEXT,
-        value: message.content.url,
+        body: message.content.url,
       }
     }
   }
