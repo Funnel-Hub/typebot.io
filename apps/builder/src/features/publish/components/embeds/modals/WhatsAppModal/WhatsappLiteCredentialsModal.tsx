@@ -15,7 +15,6 @@ import {
 import React from 'react'
 import { QrCodeWhatsappLite } from './QrCodeWhatsappLite'
 import { createId } from '@paralleldrive/cuid2'
-import { env } from '@typebot.io/env'
 
 type Props = {
   isOpen: boolean
@@ -55,34 +54,6 @@ export const WhatsappLiteCredentialsModal = ({
 
   const onSuccessSession = async (sessionId: string, phoneNumberId: string) => {
     if (!workspace) return
-    const response = await fetch(
-      `${env.NEXT_PUBLIC_WHATSAPP_ORCHESTRATOR_URL}/sessions/load-client`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sessionId,
-          notifyMessagesWebhook: `https://bot.funnelhub.io/api/v1/workspaces/${workspace.id}/whatsapp-lite/${credentialsId}/webhook`,
-        }),
-      }
-    )
-
-    if (response.status !== 201) return
-
-    await new Promise((resolve) => setTimeout(resolve, 5000))
-    const clientResponse = await fetch(
-      `${env.NEXT_PUBLIC_WHATSAPP_ORCHESTRATOR_URL}/sessions/${sessionId}/client-dns`,
-      {
-        method: 'GET',
-      }
-    )
-
-    if (clientResponse.status !== 200) return
-
-    const clientData = await clientResponse.json()
-    const clientUrl = clientData.whatsapp_client_url as string
     mutate({
       credentials: {
         id: credentialsId,
@@ -91,7 +62,7 @@ export const WhatsappLiteCredentialsModal = ({
         name: phoneNumberId,
         data: {
           phoneNumberId,
-          whatsappLiteBaseUrl: clientUrl,
+          sessionId
         },
       },
     })
@@ -113,6 +84,7 @@ export const WhatsappLiteCredentialsModal = ({
               workspaceId={workspace.id}
               isOpenModal={isOpen}
               onSucess={onSuccessSession}
+              credentialId={credentialsId}
             />
           )}
         </ModalBody>

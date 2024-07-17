@@ -158,7 +158,7 @@ const getCredentials = async ({
     credentials.iv
   )) as whatsAppLiteCredentials['data']
   return {
-    whatsappLiteBaseUrl: data.whatsappLiteBaseUrl,
+    sessionId: data.sessionId,
     phoneNumberId: data.phoneNumberId,
   }
 }
