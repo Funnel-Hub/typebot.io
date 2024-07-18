@@ -191,7 +191,7 @@ const getTypingDuration = ({
   switch (message.type) {
     case 'text':
       return computeTypingDuration({
-        bubbleContent: message.value,
+        bubbleContent: message.body,
         typingSettings: typingEmulation,
       })
     case 'interactive':
