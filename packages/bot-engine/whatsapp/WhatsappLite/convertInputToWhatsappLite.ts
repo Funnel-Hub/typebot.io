@@ -30,12 +30,12 @@ export const convertInputToWhatsAppLite = (
         const imageMessage = item.pictureSrc
           ? {
               type: TypeWhatsappMessage.IMAGE,
-              value: item.pictureSrc ?? '',
+              body: item.pictureSrc ?? '',
             }
           : undefined
         const textMessage = {
           type: TypeWhatsappMessage.TEXT,
-          value: `${idx + 1}. ${bodyText}`,
+          body: `${idx + 1}. ${bodyText}`,
         }
         return imageMessage ? [imageMessage, textMessage] : [textMessage]
       })
@@ -47,7 +47,7 @@ export const convertInputToWhatsAppLite = (
       }
       items.unshift({
         type: TypeWhatsappMessage.TEXT,
-        value: initialMessage,
+        body: initialMessage,
       })
       return items as WhatsappLiteMessage[]
     case InputBlockType.CHOICE: {
@@ -58,7 +58,7 @@ export const convertInputToWhatsAppLite = (
       return [
         {
           type: TypeWhatsappMessage.TEXT,
-          value: initialMessage.concat(
+          body: initialMessage.concat(
             input.items.map((item) => `- ${item.content}`).join('\n')
           ),
         },
