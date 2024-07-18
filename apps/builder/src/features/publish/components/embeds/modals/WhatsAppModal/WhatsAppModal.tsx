@@ -80,17 +80,17 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
           ...typebot.settings,
           ...(selectedTypeWhatsapp === 'Whatsapp Lite'
             ? {
-                whatsappLite: {
-                  ...typebot.settings.whatsappLite,
-                  isEnabled: isChecked,
-                },
-              }
+              whatsappLite: {
+                ...typebot.settings.whatsappLite,
+                isEnabled: isChecked,
+              },
+            }
             : {
-                whatsApp: {
-                  ...typebot.settings.whatsApp,
-                  isEnabled: isChecked,
-                },
-              }),
+              whatsApp: {
+                ...typebot.settings.whatsApp,
+                isEnabled: isChecked,
+              },
+            }),
         },
       },
     })
@@ -113,29 +113,29 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
           ...typebot.settings,
           ...(selectedTypeWhatsapp === 'Whatsapp Lite'
             ? {
-                whatsappLite: {
-                  ...typebot.settings.whatsappLite,
-                  startCondition: {
-                    logicalOperator:
-                      typebot.settings.whatsappLite?.startCondition
-                        ?.logicalOperator ?? LogicalOperator.AND,
-                    comparisons,
-                  },
+              whatsappLite: {
+                ...typebot.settings.whatsappLite,
+                startCondition: {
+                  logicalOperator:
+                    typebot.settings.whatsappLite?.startCondition
+                      ?.logicalOperator ?? LogicalOperator.AND,
+                  comparisons,
                 },
-                whatsapp: undefined,
-              }
+              },
+              whatsapp: undefined,
+            }
             : {
-                whatsApp: {
-                  ...typebot.settings.whatsApp,
-                  startCondition: {
-                    logicalOperator:
-                      typebot.settings.whatsApp?.startCondition
-                        ?.logicalOperator ?? LogicalOperator.AND,
-                    comparisons,
-                  },
+              whatsApp: {
+                ...typebot.settings.whatsApp,
+                startCondition: {
+                  logicalOperator:
+                    typebot.settings.whatsApp?.startCondition
+                      ?.logicalOperator ?? LogicalOperator.AND,
+                  comparisons,
                 },
-                whatsappLite: undefined,
-              }),
+              },
+              whatsappLite: undefined,
+            }),
         },
       },
     })
@@ -151,29 +151,29 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
           ...typebot.settings,
           ...(selectedTypeWhatsapp === 'Whatsapp Lite'
             ? {
-                whatsappLite: {
-                  ...typebot.settings.whatsappLite,
-                  startCondition: {
-                    comparisons:
-                      typebot.settings.whatsappLite?.startCondition
-                        ?.comparisons ?? [],
-                    logicalOperator,
-                  },
+              whatsappLite: {
+                ...typebot.settings.whatsappLite,
+                startCondition: {
+                  comparisons:
+                    typebot.settings.whatsappLite?.startCondition
+                      ?.comparisons ?? [],
+                  logicalOperator,
                 },
-                whatsapp: undefined,
-              }
+              },
+              whatsapp: undefined,
+            }
             : {
-                whatsApp: {
-                  ...typebot.settings.whatsApp,
-                  startCondition: {
-                    comparisons:
-                      typebot.settings.whatsApp?.startCondition?.comparisons ??
-                      [],
-                    logicalOperator,
-                  },
+              whatsApp: {
+                ...typebot.settings.whatsApp,
+                startCondition: {
+                  comparisons:
+                    typebot.settings.whatsApp?.startCondition?.comparisons ??
+                    [],
+                  logicalOperator,
                 },
-                whatsappLite: undefined,
-              }),
+              },
+              whatsappLite: undefined,
+            }),
         },
       },
     })
@@ -187,29 +187,29 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
           ...typebot.settings,
           ...(selectedTypeWhatsapp === 'Whatsapp Lite'
             ? {
-                whatsappLite: {
-                  ...typebot.settings.whatsappLite,
-                  startCondition: !isEnabled
-                    ? undefined
-                    : {
-                        comparisons: [],
-                        logicalOperator: LogicalOperator.AND,
-                      },
-                },
-                whatsapp: undefined,
-              }
+              whatsappLite: {
+                ...typebot.settings.whatsappLite,
+                startCondition: !isEnabled
+                  ? undefined
+                  : {
+                    comparisons: [],
+                    logicalOperator: LogicalOperator.AND,
+                  },
+              },
+              whatsapp: undefined,
+            }
             : {
-                whatsApp: {
-                  ...typebot.settings.whatsApp,
-                  startCondition: !isEnabled
-                    ? undefined
-                    : {
-                        comparisons: [],
-                        logicalOperator: LogicalOperator.AND,
-                      },
-                },
-                whatsappLite: undefined,
-              }),
+              whatsApp: {
+                ...typebot.settings.whatsApp,
+                startCondition: !isEnabled
+                  ? undefined
+                  : {
+                    comparisons: [],
+                    logicalOperator: LogicalOperator.AND,
+                  },
+              },
+              whatsappLite: undefined,
+            }),
         },
       },
     })
@@ -228,19 +228,19 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
           ...typebot.settings,
           ...(selectedTypeWhatsapp === 'Whatsapp Lite'
             ? {
-                whatsappLite: {
-                  ...typebot.settings.whatsappLite,
-                  sessionExpiryTimeout,
-                },
-                whatsapp: undefined,
-              }
+              whatsappLite: {
+                ...typebot.settings.whatsappLite,
+                sessionExpiryTimeout,
+              },
+              whatsapp: undefined,
+            }
             : {
-                whatsApp: {
-                  ...typebot.settings.whatsApp,
-                  sessionExpiryTimeout,
-                },
-                whatsappLite: undefined,
-              }),
+              whatsApp: {
+                ...typebot.settings.whatsApp,
+                sessionExpiryTimeout,
+              },
+              whatsappLite: undefined,
+            }),
         },
       },
     })
@@ -384,9 +384,9 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
                               initialItems={
                                 selectedTypeWhatsapp === 'Whatsapp Cloud API'
                                   ? whatsAppSettings?.startCondition
-                                      ?.comparisons
+                                    ?.comparisons
                                   : whatsappLiteSettings?.startCondition
-                                      ?.comparisons ?? []
+                                    ?.comparisons ?? []
                               }
                               onItemsChange={updateStartConditionComparisons}
                               ComponentBetweenItems={() => (
@@ -394,11 +394,11 @@ export const WhatsAppModal = ({ isOpen, onClose }: ModalProps): JSX.Element => {
                                   <DropdownList
                                     currentItem={
                                       selectedTypeWhatsapp ===
-                                      'Whatsapp Cloud API'
+                                        'Whatsapp Cloud API'
                                         ? whatsAppSettings?.startCondition
-                                            ?.logicalOperator
+                                          ?.logicalOperator
                                         : whatsappLiteSettings?.startCondition
-                                            ?.logicalOperator
+                                          ?.logicalOperator
                                     }
                                     onItemSelect={
                                       updateStartConditionLogicalOperator

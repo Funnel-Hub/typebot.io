@@ -3,6 +3,10 @@ import { authenticatedProcedure } from '@/helpers/server/trpc'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { isWriteWorkspaceForbidden } from '@/features/workspace/helpers/isWriteWorkspaceForbidden'
+import { env } from '@typebot.io/env'
+import { decrypt } from '@typebot.io/lib/api/encryption/decrypt'
+import { whatsAppLiteCredentials } from '@typebot.io/schemas/features/whatsapp'
+import axios from 'axios'
 
 export const deleteCredentials = authenticatedProcedure
   .meta({
@@ -41,7 +45,7 @@ export const deleteCredentials = authenticatedProcedure
           code: 'NOT_FOUND',
           message: 'Workspace not found',
         })
-
+      await deleteWhatsappCredentials(credentialsId)
       await prisma.credentials.delete({
         where: {
           id: credentialsId,
@@ -50,3 +54,26 @@ export const deleteCredentials = authenticatedProcedure
       return { credentialsId }
     }
   )
+
+const deleteWhatsappCredentials = async (credentialsId: string) => {
+  try {
+    const credential = await prisma.credentials.findFirst({
+      where: { id: credentialsId },
+    })
+
+    if (
+      credential?.type === 'whatsAppSocket' ||
+      credential?.type === 'whatsappLite'
+    ) {
+      const data = (await decrypt(
+        credential.data,
+        credential.iv
+      )) as whatsAppLiteCredentials['data']
+      await axios.post(`${env.WHATSAPP_SERVER}/remove-session`, {
+        clientId: data.sessionId,
+      })
+    }
+  } catch (err: unknown) {
+    console.error(err)
+  }
+}
