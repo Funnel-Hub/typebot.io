@@ -71,32 +71,32 @@ jobs:
           docker tag docker-image-local:latest $IMAGE
           docker push $IMAGE
 
-  deploy_to_kubernetes:
-    needs: build_and_push_to_ecr
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Update Kubernetes files
-        run: |
-          TAG_IMAGE=$(cat apps/builder/package.json | grep '"version"' | awk -F '"' '{print $4}')
-          IMAGE="$REGISTRY_URL_ECR/typebot-builder:$TAG_IMAGE"
-          sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/0-deployment.yml
-          sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/1-service.yml
-          sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/2-hpa.yml
-          sed -i -e "s#BUILDER_IMAGE#$IMAGE#" ./apps/builder/k8s/0-deployment.yml
-          sed -i -e "s#CERTIFICATE_SSL#$CERTIFICATE_SSL#" ./apps/builder/k8s/1-service.yml
-      - name: Deploy to k8s
-        run: |
-          K8S_PATH=./apps/builder/k8s
-          sudo snap install kubectl --classic
-          aws eks --region $AWS_REGION update-kubeconfig --name $K8S_CLUSTER_NAME
-          kubectl apply -f $K8S_PATH/0-deployment.yml
-          kubectl apply -f $K8S_PATH/1-service.yml
-          kubectl apply -f $K8S_PATH/2-hpa.yml
+  # deploy_to_kubernetes:
+  #   needs: build_and_push_to_ecr
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Clone repository
+  #       uses: actions/checkout@v4
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+  #     - name: Update Kubernetes files
+  #       run: |
+  #         TAG_IMAGE=$(cat apps/builder/package.json | grep '"version"' | awk -F '"' '{print $4}')
+  #         IMAGE="$REGISTRY_URL_ECR/typebot-builder:$TAG_IMAGE"
+  #         sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/0-deployment.yml
+  #         sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/1-service.yml
+  #         sed -i -e "s#APPLICATION_NAME#typebot-builder#" ./apps/builder/k8s/2-hpa.yml
+  #         sed -i -e "s#BUILDER_IMAGE#$IMAGE#" ./apps/builder/k8s/0-deployment.yml
+  #         sed -i -e "s#CERTIFICATE_SSL#$CERTIFICATE_SSL#" ./apps/builder/k8s/1-service.yml
+  #     - name: Deploy to k8s
+  #       run: |
+  #         K8S_PATH=./apps/builder/k8s
+  #         sudo snap install kubectl --classic
+  #         aws eks --region $AWS_REGION update-kubeconfig --name $K8S_CLUSTER_NAME
+  #         kubectl apply -f $K8S_PATH/0-deployment.yml
+  #         kubectl apply -f $K8S_PATH/1-service.yml
+  #         kubectl apply -f $K8S_PATH/2-hpa.yml
