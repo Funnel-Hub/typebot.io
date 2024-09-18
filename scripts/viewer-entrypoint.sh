@@ -4,4 +4,4 @@ cp .env ./apps/viewer
 cp configureRuntimeEnv.js ./apps/viewer
 cd apps/viewer
 dotenv -e .env node configureRuntimeEnv.js
-dotenv -e .env node server.js
+dotenv -e .env -- node --max-old-space-size=4096 server.js
