@@ -1,5 +1,5 @@
 import { publicProcedure } from '@/helpers/server/trpc'
-import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
+// import { continueChatResponseSchema } from '@typebot.io/schemas/features/chat/schema'
 import { z } from 'zod'
 import { continueChat as continueChatFn } from '@typebot.io/bot-engine/apiHandlers/continueChat'
 
@@ -21,7 +21,7 @@ export const continueChat = publicProcedure
         ),
     })
   )
-  .output(continueChatResponseSchema)
+  .output(z.any())
   .mutation(async ({ input: { sessionId, message }, ctx: { origin, res } }) => {
     const { corsOrigin, ...response } = await continueChatFn({
       origin,
