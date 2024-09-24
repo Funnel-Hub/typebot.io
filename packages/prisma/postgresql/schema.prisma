@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("postgresql://postgres:Ty9seYzsB0ENr1sA4azq@funnelhub.cwqgotaq038a.us-east-2.rds.amazonaws.com:5432/typebot?sslmode=require")
+  url      = "postgresql://postgres:Ty9seYzsB0ENr1sA4azq@funnelhub.cwqgotaq038a.us-east-2.rds.amazonaws.com:5432/typebot?sslmode=require"
 }
 
 model Account {
