@@ -50,9 +50,9 @@ const baseEnv = {
       .enum(['development', 'staging', 'production', 'test'])
       .optional(),
     DATABASE_URL: z
-      .string(),
-      // .url()
-      // .refine((url) => url.startsWith('postgres') || url.startsWith('mysql')),
+      .string()
+      .url()
+      .refine((url) => url.startsWith('postgres') || url.startsWith('mysql')),
     ENCRYPTION_SECRET: z.string().length(32),
     NEXTAUTH_URL: z.preprocess(
       guessNextAuthUrlForVercelPreview,
