@@ -43,12 +43,16 @@ export const receiveWhatsappLiteMessage = publicProcedure
           })
         }
         case 'expired_session':
-          await prisma.credentials.delete({
-            where: {
-              id: credentialsId,
-            },
-          })
-          return { message: 'whatsapp lite removed' }
+          try {
+            await prisma.credentials.delete({
+              where: {
+                id: credentialsId,
+              },
+            })
+            return { message: 'whatsapp lite removed' }
+          } catch(err) {
+            return { message: 'whatsapp lite removed' }
+          }
         default: {
           return { message: 'invalid event' }
         }

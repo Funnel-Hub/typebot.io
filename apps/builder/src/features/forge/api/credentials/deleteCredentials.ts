@@ -13,26 +13,29 @@ export const deleteCredentials = authenticatedProcedure
   )
   .mutation(
     async ({ input: { credentialsId, workspaceId }, ctx: { user } }) => {
-      const workspace = await prisma.workspace.findFirst({
-        where: {
-          id: workspaceId,
-          members: {
-            some: { userId: user.id, role: { in: ['ADMIN', 'MEMBER'] } },
+      try {
+        const workspace = await prisma.workspace.findFirst({
+          where: {
+            id: workspaceId,
+            members: {
+              some: { userId: user.id, role: { in: ['ADMIN', 'MEMBER'] } },
+            },
           },
-        },
-        select: { id: true, members: true },
-      })
-      if (!workspace || isWriteWorkspaceForbidden(workspace, user))
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Workspace not found',
+          select: { id: true, members: true },
         })
-
-      await prisma.credentials.delete({
-        where: {
-          id: credentialsId,
-        },
-      })
-      return { credentialsId }
+        if (!workspace || isWriteWorkspaceForbidden(workspace, user))
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Workspace not found',
+          })
+  
+        await prisma.credentials.delete({
+          where: {
+            id: credentialsId,
+          },
+        })
+      } catch(err) {
+        return { credentialsId }
+      }
     }
   )
